@@ -6,7 +6,7 @@ import { getDesignTokens } from "@/theme";
 export const ThemeModeContext = createContext("");
 
 export const ThemeModeContextProvider = ({ children }) => {
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState("dark");
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
