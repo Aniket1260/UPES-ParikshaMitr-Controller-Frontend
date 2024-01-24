@@ -14,7 +14,7 @@ const darkBlue = {
 
 export const getDesignTokens = (mode) => ({
   palette: {
-    mode,
+    mode: mode,
     ...(mode === "light"
       ? {
           primary: {
