@@ -8,16 +8,11 @@ import { useThemeMode } from "@/context/themeModeContext";
 const CustomAppBar = () => {
   const { mode, colorMode } = useThemeMode();
   return (
-    <AppBar position="sticky">
+    <AppBar
+      position="fixed"
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    >
       <Toolbar variant="dense">
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        >
-          <MenuIcon />
-        </IconButton>
         <Typography
           variant="h6"
           color="inherit"

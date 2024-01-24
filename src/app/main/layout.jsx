@@ -1,13 +1,13 @@
 import React from "react";
 import CustomAppBar from "@/components/CustomAppBar";
-import { Box } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
+import CustomDrawer from "@/components/CustomDrawer";
 
 const TeacherLayout = ({ children }) => {
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: "column",
         height: "100%",
         width: "100%",
         overflow: "hidden",
@@ -16,7 +16,11 @@ const TeacherLayout = ({ children }) => {
       }}
     >
       <CustomAppBar />
-      {children}
+      <CustomDrawer />
+      <Box sx={{ flexGrow: 1, p: 3 }}>
+        <Toolbar variant="dense" />
+        {children}
+      </Box>
     </Box>
   );
 };
