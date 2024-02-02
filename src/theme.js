@@ -40,4 +40,24 @@ export const getDesignTokens = (mode) => ({
           },
         }),
   },
+  components: {
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          "& .MuiDataGrid-cell:focus": {
+            outline: "none",
+          },
+          "& .MuiDataGrid-cell:focus-within": {
+            outline: "none",
+          },
+          "& .MuiDataGrid-columnHeader:focus-within": {
+            outline: "none",
+          },
+          "& .MuiDataGrid-columnHeader:focus": {
+            outline: "none",
+          },
+        },
+      },
+    },
+  },
 });
