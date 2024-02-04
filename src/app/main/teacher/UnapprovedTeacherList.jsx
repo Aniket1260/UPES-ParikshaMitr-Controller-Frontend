@@ -1,6 +1,6 @@
 import { controllerToken } from "@/config/temp.config";
 import { approveTeacher } from "@/services/cont-teacher.service";
-import { Check, Search } from "@mui/icons-material";
+import { Check, Edit, Search } from "@mui/icons-material";
 import {
   Box,
   IconButton,
@@ -73,6 +73,11 @@ const UnapprovedTeacherList = ({ teacherData }) => {
             <Tooltip title="Approve Teacher" placement="top" arrow>
               <IconButton onClick={() => mutate(params.row._id)}>
                 <Check />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Edit Teacher" placement="top" arrow>
+              <IconButton onClick={() => console.log("Edit Teacher")}>
+                <Edit />
               </IconButton>
             </Tooltip>
           </Box>

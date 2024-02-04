@@ -1,6 +1,6 @@
 import { controllerToken } from "@/config/temp.config";
-import { approveTeacher } from "@/services/cont-teacher.service";
-import { Check, Close, Delete, Search } from "@mui/icons-material";
+import { disableTeacher } from "@/services/cont-teacher.service";
+import { Close, Search } from "@mui/icons-material";
 import {
   Box,
   IconButton,
@@ -19,11 +19,11 @@ const ApprovedTeacherList = ({ teacherData }) => {
   const [search, setSearch] = useState("");
 
   const { mutate } = useMutation({
-    mutationFn: (id) => approveTeacher(id, controllerToken),
+    mutationFn: (id) => disableTeacher(id, controllerToken),
     onSuccess: () => {
       enqueueSnackbar({
-        variant: "success",
-        message: "Teacher Approved Successfully",
+        variant: "info",
+        message: "Teacher Disabled Successfully",
         autoHideDuration: 3000,
       });
       queryClient.invalidateQueries("teachers");
@@ -60,7 +60,7 @@ const ApprovedTeacherList = ({ teacherData }) => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
-        console.log(params);
+        console.log(1, params);
         return (
           <Box
             sx={{
@@ -73,11 +73,6 @@ const ApprovedTeacherList = ({ teacherData }) => {
             <Tooltip title="Disable Teacher" placement="top" arrow>
               <IconButton onClick={() => mutate(params.row._id)}>
                 <Close />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Teacher" placement="top" arrow>
-              <IconButton onClick={() => mutate(params.row._id)}>
-                <Delete />
               </IconButton>
             </Tooltip>
           </Box>
