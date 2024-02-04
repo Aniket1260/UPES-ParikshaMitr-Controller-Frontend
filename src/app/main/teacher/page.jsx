@@ -8,8 +8,11 @@ import UnapprovedTeacherList from "./UnapprovedTeacherList";
 
 const TeacherListPage = () => {
   const unApprovedTeacherResult = useQuery({
-    queryKey: ["teachers", "unapproved"],
+    queryKey: ["teachers", { type: "unapproved" }],
     queryFn: () => getUnapprovedTeachers(controllerToken),
+    retry: 2,
+    staleTime: 1000,
+    gcTime: 1000 * 2,
   });
 
   if (unApprovedTeacherResult.isSuccess)
@@ -34,7 +37,9 @@ const TeacherListPage = () => {
           />
         )}
         {unApprovedTeacherResult.isError && (
-          <Typography>Error: {error.message}</Typography>
+          <Typography>
+            Error: {unApprovedTeacherResult.error.response.data.message}
+          </Typography>
         )}{" "}
       </Box>
     </Box>

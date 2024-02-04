@@ -1,11 +1,28 @@
-import { Search } from "@mui/icons-material";
-import { Box, InputAdornment, TextField } from "@mui/material";
+import { controllerToken } from "@/config/temp.config";
+import { approveTeacher } from "@/services/cont-teacher.service";
+import { Check, Search } from "@mui/icons-material";
+import {
+  Box,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import React, { useMemo, useState } from "react";
 
 const UnapprovedTeacherList = ({ teacherData }) => {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+
+  const { mutate } = useMutation({
+    mutationFn: (id) => approveTeacher(id, controllerToken),
+    onSuccess: () => {
+      queryClient.invalidateQueries("teachers");
+    },
+  });
 
   const rows = useMemo(() => {
     return teacherData.filter((row) => {
@@ -33,15 +50,26 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
+      flex: 0.5,
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
+        console.log(params);
         return (
-          <div>
-            <button>Approve</button>
-            <button>Reject</button>
-          </div>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "blue",
+            }}
+          >
+            <Tooltip title="Approve Teacher" placement="top" arrow>
+              <IconButton onClick={() => mutate(params.row._id)}>
+                <Check />
+              </IconButton>
+            </Tooltip>
+          </Box>
         );
       },
     },
