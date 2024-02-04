@@ -11,6 +11,7 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 
 const UnapprovedTeacherList = ({ teacherData }) => {
@@ -20,6 +21,11 @@ const UnapprovedTeacherList = ({ teacherData }) => {
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),
     onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Teacher Approved Successfully",
+        autoHideDuration: 3000,
+      });
       queryClient.invalidateQueries("teachers");
     },
   });
