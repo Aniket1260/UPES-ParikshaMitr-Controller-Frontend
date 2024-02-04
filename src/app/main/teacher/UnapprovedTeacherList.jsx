@@ -1,8 +1,14 @@
 import { controllerToken } from "@/config/temp.config";
-import { approveTeacher } from "@/services/cont-teacher.service";
+import { approveTeacher, editTeacher } from "@/services/cont-teacher.service";
 import { Check, Edit, Search } from "@mui/icons-material";
 import {
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
   InputAdornment,
   TextField,
@@ -17,6 +23,10 @@ import React, { useMemo, useState } from "react";
 const UnapprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+  const [editTeacherModal, setEditTeacherModal] = useState({
+    open: false,
+    teacher: null,
+  });
 
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),
@@ -27,6 +37,20 @@ const UnapprovedTeacherList = ({ teacherData }) => {
         autoHideDuration: 3000,
       });
       queryClient.invalidateQueries("teachers");
+    },
+  });
+
+  const { mutate: mutateTeacher } = useMutation({
+    mutationFn: (teacher) => editTeacher(teacher._id, teacher, controllerToken),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Teacher Updated Successfully",
+        autoHideDuration: 3000,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["teachers", { type: "unapproved" }],
+      });
     },
   });
 
@@ -76,7 +100,14 @@ const UnapprovedTeacherList = ({ teacherData }) => {
               </IconButton>
             </Tooltip>
             <Tooltip title="Edit Teacher" placement="top" arrow>
-              <IconButton onClick={() => console.log("Edit Teacher")}>
+              <IconButton
+                onClick={() =>
+                  setEditTeacherModal({
+                    open: true,
+                    teacher: params.row,
+                  })
+                }
+              >
                 <Edit />
               </IconButton>
             </Tooltip>
@@ -88,6 +119,18 @@ const UnapprovedTeacherList = ({ teacherData }) => {
 
   return (
     <Box sx={{ mb: 2 }}>
+      <EditTeacherModal
+        open={editTeacherModal.open}
+        teacher={editTeacherModal.teacher}
+        handleClose={() => setEditTeacherModal({ open: false, teacher: null })}
+        changeTeacher={(teacher) => {
+          setEditTeacherModal({ open: true, teacher });
+        }}
+        submitFn={() => {
+          mutateTeacher(editTeacherModal.teacher);
+          setEditTeacherModal({ open: false, teacher: null });
+        }}
+      />
       <Box
         sx={{
           display: "flex",
@@ -126,3 +169,45 @@ const UnapprovedTeacherList = ({ teacherData }) => {
 };
 
 export default UnapprovedTeacherList;
+
+const EditTeacherModal = ({
+  open,
+  teacher,
+  handleClose,
+  changeTeacher,
+  submitFn,
+}) => {
+  return (
+    <div>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Edit Teacher</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            Change Teacher Details
+          </DialogContentText>
+          <TextField
+            label="SAP ID"
+            fullWidth
+            disabled
+            value={teacher?.sap_id}
+            sx={{ my: 1 }}
+          />
+          <TextField
+            label="Name"
+            type="text"
+            fullWidth
+            value={teacher?.name}
+            onChange={(e) =>
+              changeTeacher({ ...teacher, name: e.target.value })
+            }
+            sx={{ my: 1 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={submitFn}>Subscribe</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
+};

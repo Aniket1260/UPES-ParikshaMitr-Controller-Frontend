@@ -74,3 +74,22 @@ export const disableTeacher = async (teacherId, token) => {
     throw error;
   }
 };
+
+export const editTeacher = async (teacherId, data, token) => {
+  try {
+    const response = await axios.put(
+      `${BaseUrl}/exam-controller/teacher/edit/${teacherId}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
