@@ -1,6 +1,6 @@
 import { controllerToken } from "@/config/temp.config";
 import { approveTeacher } from "@/services/cont-teacher.service";
-import { Check, Search } from "@mui/icons-material";
+import { Check, Close, Delete, Search } from "@mui/icons-material";
 import {
   Box,
   IconButton,
@@ -14,7 +14,7 @@ import { format } from "date-fns";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 
-const UnapprovedTeacherList = ({ teacherData }) => {
+const ApprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
 
@@ -55,7 +55,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     },
     {
       field: "action",
-      headerName: "Action",
+      headerName: "Actions",
       flex: 0.5,
       sortable: false,
       disableColumnMenu: true,
@@ -70,9 +70,14 @@ const UnapprovedTeacherList = ({ teacherData }) => {
               color: "blue",
             }}
           >
-            <Tooltip title="Approve Teacher" placement="top" arrow>
+            <Tooltip title="Disable Teacher" placement="top" arrow>
               <IconButton onClick={() => mutate(params.row._id)}>
-                <Check />
+                <Close />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Teacher" placement="top" arrow>
+              <IconButton onClick={() => mutate(params.row._id)}>
+                <Delete />
               </IconButton>
             </Tooltip>
           </Box>
@@ -90,7 +95,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
         }}
       >
         <TextField
-          placeholder="Search Unapproved Teachers"
+          placeholder="Search Approved Teachers"
           variant="standard"
           InputProps={{
             startAdornment: (
@@ -104,7 +109,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
           onChange={(e) => setSearch(e.target.value)}
         />
       </Box>
-      {rows.length === 0 && <p>No unapproved teachers found</p>}
+      {rows.length === 0 && <p>No approved teachers found</p>}
       {rows.length > 0 && (
         <DataGrid
           rows={rows}
@@ -120,4 +125,4 @@ const UnapprovedTeacherList = ({ teacherData }) => {
   );
 };
 
-export default UnapprovedTeacherList;
+export default ApprovedTeacherList;

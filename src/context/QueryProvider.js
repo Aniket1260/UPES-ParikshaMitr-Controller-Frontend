@@ -12,6 +12,7 @@ const QueryProvider = ({ children }) => {
           vertical: "bottom",
           horizontal: "right",
         }}
+        autoHideDuration={3000}
       >
         {children}
       </SnackbarProvider>
