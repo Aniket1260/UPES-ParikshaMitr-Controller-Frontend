@@ -19,7 +19,7 @@ export const ThemeModeContextProvider = ({ children }) => {
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
 
   return (
-    <ThemeModeContext.Provider value={{ colorMode }}>
+    <ThemeModeContext.Provider value={{ colorMode, mode }}>
       <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ThemeModeContext.Provider>
   );

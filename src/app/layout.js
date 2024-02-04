@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import "./globals.css";
 import { ThemeModeContextProvider } from "@/context/themeModeContext";
+import QueryProvider from "@/context/QueryProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +16,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <AppRouterCacheProvider>
-          <ThemeModeContextProvider>{children}</ThemeModeContextProvider>
+          <QueryProvider>
+            <ThemeModeContextProvider>{children}</ThemeModeContextProvider>
+          </QueryProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
