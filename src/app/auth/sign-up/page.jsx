@@ -1,29 +1,17 @@
 "use client";
-import React, { useState } from "react";
-import {
-  Container,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-  Link,
-  Box,
-} from "@mui/material";
 
-function App() {
+import React, { useState } from "react";
+import { Box, Paper, TextField, Button, Typography, Link } from "@mui/material";
+
+const Signup = () => {
+  const [name, setName] = useState("");
   const [sapid, setSapid] = useState("");
   const [password, setPassword] = useState("");
+  const [reenteredPassword, setReenteredPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleSignup = (e) => {
     e.preventDefault();
-
-    const isValidUsername = /^\d{9}$/.test(username);
-
-    if (isValidUsername) {
-      console.log("Login clicked");
-    } else {
-      console.error("Invalid username. Please enter a 9-digit number.");
-    }
+    console.log("Signup clicked");
   };
 
   return (
@@ -43,10 +31,19 @@ function App() {
           p: 5,
         }}
       >
-        <Box>
-          <Typography variant="h4">SIGN IN</Typography>
-        </Box>
-        <form onSubmit={handleLogin}>
+        <Typography variant="h4">SIGN UP</Typography>
+        <form onSubmit={handleSignup}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            label="Name"
+            id="name"
+            name="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
           <TextField
             fullWidth
             variant="outlined"
@@ -70,20 +67,28 @@ function App() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <Typography
-            variant="body2"
-            align="right"
-            style={{ marginTop: "3px", marginBottom: "10px" }}
+          <TextField
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            label="Re-enter Password"
+            type="password"
+            id="reenteredPassword"
+            name="reenteredPassword"
+            value={reenteredPassword}
+            onChange={(e) => setReenteredPassword(e.target.value)}
+            required
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ marginTop: "10px" }}
           >
-            <Link href="#" color="primary">
-              Forgot password?
-            </Link>
-          </Typography>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Sign in
+            Sign up
           </Button>
         </form>
-
         <Button
           variant="outlined"
           align="center"
@@ -91,9 +96,9 @@ function App() {
           sx={{ marginTop: "7px" }}
         >
           <Typography variant="body2" color="white">
-            Don't have an account?{" "}
-            <Link href="/auth/sign-up" color="primary">
-              Sign Up
+            Already have an account?{" "}
+            <Link href="/auth/login" color="primary">
+              Sign In
             </Link>
           </Typography>
           .
@@ -101,6 +106,6 @@ function App() {
       </Paper>
     </Box>
   );
-}
+};
 
-export default App;
+export default Signup;
