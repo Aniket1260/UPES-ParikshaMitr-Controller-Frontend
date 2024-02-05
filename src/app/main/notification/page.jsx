@@ -45,6 +45,14 @@ const Notification = () => {
     { field: "title", headerName: "Title", flex: 1 },
     { field: "message", headerName: "Message", flex: 1 },
     {
+      field: "sender.name",
+      headerName: "Sender",
+      flex: 1,
+      renderCell: ({ row }) => {
+        return row?.sender?.name;
+      },
+    },
+    {
       field: "createdAt",
       headerName: "Sent At",
       flex: 0.5,
