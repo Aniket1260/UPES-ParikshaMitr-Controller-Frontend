@@ -1,4 +1,8 @@
-import { NotificationsActive, SchoolRounded } from "@mui/icons-material";
+import {
+  AccessTime,
+  NotificationsActive,
+  SchoolRounded,
+} from "@mui/icons-material";
 
 export const userMenu = [
   {
@@ -10,5 +14,13 @@ export const userMenu = [
     title: "Notifications",
     href: "/main/notification",
     icon: <NotificationsActive />,
+  },
+];
+
+export const invigilationMenu = [
+  {
+    title: "Examination Slots",
+    href: "/main/slots",
+    icon: <AccessTime />,
   },
 ];
