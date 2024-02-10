@@ -91,7 +91,7 @@ function App() {
           sx={{ marginTop: "7px" }}
         >
           <Typography variant="body2" color="white">
-            Don't have an account?{" "}
+            Dont have an account?{" "}
             <Link href="/auth/sign-up" color="primary">
               Sign Up
             </Link>
