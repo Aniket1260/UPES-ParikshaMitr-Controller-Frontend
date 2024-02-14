@@ -1,17 +1,51 @@
 "use client";
-
 import React, { useState } from "react";
 import { Box, Paper, TextField, Button, Typography, Link } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "@/services/signup.service";
 
 const Signup = () => {
   const [name, setName] = useState("");
-  const [sapid, setSapid] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [reenteredPassword, setReenteredPassword] = useState("");
 
-  const handleSignup = (e) => {
+  const signupMutation = useMutation({
+    mutationFn: (formData) => signup(formData),
+    onSuccess: (response) => {
+      console.log("Success");
+      console.log("Data from backend:", response);
+    },
+    onError: (error) => {
+      console.log("Failed", error);
+    },
+    onSettled: () => {
+      console.log("Signup Mutation Settled");
+    },
+  });
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("Signup clicked");
+    if (password !== reenteredPassword) {
+      console.error("Passwords do not match");
+      return;
+    }
+    // try {
+    //   const response = await signupMutation.mutateAsync({
+    //     name,
+    //     username,
+    //     password,
+    //   });
+    //   console.log("Success");
+    //   console.log("Data from backend:", response);
+    // } catch (error) {
+    //   console.log("Failed", error);
+    // }
+    signupMutation.mutate({
+      name,
+      username,
+      password,
+    });
   };
 
   return (
@@ -48,11 +82,11 @@ const Signup = () => {
             fullWidth
             variant="outlined"
             margin="normal"
-            label="SAP ID"
-            id="sapid"
-            name="sapid"
-            value={sapid}
-            onChange={(e) => setSapid(e.target.value)}
+            label="Username"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <TextField

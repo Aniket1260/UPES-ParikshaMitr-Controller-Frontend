@@ -9,22 +9,29 @@ import {
   Link,
   Box,
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { login } from "@/services/login.service";
 
-function App() {
-  const [sapid, setSapid] = useState("");
+const Login = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const isValidUsername = /^\d{9}$/.test(username);
-
-    if (isValidUsername) {
-      console.log("Login clicked");
-    } else {
-      console.error("Invalid username. Please enter a 9-digit number.");
-    }
-  };
+  const handleLogin = useQuery({
+    queryKey: ["login"],
+    queryFn: async () => {
+      try {
+        const result = await login(username, password);
+        console.log("Success", result);
+        return result;
+      } catch (error) {
+        console.log("Error", error);
+        throw error;
+      }
+    },
+    retry: 2,
+    staleTime: 1000,
+    gcTime: 1000 * 2,
+  });
 
   return (
     <Box
@@ -46,16 +53,21 @@ function App() {
         <Box>
           <Typography variant="h4">SIGN IN</Typography>
         </Box>
-        <form onSubmit={handleLogin}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin.refetch();
+          }}
+        >
           <TextField
             fullWidth
             variant="outlined"
             margin="normal"
-            label="SAP ID"
-            id="sapid"
-            name="sapid"
-            value={sapid}
-            onChange={(e) => setSapid(e.target.value)}
+            label="username"
+            id="username"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <TextField
@@ -91,7 +103,7 @@ function App() {
           sx={{ marginTop: "7px" }}
         >
           <Typography variant="body2" color="white">
-            Dont have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/auth/sign-up" color="primary">
               Sign Up
             </Link>
@@ -101,6 +113,6 @@ function App() {
       </Paper>
     </Box>
   );
-}
+};
 
-export default App;
+export default Login;
