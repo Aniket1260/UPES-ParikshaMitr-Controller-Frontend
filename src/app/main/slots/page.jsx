@@ -4,17 +4,35 @@ import { getAllExamSlots } from "@/services/exam-slots.service";
 import { Visibility } from "@mui/icons-material";
 import {
   Box,
+  Button,
   CircularProgress,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+// import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
 
 const ExamSlots = () => {
+  const [addModal, setAddModal] = React.useState({
+    open: false,
+  });
+
+  const router = useRouter();
+
   const SlotQuery = useQuery({
     queryKey: ["slots"],
     queryFn: () => getAllExamSlots(controllerToken),
@@ -63,7 +81,9 @@ const ExamSlots = () => {
         return (
           <Box>
             <Tooltip title="View Slot Details" placement="top" arrow>
-              <IconButton>
+              <IconButton
+                onClick={() => router.push("/main/slotsDetail/" + row._id)}
+              >
                 <Visibility />
               </IconButton>
             </Tooltip>
@@ -73,9 +93,37 @@ const ExamSlots = () => {
     },
   ];
 
+  if (SlotQuery.isError) {
+    enqueueSnackbar({
+      variant: "error",
+      message:
+        SlotQuery.error.response.status +
+        " : " +
+        SlotQuery.error.response.data.message,
+    });
+  }
+
   return (
     <Box>
-      <Typography variant="h4">Examination slots</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Typography variant="h4">Examination slots</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setAddModal((prev) => ({ ...prev, open: true }))}
+        >
+          Add Slot
+        </Button>
+      </Box>
+      <AddSlotModal
+        open={addModal.open}
+        handleClose={() => setAddModal((prev) => ({ ...prev, open: false }))}
+      />
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
         {SlotQuery.isSuccess && (
@@ -96,3 +144,54 @@ const ExamSlots = () => {
 };
 
 export default ExamSlots;
+
+const AddSlotModal = ({ open, handleClose }) => {
+  const [date, setDate] = React.useState(new Date());
+  const [slotType, setSlotType] = React.useState("Morning");
+
+  const handleAddNewSlot = () => {
+    console.log(date.toISOString(), slotType);
+  };
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Add new slot</DialogTitle>
+      <DialogContent>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <DatePicker
+            label="Slot Date"
+            value={date}
+            onChange={(newValue) => setDate(newValue)}
+            sx={{ m: 1 }}
+          />
+        </LocalizationProvider>
+        <Box sx={{ m: 1 }}>
+          <Typography variant="body1">Slot Type</Typography>
+          <ToggleButtonGroup
+            value={slotType}
+            exclusive
+            onChange={(e, newValue) => setSlotType(newValue)}
+            aria-label="text alignment"
+            sx={{ width: "100%" }}
+          >
+            <ToggleButton fullWidth value="Morning" aria-label="left aligned">
+              Morning
+            </ToggleButton>
+            <ToggleButton fullWidth value="Evening" aria-label="right aligned">
+              Evening
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+        <Box sx={{ m: 1, mt: 4 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddNewSlot}
+          >
+            Add Slot
+          </Button>
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};
