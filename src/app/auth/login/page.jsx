@@ -22,6 +22,7 @@ const Login = () => {
       try {
         const result = await login(username, password);
         console.log("Success", result);
+        localStorage.setItem("token", result.token);
         return result;
       } catch (error) {
         console.log("Error", error);
