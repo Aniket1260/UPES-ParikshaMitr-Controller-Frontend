@@ -105,14 +105,9 @@ const Login = () => {
           align="center"
           fullWidth
           sx={{ marginTop: "7px" }}
+          onClick={() => router.push("/auth/sign-up")}
         >
-          <Typography variant="body2" color="white">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/sign-up" color="primary">
-              Sign Up
-            </Link>
-          </Typography>
-          .
+          Don&apos;t have an account? Sign Up
         </Button>
       </Paper>
     </Box>

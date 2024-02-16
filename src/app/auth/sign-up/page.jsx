@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Box, Paper, TextField, Button, Typography, Link } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { signup } from "@/services/signup.service";
+import { useRouter } from "next/navigation";
+import { enqueueSnackbar } from "notistack";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -10,17 +12,27 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [reenteredPassword, setReenteredPassword] = useState("");
 
+  const router = useRouter();
+
   const signupMutation = useMutation({
-    mutationFn: (formData) => signup(formData),
-    onSuccess: (response) => {
-      console.log("Success");
-      console.log("Data from backend:", response);
+    mutationFn: () =>
+      signup({
+        name,
+        username,
+        password,
+      }),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Signup Successful",
+      });
+      router.push("/auth/login");
     },
     onError: (error) => {
-      console.log("Failed", error);
-    },
-    onSettled: () => {
-      console.log("Signup Mutation Settled");
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
     },
   });
 
@@ -30,17 +42,6 @@ const Signup = () => {
       console.error("Passwords do not match");
       return;
     }
-    // try {
-    //   const response = await signupMutation.mutateAsync({
-    //     name,
-    //     username,
-    //     password,
-    //   });
-    //   console.log("Success");
-    //   console.log("Data from backend:", response);
-    // } catch (error) {
-    //   console.log("Failed", error);
-    // }
     signupMutation.mutate({
       name,
       username,
@@ -66,76 +67,70 @@ const Signup = () => {
         }}
       >
         <Typography variant="h4">SIGN UP</Typography>
-        <form onSubmit={handleSignup}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Name"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Username"
-            id="username"
-            name="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Password"
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Re-enter Password"
-            type="password"
-            id="reenteredPassword"
-            name="reenteredPassword"
-            value={reenteredPassword}
-            onChange={(e) => setReenteredPassword(e.target.value)}
-            required
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ marginTop: "10px" }}
-          >
-            Sign up
-          </Button>
-        </form>
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Name"
+          id="name"
+          name="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Username"
+          id="username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Password"
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Re-enter Password"
+          type="password"
+          id="reenteredPassword"
+          name="reenteredPassword"
+          value={reenteredPassword}
+          onChange={(e) => setReenteredPassword(e.target.value)}
+          required
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ marginTop: "10px" }}
+          onClick={handleSignup}
+        >
+          Sign up
+        </Button>
         <Button
           variant="outlined"
           align="center"
           fullWidth
           sx={{ marginTop: "7px" }}
+          onClick={() => router.push("/auth/login")}
         >
-          <Typography variant="body2" color="white">
-            Already have an account?{" "}
-            <Link href="/auth/login" color="primary">
-              Sign In
-            </Link>
-          </Typography>
-          .
+          Already have an account? Sign In
         </Button>
       </Paper>
     </Box>
