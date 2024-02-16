@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,8 +32,10 @@ const SendNotification = ({ open, handleClose }) => {
     title: "",
     message: "",
   });
-
-  const controllerToken = localStorage.getItem("token");
+  let controllerToken;
+  useEffect(() => {
+    controllerToken = localStorage.getItem("token");
+  }, []);
 
   const queryClient = useQueryClient();
 

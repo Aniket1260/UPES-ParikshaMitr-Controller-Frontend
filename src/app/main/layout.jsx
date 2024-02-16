@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import CustomAppBar from "@/components/CustomAppBar";
 import { Box, Toolbar } from "@mui/material";
 import CustomDrawer from "@/components/CustomDrawer";
@@ -22,9 +22,9 @@ axios.interceptors.response.use(
 
 const TeacherLayout = ({ children }) => {
   const router = useRouter();
-
+  let token;
   useEffect(() => {
-    let token = localStorage.getItem("token");
+    token = localStorage.getItem("token");
   }, []);
 
   if (!token) {

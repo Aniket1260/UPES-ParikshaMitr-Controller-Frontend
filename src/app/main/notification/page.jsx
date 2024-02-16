@@ -21,9 +21,9 @@ const Notification = () => {
     open: false,
   });
   const [search, setSearch] = useState("");
-
+  let controllerToken;
   useEffect(() => {
-    let controllerToken = localStorage.getItem("token");
+    controllerToken = localStorage.getItem("token");
   }, []);
 
   const notificationRes = useQuery({

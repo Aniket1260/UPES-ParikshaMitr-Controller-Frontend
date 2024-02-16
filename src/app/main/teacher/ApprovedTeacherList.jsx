@@ -11,13 +11,15 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { enqueueSnackbar } from "notistack";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const ApprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-
-  const controllerToken = localStorage.getItem("token");
+  let controllerToken;
+  useEffect(() => {
+    controllerToken = localStorage.getItem("token");
+  }, []);
 
   const { mutate } = useMutation({
     mutationFn: (id) => disableTeacher(id, controllerToken),
