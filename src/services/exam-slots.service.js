@@ -18,3 +18,21 @@ export const getAllExamSlots = async (token) => {
     throw error;
   }
 };
+
+export const getSlotDetailsById = async (token, slotId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/slot/${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
