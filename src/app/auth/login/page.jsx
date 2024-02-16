@@ -9,29 +9,33 @@ import {
   Link,
   Box,
 } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { login } from "@/services/login.service";
+import { enqueueSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = useQuery({
-    queryKey: ["login"],
-    queryFn: async () => {
-      try {
-        const result = await login(username, password);
-        console.log("Success", result);
-        localStorage.setItem("token", result.token);
-        return result;
-      } catch (error) {
-        console.log("Error", error);
-        throw error;
-      }
+  const router = useRouter();
+
+  const { mutate: handleLogin } = useMutation({
+    mutationFn: () => login(username, password),
+    onSuccess: (data) => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Login Successful",
+      });
+      localStorage.setItem("token", data.token);
+      router.push("/main/teacher");
     },
-    retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
+    },
   });
 
   return (
@@ -54,48 +58,47 @@ const Login = () => {
         <Box>
           <Typography variant="h4">SIGN IN</Typography>
         </Box>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin.refetch();
-          }}
+
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="username"
+          id="username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Password"
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Typography
+          variant="body2"
+          align="right"
+          style={{ marginTop: "3px", marginBottom: "10px" }}
         >
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="username"
-            id="username"
-            name="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Password"
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Typography
-            variant="body2"
-            align="right"
-            style={{ marginTop: "3px", marginBottom: "10px" }}
-          >
-            <Link href="#" color="primary">
-              Forgot password?
-            </Link>
-          </Typography>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Sign in
-          </Button>
-        </form>
+          <Link href="#" color="primary">
+            Forgot password?
+          </Link>
+        </Typography>
+        <Button
+          onClick={() => handleLogin()}
+          variant="contained"
+          color="primary"
+          fullWidth
+        >
+          Sign in
+        </Button>
 
         <Button
           variant="outlined"
@@ -104,7 +107,7 @@ const Login = () => {
           sx={{ marginTop: "7px" }}
         >
           <Typography variant="body2" color="white">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/auth/sign-up" color="primary">
               Sign Up
             </Link>

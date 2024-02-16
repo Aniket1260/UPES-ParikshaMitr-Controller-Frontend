@@ -1,5 +1,4 @@
 "use client";
-import { controllerToken } from "@/config/temp.config";
 import {
   getApprovedTeachers,
   getUnapprovedTeachers,
@@ -12,8 +11,9 @@ import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
 
 const TeacherListPage = () => {
+  const controllerToken = localStorage.getItem("token");
   const unApprovedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "unapproved" }],
+    queryKey: ["teachers", { type: "unapproved" }, controllerToken],
     queryFn: () => getUnapprovedTeachers(controllerToken),
     retry: 2,
     staleTime: 1000,
@@ -21,7 +21,7 @@ const TeacherListPage = () => {
   });
 
   const approvedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "approved" }],
+    queryKey: ["teachers", { type: "approved" }, controllerToken],
     queryFn: () => getApprovedTeachers(controllerToken),
     retry: 2,
     staleTime: 1000,

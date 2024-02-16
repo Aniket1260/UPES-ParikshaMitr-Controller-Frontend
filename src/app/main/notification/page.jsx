@@ -13,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getNotifications } from "@/services/notification.service";
 import { DataGrid } from "@mui/x-data-grid";
 import { enqueueSnackbar } from "notistack";
-import { controllerToken } from "@/config/temp.config";
 import { Search } from "@mui/icons-material";
 import { format } from "date-fns";
 
@@ -23,8 +22,10 @@ const Notification = () => {
   });
   const [search, setSearch] = useState("");
 
+  const controllerToken = localStorage.getItem("token");
+
   const notificationRes = useQuery({
-    queryKey: ["notifications"],
+    queryKey: ["notifications", controllerToken],
     queryFn: () => getNotifications(controllerToken),
     retry: 2,
     staleTime: 1000,

@@ -1,4 +1,3 @@
-import { controllerToken } from "@/config/temp.config";
 import { approveTeacher, editTeacher } from "@/services/cont-teacher.service";
 import { Check, Edit, Search } from "@mui/icons-material";
 import {
@@ -27,6 +26,8 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     open: false,
     teacher: null,
   });
+
+  const controllerToken = localStorage.getItem("token");
 
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),

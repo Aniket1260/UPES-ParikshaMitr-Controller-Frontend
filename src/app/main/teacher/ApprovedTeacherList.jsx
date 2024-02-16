@@ -1,4 +1,3 @@
-import { controllerToken } from "@/config/temp.config";
 import { disableTeacher } from "@/services/cont-teacher.service";
 import { Close, Search } from "@mui/icons-material";
 import {
@@ -17,6 +16,8 @@ import React, { useMemo, useState } from "react";
 const ApprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+
+  const controllerToken = localStorage.getItem("token");
 
   const { mutate } = useMutation({
     mutationFn: (id) => disableTeacher(id, controllerToken),
