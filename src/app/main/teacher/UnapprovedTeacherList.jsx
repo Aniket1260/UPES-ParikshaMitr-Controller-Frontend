@@ -205,7 +205,7 @@ const EditTeacherModal = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={submitFn}>Subscribe</Button>
+          <Button onClick={submitFn}>Finish</Button>
         </DialogActions>
       </Dialog>
     </div>

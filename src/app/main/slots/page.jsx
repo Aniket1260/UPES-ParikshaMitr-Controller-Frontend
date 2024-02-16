@@ -1,6 +1,6 @@
 "use client";
 import { controllerToken } from "@/config/temp.config";
-import { getAllExamSlots } from "@/services/exam-slots.service";
+import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
 import { Visibility } from "@mui/icons-material";
 import {
   Box,
@@ -19,7 +19,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 // import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
@@ -126,7 +126,7 @@ const ExamSlots = () => {
       />
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
-        {SlotQuery.isSuccess && (
+        {SlotQuery.isSuccess && rows.length > 0 && (
           <DataGrid
             rows={rows}
             columns={cols}
@@ -148,9 +148,34 @@ export default ExamSlots;
 const AddSlotModal = ({ open, handleClose }) => {
   const [date, setDate] = React.useState(new Date());
   const [slotType, setSlotType] = React.useState("Morning");
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: () =>
+      AddExamSlot(controllerToken, {
+        date: date.toLocaleDateString(),
+        timeSlot: slotType,
+        rooms: [],
+      }),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Slot added successfully",
+      });
+      queryClient.invalidateQueries("slots");
+      handleClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
+    },
+  });
 
   const handleAddNewSlot = () => {
-    console.log(date.toISOString(), slotType);
+    console.log(date.toLocaleDateString(), slotType);
+    mutate();
   };
 
   return (
