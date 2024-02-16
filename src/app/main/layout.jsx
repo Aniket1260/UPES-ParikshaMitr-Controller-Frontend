@@ -23,7 +23,10 @@ axios.interceptors.response.use(
 const TeacherLayout = ({ children }) => {
   const router = useRouter();
 
-  let token = localStorage.getItem("token");
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+  }, []);
+
   if (!token) {
     router.push("/auth/login");
   }

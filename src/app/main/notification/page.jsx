@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SendNotification from "./SendNotification";
 import { useQuery } from "@tanstack/react-query";
 import { getNotifications } from "@/services/notification.service";
@@ -22,7 +22,9 @@ const Notification = () => {
   });
   const [search, setSearch] = useState("");
 
-  const controllerToken = localStorage.getItem("token");
+  useEffect(() => {
+    let controllerToken = localStorage.getItem("token");
+  }, []);
 
   const notificationRes = useQuery({
     queryKey: ["notifications", controllerToken],

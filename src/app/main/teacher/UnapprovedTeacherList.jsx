@@ -27,7 +27,9 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     teacher: null,
   });
 
-  const controllerToken = localStorage.getItem("token");
+  useEffect(() => {
+    let controllerToken = localStorage.getItem("token");
+  }, []);
 
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),
