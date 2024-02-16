@@ -1,7 +1,7 @@
 "use client";
 import { controllerToken } from "@/config/temp.config";
 import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
-import { Visibility } from "@mui/icons-material";
+import { Ballot, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -25,10 +25,16 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
+import UploadSeatingPlan from "./UploadSeatingPlan";
 
 const ExamSlots = () => {
   const [addModal, setAddModal] = React.useState({
     open: false,
+  });
+
+  const [uploadSeatingPlanModal, setUploadSeatingPlanModal] = React.useState({
+    open: false,
+    slot: null,
   });
 
   const router = useRouter();
@@ -87,6 +93,18 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Upload Seating Plan" placement="top" arrow>
+              <IconButton
+                onClick={() =>
+                  setUploadSeatingPlanModal({
+                    open: true,
+                    slot: row,
+                  })
+                }
+              >
+                <Ballot />
+              </IconButton>
+            </Tooltip>
           </Box>
         );
       },
@@ -105,6 +123,13 @@ const ExamSlots = () => {
 
   return (
     <Box>
+      <UploadSeatingPlan
+        open={uploadSeatingPlanModal.open}
+        handleClose={() =>
+          setUploadSeatingPlanModal((prev) => ({ ...prev, open: false }))
+        }
+        slot={uploadSeatingPlanModal.slot}
+      />
       <Box
         sx={{
           display: "flex",
