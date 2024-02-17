@@ -1,19 +1,22 @@
 "use client";
-import { controllerToken } from "@/config/temp.config";
 import {
   getApprovedTeachers,
   getUnapprovedTeachers,
 } from "@/services/cont-teacher.service";
 import { Box, CircularProgress, Select, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import UnapprovedTeacherList from "./UnapprovedTeacherList";
 import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
 
 const TeacherListPage = () => {
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
   const unApprovedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "unapproved" }],
+    queryKey: ["teachers", { type: "unapproved" }, controllerToken],
     queryFn: () => getUnapprovedTeachers(controllerToken),
     retry: 2,
     staleTime: 1000,
@@ -21,7 +24,7 @@ const TeacherListPage = () => {
   });
 
   const approvedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "approved" }],
+    queryKey: ["teachers", { type: "approved" }, controllerToken],
     queryFn: () => getApprovedTeachers(controllerToken),
     retry: 2,
     staleTime: 1000,

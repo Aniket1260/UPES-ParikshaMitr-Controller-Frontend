@@ -8,12 +8,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { sendNotification } from "@/services/notification.service";
-import { controllerToken } from "@/config/temp.config";
 import { enqueueSnackbar } from "notistack";
 
 const VisuallyHiddenInput = styled("input")({
@@ -33,6 +32,10 @@ const SendNotification = ({ open, handleClose }) => {
     title: "",
     message: "",
   });
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const queryClient = useQueryClient();
 
