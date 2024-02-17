@@ -1,7 +1,6 @@
 "use client";
-import { controllerToken } from "@/config/temp.config";
-import { getAllExamSlots } from "@/services/exam-slots.service";
-import { Visibility } from "@mui/icons-material";
+import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
+import { Ballot, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -19,22 +18,32 @@ import { DataGrid } from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 // import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
+import UploadSeatingPlan from "./UploadSeatingPlan";
 
 const ExamSlots = () => {
   const [addModal, setAddModal] = React.useState({
     open: false,
   });
 
+  const [uploadSeatingPlanModal, setUploadSeatingPlanModal] = React.useState({
+    open: false,
+    slot: null,
+  });
+
   const router = useRouter();
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const SlotQuery = useQuery({
-    queryKey: ["slots"],
+    queryKey: ["slots", controllerToken],
     queryFn: () => getAllExamSlots(controllerToken),
   });
 
@@ -87,6 +96,18 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Upload Seating Plan" placement="top" arrow>
+              <IconButton
+                onClick={() =>
+                  setUploadSeatingPlanModal({
+                    open: true,
+                    slot: row,
+                  })
+                }
+              >
+                <Ballot />
+              </IconButton>
+            </Tooltip>
           </Box>
         );
       },
@@ -105,6 +126,13 @@ const ExamSlots = () => {
 
   return (
     <Box>
+      <UploadSeatingPlan
+        open={uploadSeatingPlanModal.open}
+        handleClose={() =>
+          setUploadSeatingPlanModal((prev) => ({ ...prev, open: false }))
+        }
+        slot={uploadSeatingPlanModal.slot}
+      />
       <Box
         sx={{
           display: "flex",
@@ -126,7 +154,7 @@ const ExamSlots = () => {
       />
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
-        {SlotQuery.isSuccess && (
+        {SlotQuery.isSuccess && rows.length > 0 && (
           <DataGrid
             rows={rows}
             columns={cols}
@@ -148,9 +176,39 @@ export default ExamSlots;
 const AddSlotModal = ({ open, handleClose }) => {
   const [date, setDate] = React.useState(new Date());
   const [slotType, setSlotType] = React.useState("Morning");
+  const queryClient = useQueryClient();
+
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
+
+  const { mutate } = useMutation({
+    mutationFn: () =>
+      AddExamSlot(controllerToken, {
+        date: date.toLocaleDateString(),
+        timeSlot: slotType,
+        rooms: [],
+      }),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Slot added successfully",
+      });
+      queryClient.invalidateQueries("slots");
+      handleClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
+    },
+  });
 
   const handleAddNewSlot = () => {
-    console.log(date.toISOString(), slotType);
+    console.log(date.toLocaleDateString(), slotType);
+    mutate();
   };
 
   return (
