@@ -3,15 +3,19 @@ import { getSlotDetailsById } from "@/services/exam-slots.service";
 import { React, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { controllerToken } from "@/config/temp.config";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 
 const SlotDetails = ({ params }) => {
   const router = useRouter();
   const { id: slotId } = params;
+
+  if (global?.window !== undefined) {
+    var controllerToken = localStorage.getItem("token");
+  }
+
   const SlotDetailsQuery = useQuery({
-    queryKey: ["slotDetails", slotId],
+    queryKey: ["slotDetails", controllerToken, slotId],
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
   });
 
