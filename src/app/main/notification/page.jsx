@@ -21,10 +21,10 @@ const Notification = () => {
     open: false,
   });
   const [search, setSearch] = useState("");
-  let controllerToken;
-  useEffect(() => {
-    controllerToken = localStorage.getItem("token");
-  }, []);
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const notificationRes = useQuery({
     queryKey: ["notifications", controllerToken],

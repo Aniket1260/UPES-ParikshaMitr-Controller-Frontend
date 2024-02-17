@@ -27,10 +27,10 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     teacher: null,
   });
 
-  let controllerToken;
-  useEffect(() => {
-    controllerToken = localStorage.getItem("token");
-  }, []);
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),

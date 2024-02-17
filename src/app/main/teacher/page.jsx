@@ -5,13 +5,16 @@ import {
 } from "@/services/cont-teacher.service";
 import { Box, CircularProgress, Select, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import UnapprovedTeacherList from "./UnapprovedTeacherList";
 import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
 
 const TeacherListPage = () => {
-  const controllerToken = localStorage.getItem("token");
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
   const unApprovedTeacherResult = useQuery({
     queryKey: ["teachers", { type: "unapproved" }, controllerToken],
     queryFn: () => getUnapprovedTeachers(controllerToken),
