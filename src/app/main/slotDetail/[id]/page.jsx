@@ -1,12 +1,27 @@
 "use client";
-import { React, useMemo } from "react";
+import { React, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Dialog,
+  DialogContent,
+  Grid,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { getSlotDetailsById } from "@/services/exam-slots.service";
+import { QrCode } from "@mui/icons-material";
+import { useQRCode } from "next-qrcode";
 
 const SlotDetails = ({ params }) => {
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+
+  const { Canvas } = useQRCode();
+
   const router = useRouter();
   const { id: slotId } = params;
 
@@ -78,10 +93,34 @@ const SlotDetails = ({ params }) => {
                 </Typography>
                 <Typography variant="h3">
                   {SlotDetailsQuery.data.uniqueCode}
+                  <IconButton onClick={() => setQrModalOpen(true)}>
+                    <Tooltip title="Show QR" placement="top" arrow>
+                      <QrCode />
+                    </Tooltip>
+                  </IconButton>
                 </Typography>
               </Grid>
             </Grid>
           </Grid>
+          <Dialog open={qrModalOpen} onClose={() => setQrModalOpen(false)}>
+            <DialogContent>
+              <Box>
+                <Canvas
+                  text={SlotDetailsQuery.data.uniqueCode}
+                  options={{
+                    errorCorrectionLevel: "M",
+                    margin: 1,
+                    scale: 10,
+                    width: 400,
+                    color: {
+                      dark: "#000",
+                      light: "#fff",
+                    },
+                  }}
+                />
+              </Box>
+            </DialogContent>
+          </Dialog>
 
           <Box sx={{ pt: 2 }}>
             <Typography variant="h4" sx={{ mb: 2 }}>
