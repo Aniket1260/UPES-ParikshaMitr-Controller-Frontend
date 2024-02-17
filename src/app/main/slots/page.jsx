@@ -91,7 +91,7 @@ const ExamSlots = () => {
           <Box>
             <Tooltip title="View Slot Details" placement="top" arrow>
               <IconButton
-                onClick={() => router.push("/main/slotsDetail/" + row._id)}
+                onClick={() => router.push("/main/slotDetail/" + row._id)}
               >
                 <Visibility />
               </IconButton>
