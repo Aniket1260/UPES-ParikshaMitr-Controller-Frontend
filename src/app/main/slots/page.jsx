@@ -1,5 +1,4 @@
 "use client";
-import { controllerToken } from "@/config/temp.config";
 import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
 import { Ballot, Visibility } from "@mui/icons-material";
 import {
@@ -38,9 +37,13 @@ const ExamSlots = () => {
   });
 
   const router = useRouter();
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const SlotQuery = useQuery({
-    queryKey: ["slots"],
+    queryKey: ["slots", controllerToken],
     queryFn: () => getAllExamSlots(controllerToken),
   });
 
@@ -174,6 +177,11 @@ const AddSlotModal = ({ open, handleClose }) => {
   const [date, setDate] = React.useState(new Date());
   const [slotType, setSlotType] = React.useState("Morning");
   const queryClient = useQueryClient();
+
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const { mutate } = useMutation({
     mutationFn: () =>

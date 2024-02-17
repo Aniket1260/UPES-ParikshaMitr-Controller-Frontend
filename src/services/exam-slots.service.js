@@ -38,3 +38,60 @@ export const AddExamSlot = async (token, data) => {
     throw error;
   }
 };
+
+export const CreateRoomService = async (token, data) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/invigilation/room`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const UploadSeatPlanService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/room/create-seating-plan`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const AddRoomtoSlotService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/slot/add-room`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
