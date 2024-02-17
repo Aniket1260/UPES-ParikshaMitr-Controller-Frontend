@@ -7,13 +7,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SendNotification from "./SendNotification";
 import { useQuery } from "@tanstack/react-query";
 import { getNotifications } from "@/services/notification.service";
 import { DataGrid } from "@mui/x-data-grid";
 import { enqueueSnackbar } from "notistack";
-import { controllerToken } from "@/config/temp.config";
 import { Search } from "@mui/icons-material";
 import { format } from "date-fns";
 
@@ -22,9 +21,13 @@ const Notification = () => {
     open: false,
   });
   const [search, setSearch] = useState("");
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const notificationRes = useQuery({
-    queryKey: ["notifications"],
+    queryKey: ["notifications", controllerToken],
     queryFn: () => getNotifications(controllerToken),
     retry: 2,
     staleTime: 1000,

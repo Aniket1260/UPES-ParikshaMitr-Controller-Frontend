@@ -1,4 +1,3 @@
-import { controllerToken } from "@/config/temp.config";
 import { approveTeacher, editTeacher } from "@/services/cont-teacher.service";
 import { Check, Edit, Search } from "@mui/icons-material";
 import {
@@ -18,7 +17,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { enqueueSnackbar } from "notistack";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const UnapprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
@@ -27,6 +26,11 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     open: false,
     teacher: null,
   });
+
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
 
   const { mutate } = useMutation({
     mutationFn: (id) => approveTeacher(id, controllerToken),

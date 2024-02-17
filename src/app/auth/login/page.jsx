@@ -9,22 +9,34 @@ import {
   Link,
   Box,
 } from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { login } from "@/services/login.service";
+import { enqueueSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
-function App() {
-  const [sapid, setSapid] = useState("");
+const Login = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const router = useRouter();
 
-    const isValidUsername = /^\d{9}$/.test(username);
-
-    if (isValidUsername) {
-      console.log("Login clicked");
-    } else {
-      console.error("Invalid username. Please enter a 9-digit number.");
-    }
-  };
+  const { mutate: handleLogin } = useMutation({
+    mutationFn: () => login(username, password),
+    onSuccess: (data) => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Login Successful",
+      });
+      localStorage.setItem("token", data.token);
+      router.push("/main/teacher");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
+    },
+  });
 
   return (
     <Box
@@ -46,61 +58,60 @@ function App() {
         <Box>
           <Typography variant="h4">SIGN IN</Typography>
         </Box>
-        <form onSubmit={handleLogin}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="SAP ID"
-            id="sapid"
-            name="sapid"
-            value={sapid}
-            onChange={(e) => setSapid(e.target.value)}
-            required
-          />
-          <TextField
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            label="Password"
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <Typography
-            variant="body2"
-            align="right"
-            style={{ marginTop: "3px", marginBottom: "10px" }}
-          >
-            <Link href="#" color="primary">
-              Forgot password?
-            </Link>
-          </Typography>
-          <Button type="submit" variant="contained" color="primary" fullWidth>
-            Sign in
-          </Button>
-        </form>
+
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="username"
+          id="username"
+          name="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <TextField
+          fullWidth
+          variant="outlined"
+          margin="normal"
+          label="Password"
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <Typography
+          variant="body2"
+          align="right"
+          style={{ marginTop: "3px", marginBottom: "10px" }}
+        >
+          <Link href="#" color="primary">
+            Forgot password?
+          </Link>
+        </Typography>
+        <Button
+          onClick={() => handleLogin()}
+          variant="contained"
+          color="primary"
+          fullWidth
+        >
+          Sign in
+        </Button>
 
         <Button
           variant="outlined"
           align="center"
           fullWidth
           sx={{ marginTop: "7px" }}
+          onClick={() => router.push("/auth/sign-up")}
         >
-          <Typography variant="body2" color="white">
-            Dont have an account?{" "}
-            <Link href="/auth/sign-up" color="primary">
-              Sign Up
-            </Link>
-          </Typography>
-          .
+          Don&apos;t have an account? Sign Up
         </Button>
       </Paper>
     </Box>
   );
-}
+};
 
-export default App;
+export default Login;
