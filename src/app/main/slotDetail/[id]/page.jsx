@@ -1,10 +1,10 @@
 "use client";
-import { getSlotDetailsById } from "@/services/exam-slots.service";
 import { React, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { getSlotDetailsById } from "@/services/exam-slots.service";
 
 const SlotDetails = ({ params }) => {
   const router = useRouter();
@@ -41,49 +41,52 @@ const SlotDetails = ({ params }) => {
   }, [SlotDetailsQuery.data]);
 
   return (
-    <div>
-      {SlotDetailsQuery.isLoading && <div>Loading...</div>}
+    <Box>
+      {SlotDetailsQuery.isLoading && <CircularProgress />}
       {SlotDetailsQuery.isError && (
-        <div>Error: {SlotDetailsQuery.error.message}</div>
+        <Typography variant="body2" color="error">
+          Error: {SlotDetailsQuery.error.message}
+        </Typography>
       )}
       {SlotDetailsQuery.isSuccess && (
-        <div>
-          <h2>Slot Details</h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",
-              gap: "16px",
-            }}
-          >
-            {/* Left column */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateRows: "auto auto auto auto",
-                gap: "8px",
-              }}
-            >
-              <div>Date:</div>
-              <div>{SlotDetailsQuery.data.date}</div>
-              <div>Type of Slot:</div>
-              <div>{SlotDetailsQuery.data.timeSlot}</div>
-            </div>
+        <Box>
+          <Typography variant="h4" sx={{ mb: 2 }}>
+            Slot Details
+          </Typography>
+          <Grid container sx={{ px: 1 }}>
+            <Grid item xs={6}>
+              <Grid container direction="column" spacing={1}>
+                <Typography variant="body2" color="primary">
+                  Date
+                </Typography>
+                <Typography variant="h5">
+                  {SlotDetailsQuery.data.date}
+                </Typography>
+                <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                  Type of Slot
+                </Typography>
+                <Typography variant="h5">
+                  {SlotDetailsQuery.data.timeSlot}
+                </Typography>
+              </Grid>
+            </Grid>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateRows: "auto auto",
-                gap: "8px",
-              }}
-            >
-              <div>Unique Code:</div>
-              <div>{SlotDetailsQuery.data.uniqueCode}</div>
-            </div>
-          </div>
+            <Grid item xs={6}>
+              <Grid container direction="column" spacing={1}>
+                <Typography variant="body2" color="primary">
+                  Unique Code
+                </Typography>
+                <Typography variant="h3">
+                  {SlotDetailsQuery.data.uniqueCode}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
 
           <Box sx={{ pt: 2 }}>
-            <Typography variant="h4">Room Details</Typography>
+            <Typography variant="h4" sx={{ mb: 2 }}>
+              Room Details
+            </Typography>
             {SlotDetailsQuery.isLoading && <CircularProgress />}
             {SlotDetailsQuery.isSuccess && (
               <DataGrid
@@ -98,9 +101,9 @@ const SlotDetails = ({ params }) => {
               />
             )}
           </Box>
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

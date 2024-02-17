@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Paper,
@@ -20,6 +20,14 @@ const Login = () => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   const { mutate: handleLogin } = useMutation({
     mutationFn: () => login(username, password),
     onSuccess: (data) => {
@@ -37,6 +45,11 @@ const Login = () => {
       });
     },
   });
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
 
   return (
     <Box
