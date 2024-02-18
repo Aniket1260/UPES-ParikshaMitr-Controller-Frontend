@@ -39,17 +39,50 @@ const SlotDetails = ({ params }) => {
     { field: "block", headerName: "Block", flex: 1 },
     { field: "floor", headerName: "Floor", flex: 1 },
     { field: "students", headerName: "Students", flex: 1 },
+    {
+      field: "invigilators",
+      headerName: "Invigilators",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Box>
+              <Typography variant="body2" color="primary">
+                Invigilator 1
+              </Typography>
+              <Typography variant="h6" component="p">
+                {params.value[0] ? params.value[0].name : "Not Assigned"}
+              </Typography>
+            </Box>
+            <Box>
+              <Typography variant="body2" color="primary">
+                Invigilator 2
+              </Typography>
+              <Typography variant="h6" component="p">
+                {params.value[1] ? params.value[1].name : "Not Assigned"}
+              </Typography>
+            </Box>
+          </Box>
+        );
+      },
+    },
   ];
 
   const rows = useMemo(() => {
     if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
-      const roomRows = SlotDetailsQuery.data.rooms.map((room, index) => ({
-        id: index + 1,
-        room_no: room.room_no,
-        block: room.block,
-        floor: room.floor,
-        students: room.students.length,
-      }));
+      const roomRows = SlotDetailsQuery.data.rooms.map((room, index) => {
+        return {
+          id: index + 1,
+          room_no: room.room_no,
+          block: room.block,
+          floor: room.floor,
+          students: room.students.length,
+          invigilators: [
+            room.room_invigilator_id.invigilator1_id,
+            room.room_invigilator_id.invigilator2_id,
+          ],
+        };
+      });
       return roomRows;
     }
     return [];
@@ -108,7 +141,7 @@ const SlotDetails = ({ params }) => {
                 <Canvas
                   text={SlotDetailsQuery.data.uniqueCode}
                   options={{
-                    errorCorrectionLevel: "M",
+                    errorCorrectionLevel: "H",
                     margin: 1,
                     scale: 10,
                     width: 400,
@@ -137,6 +170,7 @@ const SlotDetails = ({ params }) => {
                 disableRowSelectionOnClick
                 disableColumnSelector
                 disableColumnFilter
+                rowHeight={120}
               />
             )}
           </Box>
