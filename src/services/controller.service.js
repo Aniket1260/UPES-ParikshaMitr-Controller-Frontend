@@ -18,3 +18,22 @@ export const getUnapprovedInvigilations = async (token) => {
     throw error;
   }
 };
+
+export const ApproveInvigilationsService = async (token, invigilations) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/room/approve-invigilator`,
+      invigilations,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

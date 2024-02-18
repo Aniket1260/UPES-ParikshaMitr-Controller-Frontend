@@ -1,5 +1,8 @@
 "use client";
-import { getUnapprovedInvigilations } from "@/services/controller.service";
+import {
+  ApproveInvigilationsService,
+  getUnapprovedInvigilations,
+} from "@/services/controller.service";
 import { Check } from "@mui/icons-material";
 import {
   Box,
@@ -9,14 +12,33 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
 
 const ApproveInvigilations = () => {
+  const queryClient = useQueryClient();
+
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
+
+  const { mutate: approveInvigilations } = useMutation({
+    mutationFn: (data) => ApproveInvigilationsService(controllerToken, data),
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response.status + " : " + error.response.data.message,
+      });
+    },
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Invigilations Approved Successfully",
+      });
+      queryClient.invalidateQueries("unapprovedTeachers");
+    },
+  });
 
   const UnapprovedTeachersQuery = useQuery({
     queryKey: ["unapprovedTeachers", controllerToken],
@@ -43,6 +65,7 @@ const ApproveInvigilations = () => {
           id: id++,
           room_no: ele.room_no,
           room_id: ele.room_id,
+          invigilator_id: ele.invigilator1.id,
           name: ele.invigilator1.name,
           sap_id: ele.invigilator1.sap_id,
         });
@@ -54,12 +77,12 @@ const ApproveInvigilations = () => {
           room_id: ele.room_id,
           name: ele.invigilator2.name,
           sap_id: ele.invigilator2.sap_id,
+          invigilator_id: ele.invigilator2.id,
         });
       }
     });
     return rows;
   }, [UnapprovedTeachersQuery.data]);
-  console.log(rows);
 
   const cols = [
     {
@@ -75,17 +98,20 @@ const ApproveInvigilations = () => {
       flex: 1,
       renderCell: (params) => {
         return (
-          <IconButton
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              console.log(params.row);
-            }}
-          >
-            <Tooltip title="Approve Invigilator" arrow placement="top">
+          <Tooltip title="Approve Invigilator" arrow placement="top">
+            <IconButton
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                approveInvigilations({
+                  roomId: params.row.room_id,
+                  invigilatorId: params.row.invigilator_id,
+                });
+              }}
+            >
               <Check />
-            </Tooltip>
-          </IconButton>
+            </IconButton>
+          </Tooltip>
         );
       },
     },
@@ -97,7 +123,7 @@ const ApproveInvigilations = () => {
         Approve Invigilations
       </Typography>
       {UnapprovedTeachersQuery.isLoading && <CircularProgress />}
-      {UnapprovedTeachersQuery.isSuccess && (
+      {UnapprovedTeachersQuery.isSuccess && rows.length > 0 && (
         <DataGrid
           rows={rows}
           columns={cols}
