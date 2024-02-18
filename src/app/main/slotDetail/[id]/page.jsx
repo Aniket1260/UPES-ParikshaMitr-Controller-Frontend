@@ -9,16 +9,19 @@ import {
   DialogContent,
   Grid,
   IconButton,
+  InputAdornment,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { getSlotDetailsById } from "@/services/exam-slots.service";
-import { QrCode } from "@mui/icons-material";
+import { QrCode, Search } from "@mui/icons-material";
 import { useQRCode } from "next-qrcode";
 
 const SlotDetails = ({ params }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const { Canvas } = useQRCode();
 
@@ -35,10 +38,10 @@ const SlotDetails = ({ params }) => {
   });
 
   const columns = [
-    { field: "room_no", headerName: "Room Number", flex: 1 },
-    { field: "block", headerName: "Block", flex: 1 },
-    { field: "floor", headerName: "Floor", flex: 1 },
-    { field: "students", headerName: "Students", flex: 1 },
+    { field: "room_no", headerName: "Room Number", flex: 0.5 },
+    { field: "block", headerName: "Block", flex: 0.5 },
+    { field: "floor", headerName: "Floor", flex: 0.5 },
+    { field: "students", headerName: "No. of Students", flex: 0.5 },
     {
       field: "invigilators",
       headerName: "Invigilators",
@@ -83,10 +86,19 @@ const SlotDetails = ({ params }) => {
           ],
         };
       });
+
+      if (search) {
+        return roomRows.filter((row) => {
+          return ("" + row.room_no)
+            .toLowerCase()
+            .includes(search.toLowerCase());
+        });
+      }
+
       return roomRows;
     }
     return [];
-  }, [SlotDetailsQuery.data]);
+  }, [SlotDetailsQuery.data, search]);
 
   return (
     <Box>
@@ -161,17 +173,40 @@ const SlotDetails = ({ params }) => {
             </Typography>
             {SlotDetailsQuery.isLoading && <CircularProgress />}
             {SlotDetailsQuery.isSuccess && (
-              <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-                disableRowSelectionOnClick
-                disableColumnSelector
-                disableColumnFilter
-                rowHeight={120}
-              />
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "end",
+                  }}
+                >
+                  <TextField
+                    placeholder="Search Room Nos."
+                    variant="standard"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Search />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{ mb: 1, minWidth: 300 }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </Box>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5]}
+                  disableSelectionOnClick
+                  disableRowSelectionOnClick
+                  disableColumnSelector
+                  disableColumnFilter
+                  rowHeight={120}
+                />
+              </>
             )}
           </Box>
         </Box>
