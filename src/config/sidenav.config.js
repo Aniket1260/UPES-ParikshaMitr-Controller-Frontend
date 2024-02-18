@@ -1,5 +1,6 @@
 import {
   AccessTime,
+  AddTask,
   NotificationsActive,
   SchoolRounded,
 } from "@mui/icons-material";
@@ -22,5 +23,10 @@ export const invigilationMenu = [
     title: "Examination Slots",
     href: "/main/slots",
     icon: <AccessTime />,
+  },
+  {
+    title: "Approve Invigilations",
+    href: "/main/approve-invigilations",
+    icon: <AddTask />,
   },
 ];
