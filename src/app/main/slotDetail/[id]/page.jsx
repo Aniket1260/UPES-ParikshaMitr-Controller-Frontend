@@ -47,7 +47,10 @@ const getChipText = (status) => {
 const SlotDetails = ({ params }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [approveModalOpen, setApproveModalOpen] = useState(false);
+  const [approveModalOpen, setApproveModalOpen] = useState({
+    open: false,
+    room: null,
+  });
 
   const { Canvas } = useQRCode();
   const queryClient = useQueryClient();
@@ -79,7 +82,12 @@ const SlotDetails = ({ params }) => {
                 variant="soft"
                 label={getChipText(params.row.status)}
                 color={getChipColor(params.row.status)}
-                onClick={() => setApproveModalOpen(true)}
+                onClick={() =>
+                  setApproveModalOpen({
+                    open: true,
+                    room: params.row,
+                  })
+                }
               />
             ) : (
               <Chip
@@ -129,6 +137,7 @@ const SlotDetails = ({ params }) => {
       const roomRows = SlotDetailsQuery.data.rooms.map((room, index) => {
         return {
           id: index + 1,
+          room_id: room._id,
           room_no: room.room_no,
           block: room.block,
           floor: room.floor,
@@ -184,8 +193,12 @@ const SlotDetails = ({ params }) => {
   return (
     <Box>
       <ApproveModal
-        open={approveModalOpen}
-        handleClose={() => setApproveModalOpen(false)}
+        open={approveModalOpen.open}
+        handleClose={() => setApproveModalOpen({ open: false, room: null })}
+        room={approveModalOpen.room}
+        setRoom={(room) =>
+          setApproveModalOpen((prev) => ({ ...prev, room: room }))
+        }
       />
       {SlotDetailsQuery.isLoading && <CircularProgress />}
       {SlotDetailsQuery.isError && (
