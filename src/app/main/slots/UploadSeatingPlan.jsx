@@ -104,6 +104,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
           eligible,
         };
       });
+      console.log(data);
       setCsvData(data);
     };
     reader.onloadend = () => {
@@ -341,7 +342,9 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
                   ? "YES"
                   : x.eligible === "D"
                   ? "DEBARRED"
-                  : "F_HOLD",
+                  : x.eligible === "F"
+                  ? "F_HOLD"
+                  : "R_HOLD",
               seat_no: x.seat,
             };
           }),

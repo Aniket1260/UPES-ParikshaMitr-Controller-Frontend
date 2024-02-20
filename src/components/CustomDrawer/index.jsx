@@ -40,8 +40,8 @@ const CustomDrawer = () => {
           Exam Management
         </Typography>
         <List>
-          {invigilationMenu.map((item) => (
-            <Link href={item.href} key={item.id}>
+          {invigilationMenu.map((item, idx) => (
+            <Link href={item.href} key={idx}>
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -61,8 +61,8 @@ const CustomDrawer = () => {
           Teacher Management
         </Typography>
         <List>
-          {userMenu.map((item) => (
-            <Link href={item.href} key={item.id}>
+          {userMenu.map((item, idx) => (
+            <Link href={item.href} key={idx}>
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>

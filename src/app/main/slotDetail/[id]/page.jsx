@@ -1,9 +1,11 @@
 "use client";
 import { React, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Box,
+  Button,
+  Chip,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -16,14 +18,39 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { getSlotDetailsById } from "@/services/exam-slots.service";
-import { QrCode, Search } from "@mui/icons-material";
+import { CheckCircle, QrCode, Refresh, Search } from "@mui/icons-material";
 import { useQRCode } from "next-qrcode";
+import ApproveModal from "./approveModal";
+
+const getChipColor = (status) => {
+  switch (status) {
+    case "APPROVAL":
+      return "warning";
+    case "INPROGRESS":
+      return "info";
+    case "COMPLETED":
+      return "success";
+  }
+};
+
+const getChipText = (status) => {
+  switch (status) {
+    case "APPROVAL":
+      return "Waiting for Approval";
+    case "INPROGRESS":
+      return "In Progress";
+    case "COMPLETED":
+      return "Completed";
+  }
+};
 
 const SlotDetails = ({ params }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [approveModalOpen, setApproveModalOpen] = useState(false);
 
   const { Canvas } = useQRCode();
+  const queryClient = useQueryClient();
 
   const router = useRouter();
   const { id: slotId } = params;
@@ -38,7 +65,33 @@ const SlotDetails = ({ params }) => {
   });
 
   const columns = [
-    { field: "room_no", headerName: "Room Number", flex: 0.5 },
+    {
+      field: "room_no",
+      headerName: "Room Number",
+      flex: 0.5,
+      renderCell: (params) => {
+        console.log(params);
+        return (
+          <>
+            <Typography mr={1}>{params.value}</Typography>
+            {params.row.status === "APPROVAL" ? (
+              <Chip
+                variant="soft"
+                label={getChipText(params.row.status)}
+                color={getChipColor(params.row.status)}
+                onClick={() => setApproveModalOpen(true)}
+              />
+            ) : (
+              <Chip
+                variant="soft"
+                label={getChipText(params.row.status)}
+                color={getChipColor(params.row.status)}
+              />
+            )}
+          </>
+        );
+      },
+    },
     { field: "block", headerName: "Block", flex: 0.5 },
     { field: "floor", headerName: "Floor", flex: 0.5 },
     { field: "students", headerName: "No. of Students", flex: 0.5 },
@@ -84,6 +137,7 @@ const SlotDetails = ({ params }) => {
             room.room_invigilator_id.invigilator1_id,
             room.room_invigilator_id.invigilator2_id,
           ],
+          status: room.status,
         };
       });
 
@@ -95,6 +149,33 @@ const SlotDetails = ({ params }) => {
         });
       }
 
+      roomRows.sort((a, b) => {
+        // Check for APPROVAL status first
+        if (a.status === "APPROVAL" && b.status !== "APPROVAL") {
+          return -1; // Place "a" (with APPROVAL) before "b"
+        } else if (b.status === "APPROVAL" && a.status !== "APPROVAL") {
+          return 1; // Place "b" (with APPROVAL) before "a"
+        }
+
+        // Then check for INPROGRESS status
+        if (
+          a.status === "INPROGRESS" &&
+          b.status !== "APPROVAL" &&
+          b.status !== "INPROGRESS"
+        ) {
+          return -1; // Place "a" (with INPROGRESS) before "b" (other)
+        } else if (
+          b.status === "INPROGRESS" &&
+          a.status !== "APPROVAL" &&
+          a.status !== "INPROGRESS"
+        ) {
+          return 1; // Place "b" (with INPROGRESS) before "a" (other)
+        }
+
+        // Finally, order other statuses
+        return a.status.localeCompare(b.status); // Alphabetical order for remaining statuses
+      });
+
       return roomRows;
     }
     return [];
@@ -102,6 +183,10 @@ const SlotDetails = ({ params }) => {
 
   return (
     <Box>
+      <ApproveModal
+        open={approveModalOpen}
+        handleClose={() => setApproveModalOpen(false)}
+      />
       {SlotDetailsQuery.isLoading && <CircularProgress />}
       {SlotDetailsQuery.isError && (
         <Typography variant="body2" color="error">
@@ -180,6 +265,16 @@ const SlotDetails = ({ params }) => {
                     justifyContent: "end",
                   }}
                 >
+                  <Tooltip title="Refresh Data" placement="top">
+                    <IconButton
+                      sx={{ mr: 2 }}
+                      onClick={() =>
+                        queryClient.invalidateQueries("slotDetails")
+                      }
+                    >
+                      <Refresh />
+                    </IconButton>
+                  </Tooltip>
                   <TextField
                     placeholder="Search Room Nos."
                     variant="standard"
