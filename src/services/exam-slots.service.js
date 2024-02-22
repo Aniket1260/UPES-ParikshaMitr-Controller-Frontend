@@ -113,3 +113,41 @@ export const AddRoomtoSlotService = async (token, data) => {
     throw error;
   }
 };
+export const getRoomDetailsById = async (token, roomId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/room/total-supplies?room_id=${roomId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const approveRoom = async (roomId, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/invigilation/room/approve-submission`,
+      {
+        room_id: roomId,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
