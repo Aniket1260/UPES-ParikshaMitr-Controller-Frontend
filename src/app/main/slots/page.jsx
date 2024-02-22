@@ -1,6 +1,6 @@
 "use client";
 import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
-import { Ballot, Visibility } from "@mui/icons-material";
+import { Ballot, Call, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
 import UploadSeatingPlan from "./UploadSeatingPlan";
+import ContactModal from "./ContactModal";
 
 const ExamSlots = () => {
   const [addModal, setAddModal] = React.useState({
@@ -34,6 +35,11 @@ const ExamSlots = () => {
   const [uploadSeatingPlanModal, setUploadSeatingPlanModal] = React.useState({
     open: false,
     slot: null,
+  });
+
+  const [contactModal, setContactModal] = React.useState({
+    open: false,
+    slot_id: null,
   });
 
   const router = useRouter();
@@ -96,6 +102,18 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Slot Contact Details" placement="top" arrow>
+              <IconButton
+                onClick={() =>
+                  setContactModal({
+                    open: true,
+                    slot_id: row._id,
+                  })
+                }
+              >
+                <Call />
+              </IconButton>
+            </Tooltip>
             {row?.rooms?.length == 0 && (
               <Tooltip title="Upload Seating Plan" placement="top" arrow>
                 <IconButton
@@ -128,6 +146,16 @@ const ExamSlots = () => {
 
   return (
     <Box>
+      <ContactModal
+        open={contactModal.open}
+        handleClose={() =>
+          setContactModal({
+            open: false,
+            slot_id: null,
+          })
+        }
+        slot_id={contactModal.slot_id}
+      />
       <UploadSeatingPlan
         open={uploadSeatingPlanModal.open}
         handleClose={() =>

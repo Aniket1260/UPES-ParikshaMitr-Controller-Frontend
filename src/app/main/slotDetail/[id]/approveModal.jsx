@@ -96,12 +96,12 @@ const ApproveModal = ({ open, handleClose, room }) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "end", mt: 2 }}>
+          <Button color="primary" onClick={handleCancel}>
+            Cancel
+          </Button>
           <Button variant="contained" color="primary" onClick={mutation.mutate}>
             Approve
-          </Button>
-          <Button variant="contained" color="primary" onClick={handleCancel}>
-            Cancel
           </Button>
         </Box>
       </DialogContent>

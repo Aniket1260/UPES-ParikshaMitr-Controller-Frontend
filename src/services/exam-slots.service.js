@@ -151,3 +151,40 @@ export const approveRoom = async (roomId, token) => {
     throw error;
   }
 };
+
+export const getSlotContacts = async (token, slotId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/contact-details?slot_id=${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const EditSlotContacts = async (token, data) => {
+  try {
+    const response = await axios.put(
+      `${BaseUrl}/exam-controller/invigilation/contact-details`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
