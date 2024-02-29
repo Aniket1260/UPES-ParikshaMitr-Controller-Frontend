@@ -1,12 +1,19 @@
 "use client";
 import { getTeacherAttendance } from "@/services/cont-teacher.service";
-import { Box, CircularProgress, Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+  useGridApiRef,
+} from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
 
 const AttendanceReport = () => {
+  const tableApiRef = useGridApiRef();
+
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
@@ -120,10 +127,25 @@ const AttendanceReport = () => {
 
   return (
     <Box>
-      <Box>
-        <Typography variant="h4" sx={{ mb: 3 }}>
-          Attendance Report
-        </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
+      >
+        <Typography variant="h4">Attendance Report</Typography>
+        <Button
+          variant="outlined"
+          onClick={() =>
+            tableApiRef.current.exportDataAsCsv({
+              fileName: "Attendance Report",
+            })
+          }
+        >
+          Export as CSV
+        </Button>
       </Box>
       {AttendanceQuery.isLoading && <CircularProgress />}
       {AttendanceQuery.isSuccess && console.log(AttendanceQuery.data, cols)}
@@ -141,6 +163,8 @@ const AttendanceReport = () => {
             columnGroupingModel={colGroup}
             getRowHeight={() => "auto"}
             getEstimatedRowHeight={() => 200}
+            rowSelection={false}
+            apiRef={tableApiRef}
             sx={{
               "& .MuiDataGrid-columnHeaderTitle": {
                 whiteSpace: "normal",
