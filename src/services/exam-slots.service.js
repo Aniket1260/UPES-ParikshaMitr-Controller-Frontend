@@ -188,3 +188,20 @@ export const EditSlotContacts = async (token, data) => {
     throw error;
   }
 };
+export const getPendingSupplies = async (token, roomId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/room/supplies?room_id=${roomId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
