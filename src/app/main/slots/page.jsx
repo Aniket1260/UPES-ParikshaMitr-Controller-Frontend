@@ -71,8 +71,13 @@ const ExamSlots = () => {
       },
     },
     {
-      field: "timeSlot",
+      field: "type",
       headerName: "Slot Type",
+      flex: 1,
+    },
+    {
+      field: "timeSlot",
+      headerName: "Time Slot",
       flex: 1,
     },
     {
@@ -205,7 +210,8 @@ export default ExamSlots;
 
 const AddSlotModal = ({ open, handleClose }) => {
   const [date, setDate] = React.useState(new Date());
-  const [slotType, setSlotType] = React.useState("Morning");
+  const [slotType, setSlotType] = React.useState("Endsem");
+  const [timeSlot, setTimeSlot] = React.useState("Morning");
   const queryClient = useQueryClient();
 
   if (global?.window !== undefined) {
@@ -217,7 +223,8 @@ const AddSlotModal = ({ open, handleClose }) => {
     mutationFn: () =>
       AddExamSlot(controllerToken, {
         date: date.toLocaleDateString(),
-        timeSlot: slotType,
+        timeSlot: timeSlot,
+        type: slotType,
         rooms: [],
       }),
     onSuccess: () => {
@@ -262,9 +269,31 @@ const AddSlotModal = ({ open, handleClose }) => {
             aria-label="text alignment"
             sx={{ width: "100%" }}
           >
+            <ToggleButton fullWidth value="Midsem" aria-label="left aligned">
+              Midsem
+            </ToggleButton>
+            <ToggleButton fullWidth value="Endsem" aria-label="right aligned">
+              Endsem
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+        <Box sx={{ m: 1 }}>
+          <Typography variant="body1">Slot Time Slot</Typography>
+          <ToggleButtonGroup
+            value={timeSlot}
+            exclusive
+            onChange={(e, newValue) => setTimeSlot(newValue)}
+            aria-label="text alignment"
+            sx={{ width: "100%" }}
+          >
             <ToggleButton fullWidth value="Morning" aria-label="left aligned">
               Morning
             </ToggleButton>
+            {slotType === "Midsem" && (
+              <ToggleButton fullWidth value="Afternoon" aria-label="centered">
+                Afternoon
+              </ToggleButton>
+            )}
             <ToggleButton fullWidth value="Evening" aria-label="right aligned">
               Evening
             </ToggleButton>

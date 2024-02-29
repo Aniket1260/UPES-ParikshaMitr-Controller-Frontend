@@ -16,7 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { approveRoom, getRoomDetailsById } from "@/services/exam-slots.service";
 import { enqueueSnackbar } from "notistack";
 
-const ApproveModal = ({ open, handleClose, room }) => {
+const PendingSuppliesModal = ({ open, handleClose, room }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
@@ -51,10 +51,11 @@ const ApproveModal = ({ open, handleClose, room }) => {
 
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Approve Submission</DialogTitle>
+      <DialogTitle>Pending Supplies (Room No. {room?.room_no})</DialogTitle>
       <DialogContent>
         <div>
-          Please verify that you have received following from invigilator
+          These are the pending supplies for the room. Please send the supplies
+          as soon as possible.
         </div>
         <br></br>
         <TableContainer component={Paper}>
@@ -106,4 +107,4 @@ const ApproveModal = ({ open, handleClose, room }) => {
   );
 };
 
-export default ApproveModal;
+export default PendingSuppliesModal;

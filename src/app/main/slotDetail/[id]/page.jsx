@@ -21,6 +21,7 @@ import { getSlotDetailsById } from "@/services/exam-slots.service";
 import { CheckCircle, QrCode, Refresh, Search } from "@mui/icons-material";
 import { useQRCode } from "next-qrcode";
 import ApproveModal from "./approveModal";
+import PendingSuppliesModal from "./pendingSuppliesModal";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -30,6 +31,8 @@ const getChipColor = (status) => {
       return "info";
     case "COMPLETED":
       return "success";
+    case "PENDING_SUPPLIES":
+      return "error";
   }
 };
 
@@ -41,6 +44,8 @@ const getChipText = (status) => {
       return "In Progress";
     case "COMPLETED":
       return "Completed";
+    case "PENDING_SUPPLIES":
+      return "Pending Supplies";
   }
 };
 
@@ -48,6 +53,11 @@ const SlotDetails = ({ params }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [approveModalOpen, setApproveModalOpen] = useState({
+    open: false,
+    room: null,
+  });
+
+  const [pendingSuppliesModalOpen, setPendingSuppliesModalOpen] = useState({
     open: false,
     room: null,
   });
@@ -84,6 +94,18 @@ const SlotDetails = ({ params }) => {
                 color={getChipColor(params.row.status)}
                 onClick={() =>
                   setApproveModalOpen({
+                    open: true,
+                    room: params.row,
+                  })
+                }
+              />
+            ) : params.row.status === "PENDING_SUPPLIES" ? (
+              <Chip
+                variant="soft"
+                label={getChipText(params.row.status)}
+                color={getChipColor(params.row.status)}
+                onClick={() =>
+                  setPendingSuppliesModalOpen({
                     open: true,
                     room: params.row,
                   })
@@ -159,6 +181,19 @@ const SlotDetails = ({ params }) => {
       }
 
       roomRows.sort((a, b) => {
+        // PENDNG_SUPPLIES status should be at the top
+        if (
+          a.status === "PENDING_SUPPLIES" &&
+          b.status !== "PENDING_SUPPLIES"
+        ) {
+          return -1; // Place "a" (with PENDING_SUPPLIES) before "b"
+        } else if (
+          b.status === "PENDING_SUPPLIES" &&
+          a.status !== "PENDING_SUPPLIES"
+        ) {
+          return 1; // Place "b" (with PENDING_SUPPLIES) before "a"
+        }
+
         // Check for APPROVAL status first
         if (a.status === "APPROVAL" && b.status !== "APPROVAL") {
           return -1; // Place "a" (with APPROVAL) before "b"
@@ -200,6 +235,17 @@ const SlotDetails = ({ params }) => {
           setApproveModalOpen((prev) => ({ ...prev, room: room }))
         }
       />
+      <PendingSuppliesModal
+        open={pendingSuppliesModalOpen.open}
+        handleClose={() =>
+          setPendingSuppliesModalOpen({ open: false, room: null })
+        }
+        room={pendingSuppliesModalOpen.room}
+        setRoom={(room) =>
+          setPendingSuppliesModalOpen((prev) => ({ ...prev, room: room }))
+        }
+      />
+
       {SlotDetailsQuery.isLoading && <CircularProgress />}
       {SlotDetailsQuery.isError && (
         <Typography variant="body2" color="error">
