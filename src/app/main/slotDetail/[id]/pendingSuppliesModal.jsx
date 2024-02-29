@@ -12,9 +12,8 @@ import {
   TableRow,
 } from "@mui/material";
 import React from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { approveRoom, getRoomDetailsById } from "@/services/exam-slots.service";
-import { enqueueSnackbar } from "notistack";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getPendingSupplies } from "@/services/exam-slots.service";
 
 const PendingSuppliesModal = ({ open, handleClose, room }) => {
   if (global?.window !== undefined) {
@@ -23,26 +22,8 @@ const PendingSuppliesModal = ({ open, handleClose, room }) => {
   const queryClient = useQueryClient();
   const { isLoading, isError, data } = useQuery({
     queryKey: ["roomDetails", controllerToken, room?.room_id],
-    queryFn: () => getRoomDetailsById(controllerToken, room?.room_id),
+    queryFn: () => getPendingSupplies(controllerToken, room?.room_id),
     enabled: !!room?.room_id,
-  });
-
-  const mutation = useMutation({
-    mutationFn: () => approveRoom(room?.room_id, controllerToken),
-    onSuccess: () => {
-      enqueueSnackbar({
-        variant: "success",
-        message: "Room Approved Successfully",
-      });
-      queryClient.invalidateQueries("slotDetails");
-      handleClose();
-    },
-    onError: (error) => {
-      enqueueSnackbar({
-        variant: "error",
-        message: error.message,
-      });
-    },
   });
 
   const handleCancel = () => {
@@ -71,7 +52,7 @@ const PendingSuppliesModal = ({ open, handleClose, room }) => {
                   <TableCell>Error fetching data</TableCell>
                 </TableRow>
               )}
-              {data && (
+              {data && data.pending_supplies && (
                 <>
                   <TableRow>
                     <TableCell style={{ flex: 1, fontWeight: "bold" }}>
@@ -81,25 +62,26 @@ const PendingSuppliesModal = ({ open, handleClose, room }) => {
                       Quantity
                     </TableCell>
                   </TableRow>
-                  {data.data.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell style={{ flex: 1 }}>{item.type}</TableCell>
-                      <TableCell style={{ flex: 0.5 }}>
-                        {item.quantity + " " + "Nos."}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {data.pending_supplies
+                    .filter((item) => item.quantity > 0)
+                    .map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell style={{ flex: 1 }}>
+                          {item.suppl_type}
+                        </TableCell>
+                        <TableCell style={{ flex: 0.5 }}>
+                          {item.quantity + " Nos."}
+                        </TableCell>
+                      </TableRow>
+                    ))}
                 </>
               )}
             </TableBody>
           </Table>
         </TableContainer>
         <Box sx={{ display: "flex", justifyContent: "end", mt: 2 }}>
-          <Button color="primary" onClick={handleCancel}>
-            Cancel
-          </Button>
-          <Button variant="contained" color="primary" onClick={mutation.mutate}>
-            Approve
+          <Button variant="contained" color="primary" onClick={handleCancel}>
+            Close
           </Button>
         </Box>
       </DialogContent>
