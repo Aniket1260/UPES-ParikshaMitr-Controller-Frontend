@@ -111,3 +111,21 @@ export const getTeacherAttendance = async (token) => {
     throw error;
   }
 };
+
+export const deleteTeacherService = async (teacherId, token) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/teacher/delete/${teacherId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -1,5 +1,9 @@
-import { approveTeacher, editTeacher } from "@/services/cont-teacher.service";
-import { Check, Edit, Search } from "@mui/icons-material";
+import {
+  approveTeacher,
+  deleteTeacherService,
+  editTeacher,
+} from "@/services/cont-teacher.service";
+import { Check, Delete, Edit, Search } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -50,6 +54,20 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       enqueueSnackbar({
         variant: "success",
         message: "Teacher Updated Successfully",
+        autoHideDuration: 3000,
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["teachers", { type: "unapproved" }],
+      });
+    },
+  });
+
+  const { mutate: deleteTeacher } = useMutation({
+    mutationFn: (id) => deleteTeacherService(id, controllerToken),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Teacher Deleted Successfully",
         autoHideDuration: 3000,
       });
       queryClient.invalidateQueries({
@@ -113,6 +131,15 @@ const UnapprovedTeacherList = ({ teacherData }) => {
                 }
               >
                 <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete Teacher" placement="top" arrow>
+              <IconButton
+                onClick={() => {
+                  deleteTeacher(params.row._id);
+                }}
+              >
+                <Delete color="error" />
               </IconButton>
             </Tooltip>
           </Box>
