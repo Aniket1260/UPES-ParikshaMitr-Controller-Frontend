@@ -156,18 +156,18 @@ const SlotDetails = ({ params }) => {
         );
       },
     },
-    {
-      field: "inv3",
-      headerName: "Invigilator 3",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Typography sx={{ fontWeight: 800 }}>
-            {params.value ? params.value.name : "Not Assigned"}
-          </Typography>
-        );
-      },
-    },
+    // {
+    //   field: "inv3",
+    //   headerName: "Invigilator 3",
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     return (
+    //       <Typography sx={{ fontWeight: 800 }}>
+    //         {params.value ? params.value.name : "Not Assigned"}
+    //       </Typography>
+    //     );
+    //   },
+    // },
 
     {
       field: "room_id",

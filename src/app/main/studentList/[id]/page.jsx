@@ -11,11 +11,16 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   MenuItem,
   Select,
   Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarFilterButton,
+} from "@mui/x-data-grid";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
@@ -95,6 +100,60 @@ const StudentListRoomID = ({ params }) => {
     { field: "sap_id", headerName: "SAP ID", width: 150 },
     { field: "roll_no", headerName: "Roll No.", width: 150 },
     { field: "student_name", headerName: "Name", width: 150 },
+    { field: "seat_no", headerName: "Seat No", width: 120 },
+    { field: "subject", headerName: "Subject", width: 150 },
+    { field: "subject_code", headerName: "Subject Code", width: 150 },
+    {
+      field: "attendance",
+      headerName: "Attendance",
+      width: 120,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              backgroundColor: params.value ? "darkgreen" : "#ad1313",
+              color: "white",
+              padding: "5px",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            <Typography variant="body1" py={1}>
+              {params.value ? "P" : "A"}
+            </Typography>
+          </Box>
+        );
+      },
+    },
+    {
+      field: "eligible",
+      headerName: "Eligible",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <Box
+            sx={{
+              backgroundColor:
+                params.value === "YES"
+                  ? "darkgreen"
+                  : params.value === "F_HOLD"
+                  ? "#EAAA08"
+                  : params.value === "DEBARRED"
+                  ? "#ad1313"
+                  : "#E508EA",
+              color: "white",
+              padding: "5px",
+              textAlign: "center",
+              width: "100%",
+            }}
+          >
+            <Typography variant="body1" py={1}>
+              {params.value}
+            </Typography>
+          </Box>
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
@@ -102,9 +161,9 @@ const StudentListRoomID = ({ params }) => {
       renderCell: (params) => (
         <div>
           <Tooltip title="Edit students eligibility" arrow placement="top">
-            <div onClick={() => handleOpenModal(params.row)}>
+            <IconButton onClick={() => handleOpenModal(params.row)}>
               <CheckCircleOutlineIcon color="primary" />
-            </div>
+            </IconButton>
           </Tooltip>
         </div>
       ),
@@ -113,6 +172,7 @@ const StudentListRoomID = ({ params }) => {
 
   const rows = useMemo(() => {
     if (StudentListQuery.isSuccess) {
+      console.log(StudentListQuery.data);
       return StudentListQuery.data;
     }
     return [];
@@ -121,19 +181,30 @@ const StudentListRoomID = ({ params }) => {
   return (
     <Box>
       <Typography variant="h4">Student List</Typography>
-      <Box>
+      <Box sx={{ mt: 2 }}>
         {StudentListQuery.isLoading && <CircularProgress />}
 
-        {StudentListQuery.isSuccess && (
-          <DataGrid
-            rows={rows}
-            columns={cols}
-            disableRowSelectionOnClick
-            disableColumnSelector
-            disableColumnFilter
-            getRowId={(row) => row?.sap_id}
-            sx={{ width: "100%" }}
-          />
+        {StudentListQuery.isSuccess && rows.length > 0 && (
+          <>
+            {/* <Box>
+              <Text
+            </Box> */}
+            <DataGrid
+              rows={rows}
+              columns={cols}
+              disableRowSelectionOnClick
+              disableColumnSelector
+              getRowId={(row) => row?.sap_id}
+              slots={{
+                toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarFilterButton />
+                  </GridToolbarContainer>
+                ),
+              }}
+              sx={{ width: "100%" }}
+            />
+          </>
         )}
       </Box>
       <Dialog open={openModal} onClose={handleCloseModal}>
