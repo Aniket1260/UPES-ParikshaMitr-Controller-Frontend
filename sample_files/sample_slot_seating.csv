@@ -1,0 +1,7 @@
+Prog,Sem,Roll No.,SAP_ID,Name,Batch No.,Building,Room No.,Seat No.,Subject,Subject Code,Eligible
+B.Sc. (Computer Science),I,R2142201111,500086111,Test Student 1,B01,BLOCK-III,3001,A1,Compiler Design,CSAI 2020,Y
+B.Sc. (Computer Science),I,R2142201112,500086112,Test Student 2,B01,BLOCK-III,3001,A2,Compiler Design,CSAI 2020,D
+B.Sc. (Computer Science),III,R2142201113,500086113,Test Student 3,B02,BLOCK-III,3001,A3,Compiler Design,CSAI 2020,F
+B.Sc. (Computer Science),III,R2142201114,500086114,Test Student 4,B02,BLOCK-III,3001,B1,Compiler Design,CSAI 2020,Y
+B.Tech. CSE AIML,III,R2142201115,500086115,Test Student 5,B02,BLOCK-III,3001,B2,Compiler Design,CSAI 2020,R
+B.Tech. CSE AIML,III,R2142201116,500086116,Test Student 6,B03,BLOCK-III,3001,B3,Compiler Design,CSAI 2020,Y
