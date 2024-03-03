@@ -113,7 +113,7 @@ const Login = () => {
           Sign in
         </Button>
 
-        <Button
+        {/* <Button
           variant="outlined"
           align="center"
           fullWidth
@@ -121,7 +121,7 @@ const Login = () => {
           onClick={() => router.push("/auth/sign-up")}
         >
           Don&apos;t have an account? Sign Up
-        </Button>
+        </Button> */}
       </Paper>
     </Box>
   );
