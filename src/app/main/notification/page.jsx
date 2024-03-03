@@ -138,16 +138,18 @@ const Notification = () => {
           </Box>
           <Box>
             {console.log(notificationRes.data?.data?.notifications)}
-            <DataGrid
-              rows={rows}
-              columns={cols}
-              pageSize={5}
-              rowsPerPageOptions={[5]}
-              disableSelectionOnClick
-              disableRowSelectionOnClick
-              disableColumnSelector
-              disableColumnFilter
-            />
+            {rows.length > 0 && (
+              <DataGrid
+                rows={rows}
+                columns={cols}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disableSelectionOnClick
+                disableRowSelectionOnClick
+                disableColumnSelector
+                disableColumnFilter
+              />
+            )}
           </Box>
         </Box>
       )}
