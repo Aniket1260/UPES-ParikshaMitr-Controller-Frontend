@@ -3,18 +3,29 @@ import {
   getApprovedTeachers,
   getUnapprovedTeachers,
 } from "@/services/cont-teacher.service";
-import { Box, CircularProgress, Select, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  IconButton,
+  Select,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import UnapprovedTeacherList from "./UnapprovedTeacherList";
 import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
+import { EventAvailable } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 
 const TeacherListPage = () => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
   }
+  const router = useRouter();
   const unApprovedTeacherResult = useQuery({
     queryKey: ["teachers", { type: "unapproved" }, controllerToken],
     queryFn: () => getUnapprovedTeachers(controllerToken),
@@ -53,9 +64,22 @@ const TeacherListPage = () => {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Teachers
-      </Typography>
+      <Box>
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Teachers{" "}
+        </Typography>
+      </Box>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h6">Quick Actions </Typography>
+        <Box sx={{ display: "flex" }}>
+          <Button
+            variant="contained"
+            onClick={() => router.push("teacher/attendance-report")}
+          >
+            View Attendance Report
+          </Button>
+        </Box>
+      </Box>
       {unApprovedTeacherResult.isLoading || approvedTeacherResult.isLoading ? (
         <Box>
           <CircularProgress />

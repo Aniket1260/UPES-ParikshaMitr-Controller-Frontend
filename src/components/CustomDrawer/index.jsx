@@ -1,4 +1,4 @@
-import { userMenu } from "@/config/sidenav.config";
+import { invigilationMenu, userMenu } from "@/config/sidenav.config";
 import {
   Box,
   Divider,
@@ -9,6 +9,7 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import Link from "next/link";
 import React from "react";
@@ -23,11 +24,24 @@ const CustomDrawer = () => {
         [`& .MuiDrawer-paper`]: { width: 240, boxSizing: "border-box" },
       }}
     >
-      <Toolbar variant="dense" />
+      <Toolbar
+        variant="dense"
+        sx={{
+          mb: 2,
+        }}
+      />
       <Box sx={{ overflow: "auto" }}>
+        <Typography
+          variant="body2"
+          component="div"
+          sx={{ px: 2, pt: 1 }}
+          color="text.secondary"
+        >
+          Exam Management
+        </Typography>
         <List>
-          {userMenu.map((item) => (
-            <Link href={item.href} key={item.id}>
+          {invigilationMenu.map((item, idx) => (
+            <Link href={item.href} key={idx}>
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>{item.icon}</ListItemIcon>
@@ -38,14 +52,24 @@ const CustomDrawer = () => {
           ))}
         </List>
         <Divider />
+        <Typography
+          variant="body2"
+          component="div"
+          sx={{ px: 2, pt: 1 }}
+          color="text.secondary"
+        >
+          Teacher Management
+        </Typography>
         <List>
-          {["All mail", "Trash", "Spam"].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>a</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
+          {userMenu.map((item, idx) => (
+            <Link href={item.href} key={idx}>
+              <ListItem disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>{item.icon}</ListItemIcon>
+                  <ListItemText primary={item.title} />
+                </ListItemButton>
+              </ListItem>
+            </Link>
           ))}
         </List>
       </Box>

@@ -1,0 +1,1 @@
+This is a sample notification body that will be sent to the user. You can customize this message to include any information you want to send to the user.
