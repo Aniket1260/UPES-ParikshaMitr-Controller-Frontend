@@ -391,17 +391,19 @@ const SlotDetails = ({ params }) => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </Box>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  disableSelectionOnClick
-                  disableRowSelectionOnClick
-                  disableColumnSelector
-                  disableColumnFilter
-                  rowHeight={60}
-                />
+                {rows.length > 0 && (
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableSelectionOnClick
+                    disableRowSelectionOnClick
+                    disableColumnSelector
+                    disableColumnFilter
+                    rowHeight={60}
+                  />
+                )}
               </>
             )}
           </Box>
