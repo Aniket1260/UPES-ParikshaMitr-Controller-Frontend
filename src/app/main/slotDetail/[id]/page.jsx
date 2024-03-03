@@ -18,7 +18,14 @@ import {
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { getSlotDetailsById } from "@/services/exam-slots.service";
-import { CheckCircle, QrCode, Refresh, Search } from "@mui/icons-material";
+import {
+  CheckCircle,
+  Groups3,
+  Person4,
+  QrCode,
+  Refresh,
+  Search,
+} from "@mui/icons-material";
 import { useQRCode } from "next-qrcode";
 import ApproveModal from "./approveModal";
 import PendingSuppliesModal from "./pendingSuppliesModal";
@@ -81,7 +88,7 @@ const SlotDetails = ({ params }) => {
     {
       field: "room_no",
       headerName: "Room Number",
-      flex: 0.5,
+      width: 200,
       renderCell: (params) => {
         console.log(params);
         return (
@@ -122,32 +129,68 @@ const SlotDetails = ({ params }) => {
         );
       },
     },
-    { field: "block", headerName: "Block", flex: 0.5 },
-    { field: "floor", headerName: "Floor", flex: 0.5 },
-    { field: "students", headerName: "No. of Students", flex: 0.5 },
+    { field: "block", headerName: "Block", width: 120 },
+    { field: "floor", headerName: "Floor", width: 120 },
+    { field: "students", headerName: "No. of Students", width: 150 },
     {
-      field: "invigilators",
-      headerName: "Invigilators",
+      field: "inv1",
+      headerName: "Invigilator 1",
       flex: 1,
       renderCell: (params) => {
         return (
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Box>
-              <Typography variant="body2" color="primary">
-                Invigilator 1
-              </Typography>
-              <Typography variant="h6" component="p">
-                {params.value[0] ? params.value[0].name : "Not Assigned"}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="body2" color="primary">
-                Invigilator 2
-              </Typography>
-              <Typography variant="h6" component="p">
-                {params.value[1] ? params.value[1].name : "Not Assigned"}
-              </Typography>
-            </Box>
+          <Typography sx={{ fontWeight: 800 }}>
+            {params.value ? params.value.name : "Not Assigned"}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "inv2",
+      headerName: "Invigilator 2",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Typography sx={{ fontWeight: 800 }}>
+            {params.value ? params.value.name : "Not Assigned"}
+          </Typography>
+        );
+      },
+    },
+    {
+      field: "inv3",
+      headerName: "Invigilator 3",
+      flex: 1,
+      renderCell: (params) => {
+        return (
+          <Typography sx={{ fontWeight: 800 }}>
+            {params.value ? params.value.name : "Not Assigned"}
+          </Typography>
+        );
+      },
+    },
+
+    {
+      field: "room_id",
+      headerName: "Actions",
+      flex: 0.5,
+      renderCell: (params) => {
+        console.log("Actions", params);
+        return (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "blue",
+            }}
+          >
+            <Tooltip title="Student List" placement="top" arrow>
+              <IconButton
+                onClick={() => router.push(`/main/studentList/${params.value}`)}
+              >
+                <Groups3 />
+              </IconButton>
+            </Tooltip>
           </Box>
         );
       },
@@ -164,10 +207,9 @@ const SlotDetails = ({ params }) => {
           block: room.block,
           floor: room.floor,
           students: room.students.length,
-          invigilators: [
-            room.room_invigilator_id.invigilator1_id,
-            room.room_invigilator_id.invigilator2_id,
-          ],
+          inv1: room.room_invigilator_id.invigilator1_id,
+          inv2: room.room_invigilator_id.invigilator2_id,
+          inv3: room.room_invigilator_id.invigilator3_id,
           status: room.status,
         };
       });
@@ -358,7 +400,7 @@ const SlotDetails = ({ params }) => {
                   disableRowSelectionOnClick
                   disableColumnSelector
                   disableColumnFilter
-                  rowHeight={120}
+                  rowHeight={60}
                 />
               </>
             )}

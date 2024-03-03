@@ -205,3 +205,21 @@ export const getPendingSupplies = async (token, roomId) => {
     throw error;
   }
 };
+
+export const getStudentListByRoomId = async (token, roomId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/room/student-list?room_id=${roomId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
