@@ -223,3 +223,22 @@ export const getStudentListByRoomId = async (token, roomId) => {
     throw error;
   }
 };
+export const UpdateStudentEligibility = async (token, student) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/room/edit-student-eligibility`,
+      student,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
