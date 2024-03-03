@@ -141,27 +141,50 @@ const StudentListRoomID = ({ params }) => {
         <DialogContent>
           {selectedStudent && (
             <>
-              <Typography variant="subtitle1">
-                <b>Sap_id:</b> {selectedStudent.sap_id}
+              <Typography variant="subtitle2" color="primary">
+                <b>Sap_id:</b>
               </Typography>
               <Typography variant="subtitle1">
-                <b>Roll_No:</b> {selectedStudent.roll_no}
-              </Typography>
-              <Typography variant="subtitle1">
-                <b>Name:</b> {selectedStudent.student_name}
-              </Typography>
-              <Typography variant="subtitle1">
-                <b>Course:</b> {selectedStudent.course}
-              </Typography>
-              <Typography variant="subtitle1">
-                <b>Subject:</b> {selectedStudent.subject}
-              </Typography>
-              <Typography variant="subtitle1">
-                <b>Subject Code:</b> {selectedStudent.subject_code}
+                {selectedStudent.sap_id}
               </Typography>
 
+              <Typography variant="subtitle2" color="primary">
+                <b>Roll_No:</b>
+              </Typography>
               <Typography variant="subtitle1">
-                <b>Eligible:</b>{" "}
+                {selectedStudent.roll_no}
+              </Typography>
+
+              <Typography variant="subtitle2" color="primary">
+                <b>Name:</b>
+              </Typography>
+              <Typography variant="subtitle1">
+                {selectedStudent.student_name}
+              </Typography>
+
+              <Typography variant="subtitle2" color="primary">
+                <b>Course:</b>
+              </Typography>
+              <Typography variant="subtitle1">
+                {selectedStudent.course}
+              </Typography>
+
+              <Typography variant="subtitle2" color="primary">
+                <b>Subject:</b>
+              </Typography>
+              <Typography variant="subtitle1">
+                {selectedStudent.subject}
+              </Typography>
+
+              <Typography variant="subtitle2" color="primary">
+                <b>Subject Code:</b>
+              </Typography>
+              <Typography variant="subtitle1">
+                {selectedStudent.subject_code}
+              </Typography>
+
+              <Typography variant="subtitle1" color="primary">
+                <b>Eligible:</b>
               </Typography>
               <Select
                 value={selectedOption || selectedStudent.eligible}
