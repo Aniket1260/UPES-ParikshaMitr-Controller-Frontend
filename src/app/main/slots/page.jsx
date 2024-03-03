@@ -119,20 +119,20 @@ const ExamSlots = () => {
                 <Call />
               </IconButton>
             </Tooltip> */}
-            {row?.rooms?.length == 0 && (
-              <Tooltip title="Upload Seating Plan" placement="top" arrow>
-                <IconButton
-                  onClick={() =>
-                    setUploadSeatingPlanModal({
-                      open: true,
-                      slot: row,
-                    })
-                  }
-                >
-                  <Ballot />
-                </IconButton>
-              </Tooltip>
-            )}
+            {/* {row?.rooms?.length == 0 && ( */}
+            <Tooltip title="Upload Seating Plan" placement="top" arrow>
+              <IconButton
+                onClick={() =>
+                  setUploadSeatingPlanModal({
+                    open: true,
+                    slot: row,
+                  })
+                }
+              >
+                <Ballot />
+              </IconButton>
+            </Tooltip>
+            {/* )} */}
           </Box>
         );
       },
