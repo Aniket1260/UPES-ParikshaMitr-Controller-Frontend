@@ -181,7 +181,7 @@ const StudentListRoomID = ({ params }) => {
   return (
     <Box>
       <Typography variant="h4">Student List</Typography>
-      <Box sx={{ mt: 2 }}>
+      <Box sx={{ mt: 2, maxWidth: "80vw" }}>
         {StudentListQuery.isLoading && <CircularProgress />}
 
         {StudentListQuery.isSuccess && rows.length > 0 && (
@@ -189,6 +189,7 @@ const StudentListRoomID = ({ params }) => {
             {/* <Box>
               <Text
             </Box> */}
+            {/* <Box sx={{ maxWidth: "100%", overflowX: "scroll" }}> */}
             <DataGrid
               rows={rows}
               columns={cols}
@@ -202,8 +203,10 @@ const StudentListRoomID = ({ params }) => {
                   </GridToolbarContainer>
                 ),
               }}
-              sx={{ width: "100%" }}
+              // sx={{ overflowX: "scroll", maxWidth: "100%" }}
+              // sx={{ width: "100%" }}
             />
+            {/* </Box> */}
           </>
         )}
       </Box>
