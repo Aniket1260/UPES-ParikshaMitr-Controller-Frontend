@@ -1,1 +1,1 @@
-export const BaseUrl = "https://test.aniruddhremote.online";
+export const BaseUrl = "http://localhost:3000";

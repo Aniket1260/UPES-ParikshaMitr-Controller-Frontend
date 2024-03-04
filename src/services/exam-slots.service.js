@@ -242,3 +242,22 @@ export const UpdateStudentEligibility = async (token, student) => {
     throw error;
   }
 };
+
+export const DeleteSlotService = async (token, slotId) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/invigilation/slot/delete/${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

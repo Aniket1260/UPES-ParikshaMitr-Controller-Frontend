@@ -156,18 +156,18 @@ const SlotDetails = ({ params }) => {
         );
       },
     },
-    {
-      field: "inv3",
-      headerName: "Invigilator 3",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Typography sx={{ fontWeight: 800 }}>
-            {params.value ? params.value.name : "Not Assigned"}
-          </Typography>
-        );
-      },
-    },
+    // {
+    //   field: "inv3",
+    //   headerName: "Invigilator 3",
+    //   flex: 1,
+    //   renderCell: (params) => {
+    //     return (
+    //       <Typography sx={{ fontWeight: 800 }}>
+    //         {params.value ? params.value.name : "Not Assigned"}
+    //       </Typography>
+    //     );
+    //   },
+    // },
 
     {
       field: "room_id",
@@ -391,17 +391,19 @@ const SlotDetails = ({ params }) => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </Box>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  pageSize={5}
-                  rowsPerPageOptions={[5]}
-                  disableSelectionOnClick
-                  disableRowSelectionOnClick
-                  disableColumnSelector
-                  disableColumnFilter
-                  rowHeight={60}
-                />
+                {rows.length > 0 && (
+                  <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    disableSelectionOnClick
+                    disableRowSelectionOnClick
+                    disableColumnSelector
+                    disableColumnFilter
+                    rowHeight={60}
+                  />
+                )}
               </>
             )}
           </Box>

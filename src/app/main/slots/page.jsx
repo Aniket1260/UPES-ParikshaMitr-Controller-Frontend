@@ -1,6 +1,10 @@
 "use client";
-import { AddExamSlot, getAllExamSlots } from "@/services/exam-slots.service";
-import { Ballot, Call, Visibility } from "@mui/icons-material";
+import {
+  AddExamSlot,
+  DeleteSlotService,
+  getAllExamSlots,
+} from "@/services/exam-slots.service";
+import { Ballot, Call, Delete, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -32,6 +36,8 @@ const ExamSlots = () => {
     open: false,
   });
 
+  const queryClient = useQueryClient();
+
   const [uploadSeatingPlanModal, setUploadSeatingPlanModal] = React.useState({
     open: false,
     slot: null,
@@ -51,6 +57,23 @@ const ExamSlots = () => {
   const SlotQuery = useQuery({
     queryKey: ["slots", controllerToken],
     queryFn: () => getAllExamSlots(controllerToken),
+  });
+
+  const { mutate: deleteSlot } = useMutation({
+    mutationFn: (slotId) => DeleteSlotService(controllerToken, slotId),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Slot deleted successfully",
+      });
+      queryClient.invalidateQueries("slots");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
   });
 
   const rows = useMemo(() => {
@@ -96,7 +119,7 @@ const ExamSlots = () => {
     {
       field: "_",
       headerName: "Actions",
-      flex: 0.5,
+      flex: 0.6,
       renderCell: ({ row }) => {
         return (
           <Box>
@@ -130,6 +153,13 @@ const ExamSlots = () => {
                   }
                 >
                   <Ballot />
+                </IconButton>
+              </Tooltip>
+            )}
+            {row?.isDeletable && (
+              <Tooltip title="Delete Slot" placement="top" arrow>
+                <IconButton onClick={() => deleteSlot(row._id)}>
+                  <Delete color="error" />
                 </IconButton>
               </Tooltip>
             )}
