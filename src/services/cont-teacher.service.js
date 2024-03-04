@@ -129,3 +129,22 @@ export const deleteTeacherService = async (teacherId, token) => {
     throw error;
   }
 };
+
+export const ChangePasswordService = async (data, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/teacher/change-password`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
