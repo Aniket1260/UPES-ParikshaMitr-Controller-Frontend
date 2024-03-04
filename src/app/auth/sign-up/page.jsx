@@ -31,7 +31,7 @@ const Signup = () => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
     },
   });

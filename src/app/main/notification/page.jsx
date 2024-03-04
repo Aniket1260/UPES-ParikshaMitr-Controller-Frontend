@@ -38,9 +38,9 @@ const Notification = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        notificationRes.error.response.status +
+        notificationRes.error.response?.status +
         " : " +
-        notificationRes.error.response.data.message,
+        notificationRes.error.response?.data.message,
     });
   }
 

@@ -143,9 +143,9 @@ const ExamSlots = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        SlotQuery.error.response.status +
+        SlotQuery.error.response?.status +
         " : " +
-        SlotQuery.error.response.data.message,
+        SlotQuery.error.response?.data.message,
     });
   }
 
@@ -238,7 +238,7 @@ const AddSlotModal = ({ open, handleClose }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
     },
   });

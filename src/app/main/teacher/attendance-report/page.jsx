@@ -30,9 +30,9 @@ const AttendanceReport = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        AttendanceQuery.error.response.status +
+        AttendanceQuery.error.response?.status +
         " : " +
-        AttendanceQuery.error.response.data.message,
+        AttendanceQuery.error.response?.data.message,
     });
   }
 

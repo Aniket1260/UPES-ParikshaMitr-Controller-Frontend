@@ -28,7 +28,7 @@ const ApproveInvigilations = () => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
     },
     onSuccess: () => {
@@ -49,9 +49,9 @@ const ApproveInvigilations = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        UnapprovedTeachersQuery.error.response.status +
+        UnapprovedTeachersQuery.error.response?.status +
         " : " +
-        UnapprovedTeachersQuery.error.response.data.message,
+        UnapprovedTeachersQuery.error.response?.data.message,
     });
   }
 

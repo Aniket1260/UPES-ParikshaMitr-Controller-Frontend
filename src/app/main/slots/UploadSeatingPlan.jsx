@@ -145,7 +145,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
       setLoadingState((prev) => ({
         ...prev,
@@ -153,7 +153,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
         creatingRooms: {
           ...prev.creatingRooms,
           processing: false,
-          error: error.response.status + " : " + error.response.data.message,
+          error: error.response?.status + " : " + error.response?.data.message,
         },
       }));
     },
@@ -173,7 +173,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
       setLoadingState((prev) => ({
         ...prev,
@@ -181,7 +181,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
         uploadSeatPlan: {
           ...prev.uploadSeatPlan,
           processing: false,
-          error: error.response.status + " : " + error.response.data.message,
+          error: error.response?.status + " : " + error.response?.data.message,
         },
       }));
     },
@@ -201,7 +201,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
       // setLoadingState((prev) => ({
       //   ...prev,

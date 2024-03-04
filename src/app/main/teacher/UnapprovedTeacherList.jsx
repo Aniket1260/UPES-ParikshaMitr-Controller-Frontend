@@ -94,7 +94,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response.status + " : " + error.response.data.message,
+        message: error.response?.status + " : " + error.response?.data.message,
         autoHideDuration: 3000,
       });
     },

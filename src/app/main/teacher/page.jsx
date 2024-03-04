@@ -46,9 +46,9 @@ const TeacherListPage = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        unApprovedTeacherResult.error.response.status +
+        unApprovedTeacherResult.error.response?.status +
         " : " +
-        unApprovedTeacherResult.error.response.data.message,
+        unApprovedTeacherResult.error.response?.data.message,
     });
   }
 
@@ -56,9 +56,9 @@ const TeacherListPage = () => {
     enqueueSnackbar({
       variant: "error",
       message:
-        approvedTeacherResult.error.response.status +
+        approvedTeacherResult.error.response?.status +
         " : " +
-        approvedTeacherResult.error.response.data.message,
+        approvedTeacherResult.error.response?.data.message,
     });
   }
 
