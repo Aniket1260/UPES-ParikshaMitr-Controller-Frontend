@@ -130,7 +130,7 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Slot Contact Details" placement="top" arrow>
+            {/* <Tooltip title="Slot Contact Details" placement="top" arrow>
               <IconButton
                 onClick={() =>
                   setContactModal({
@@ -141,7 +141,7 @@ const ExamSlots = () => {
               >
                 <Call />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
             {row?.rooms?.length == 0 && (
               <Tooltip title="Upload Seating Plan" placement="top" arrow>
                 <IconButton
