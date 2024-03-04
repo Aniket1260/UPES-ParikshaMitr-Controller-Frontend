@@ -12,12 +12,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  TextField,
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
-import React from "react";
+import React, { useEffect } from "react";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -33,6 +34,11 @@ const VisuallyHiddenInput = styled("input")({
 
 const UploadSeatingPlan = ({ open, handleClose, slot }) => {
   const [csvData, setCsvData] = React.useState(null);
+  const [valState, setValState] = React.useState({
+    text: "",
+    enabled: false,
+  });
+
   const [loadingState, setLoadingState] = React.useState({
     processing: false,
     creatingRooms: {
@@ -54,6 +60,15 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
       error: null,
     },
   });
+
+  useEffect(() => {
+    if (valState.text === "uploadseatingplan") {
+      setValState((prev) => ({ ...prev, enabled: true }));
+    } else {
+      setValState((prev) => ({ ...prev, enabled: false }));
+    }
+  }, [valState.text]);
+
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
@@ -425,6 +440,19 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
               }}
               pageSizeOptions={[5]}
             />
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              Please enter &apos;<b>uploadseatingplan</b>&apos; to Continue
+            </Typography>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              label="Message"
+              fullWidth
+              value={valState.text}
+              onChange={(e) => {
+                setValState({ text: e.target.value });
+              }}
+            />
             {loadingState.creatingRooms.processing && (
               <Box>
                 <Typography variant="h6" sx={{ mt: 2 }}>
@@ -472,7 +500,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
                 onClick={() => {
                   handleSubmit();
                 }}
-                disabled={loadingState.processing}
+                disabled={loadingState.processing || !valState.enabled}
               >
                 Upload
               </Button>
