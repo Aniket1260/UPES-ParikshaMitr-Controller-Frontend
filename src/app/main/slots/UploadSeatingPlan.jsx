@@ -12,13 +12,14 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   TextField,
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -395,12 +396,39 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
     { field: "seat", headerName: "Seat", flex: 1 },
   ];
 
+  const room_rows = useMemo(() => {
+    if (!csvData) return [];
+    const uniqueRooms = new Set(csvData.map((ele) => ele.room));
+    return [...uniqueRooms].map((ele, idx) => {
+      return {
+        id: idx,
+        room: ele,
+        building: csvData.find((x) => x.room === ele).building,
+        seats: csvData.filter((x) => x.room === ele).length,
+      };
+    });
+  }, [csvData]);
+
+  const room_cols = [
+    { field: "room", headerName: "Room", flex: 1 },
+    { field: "building", headerName: "Building", flex: 1 },
+    { field: "seats", headerName: "Seats", flex: 1 },
+  ];
+
   return (
     <Dialog
       open={open}
       onClose={() => {
         setCsvData(null);
         handleClose();
+      }}
+      sx={{
+        "& .MuiDialog-container": {
+          "& .MuiPaper-root": {
+            width: "100%",
+            maxWidth: "1000px", // Set your width here
+          },
+        },
       }}
     >
       <DialogTitle>Upload Seating Plan</DialogTitle>
@@ -426,20 +454,40 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
             <Typography variant="h6" sx={{ mt: 2 }}>
               Seating Plan Preview
             </Typography>
-            <DataGrid
-              rows={csvData}
-              columns={cols}
-              disableRowSelectionOnClick
-              disableColumnSelector
-              disableColumnFilter
-              getRowId={(row) => row.sap}
-              localeText={{ noRowsLabel: "This is a custom message :)" }}
-              sx={{ width: "500px" }}
-              initialState={{
-                pagination: { paginationModel: { pageSize: 5 } },
-              }}
-              pageSizeOptions={[5]}
-            />
+            <Grid container spacing={2}>
+              <Grid item md={6} xs={12}>
+                <DataGrid
+                  rows={csvData}
+                  columns={cols}
+                  disableRowSelectionOnClick
+                  disableColumnSelector
+                  disableColumnFilter
+                  getRowId={(row) => row.sap}
+                  localeText={{ noRowsLabel: "This is a custom message :)" }}
+                  sx={{ width: "100%" }}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 5 } },
+                  }}
+                  pageSizeOptions={[5]}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <DataGrid
+                  rows={room_rows}
+                  columns={room_cols}
+                  disableRowSelectionOnClick
+                  disableColumnSelector
+                  disableColumnFilter
+                  getRowId={(row) => row.id}
+                  localeText={{ noRowsLabel: "This is a custom message :)" }}
+                  sx={{ width: "100%" }}
+                  initialState={{
+                    pagination: { paginationModel: { pageSize: 5 } },
+                  }}
+                  pageSizeOptions={[5]}
+                />
+              </Grid>
+            </Grid>
             <Typography variant="body1" sx={{ mt: 2 }}>
               Please enter &apos;<b>uploadseatingplan</b>&apos; to Continue
             </Typography>
