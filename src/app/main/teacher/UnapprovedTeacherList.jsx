@@ -102,7 +102,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
 
   const rows = useMemo(() => {
     return teacherData.filter((row) => {
-      return row.name.toLowerCase().includes(search.toLowerCase());
+      return row.name.toLowerCase().startsWith(search.toLowerCase());
     });
   }, [search, teacherData]);
 
