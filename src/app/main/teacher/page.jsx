@@ -86,26 +86,34 @@ const TeacherListPage = () => {
         </Box>
       ) : (
         <Box>
-          <Typography variant="h6">Unapproved Teachers</Typography>
-          {unApprovedTeacherResult.isSuccess && (
-            <UnapprovedTeacherList
-              teacherData={unApprovedTeacherResult.data.map((ele, idx) => ({
-                ...ele,
-                id: idx + 1,
-              }))}
-            />
-          )}
-          <Typography variant="h6" sx={{ mt: 5 }}>
-            Approved Teachers
-          </Typography>
-          {approvedTeacherResult.isSuccess && (
-            <ApprovedTeacherList
-              teacherData={approvedTeacherResult.data.map((ele, idx) => ({
-                ...ele,
-                id: idx + 1,
-              }))}
-            />
-          )}
+          {unApprovedTeacherResult.isSuccess &&
+            Array.isArray(unApprovedTeacherResult.data) &&
+            unApprovedTeacherResult.data.length > 0 && (
+              <>
+                <Typography variant="h6">Unapproved Teachers</Typography>
+                <UnapprovedTeacherList
+                  teacherData={unApprovedTeacherResult.data.map((ele, idx) => ({
+                    ...ele,
+                    id: idx + 1,
+                  }))}
+                />
+              </>
+            )}
+          {approvedTeacherResult.isSuccess &&
+            Array.isArray(approvedTeacherResult.data) &&
+            approvedTeacherResult.data.length > 0 && (
+              <>
+                <Typography variant="h6" sx={{ mt: 5 }}>
+                  Approved Teachers
+                </Typography>
+                <ApprovedTeacherList
+                  teacherData={approvedTeacherResult.data.map((ele, idx) => ({
+                    ...ele,
+                    id: idx + 1,
+                  }))}
+                />
+              </>
+            )}
         </Box>
       )}
     </Box>
