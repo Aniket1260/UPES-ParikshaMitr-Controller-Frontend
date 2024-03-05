@@ -120,7 +120,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       headerName: "Onboarding Date",
       flex: 1,
       renderCell: (params) => {
-        return format(new Date(params.value), "do MMM yyyy");
+        return format(new Date(params.value), "do MMM yyyy hh:mm a");
       },
     },
     {
