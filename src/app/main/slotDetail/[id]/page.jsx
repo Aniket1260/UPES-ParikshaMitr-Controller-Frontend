@@ -349,6 +349,15 @@ const SlotDetails = ({ params }) => {
                     },
                   }}
                 />
+                <Typography
+                  variant="h3"
+                  sx={{
+                    textAlign: "center",
+                    mt: 2,
+                  }}
+                >
+                  {SlotDetailsQuery.data.uniqueCode}
+                </Typography>
               </Box>
             </DialogContent>
           </Dialog>
