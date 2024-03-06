@@ -336,6 +336,21 @@ const SlotDetails = ({ params }) => {
           <Dialog open={qrModalOpen} onClose={() => setQrModalOpen(false)}>
             <DialogContent>
               <Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    mb: 2,
+                  }}
+                >
+                  <Typography variant="h6">
+                    {SlotDetailsQuery.data.date}
+                  </Typography>
+                  <Typography variant="h6">
+                    {" "}
+                    {SlotDetailsQuery.data.timeSlot}
+                  </Typography>
+                </Box>
                 <Canvas
                   text={SlotDetailsQuery.data.uniqueCode}
                   options={{
