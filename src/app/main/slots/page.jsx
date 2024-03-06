@@ -8,6 +8,7 @@ import { Ballot, Call, Delete, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Chip,
   CircularProgress,
   Dialog,
   DialogContent,
@@ -102,6 +103,21 @@ const ExamSlots = () => {
       field: "timeSlot",
       headerName: "Time Slot",
       flex: 1,
+      renderCell: (params) => {
+        return (
+          <Chip
+            variant="soft"
+            label={params.value}
+            color={
+              params.value === "Morning"
+                ? "info"
+                : params.value === "Afternoon"
+                ? "secondary"
+                : "primary"
+            }
+          />
+        );
+      },
     },
     {
       field: "uniqueCode",
