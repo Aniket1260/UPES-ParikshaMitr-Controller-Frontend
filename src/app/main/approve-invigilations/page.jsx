@@ -7,6 +7,7 @@ import {
 import { Cancel, Check } from "@mui/icons-material";
 import {
   Box,
+  Chip,
   CircularProgress,
   IconButton,
   Tooltip,
@@ -86,6 +87,9 @@ const ApproveInvigilations = () => {
           invigilator_id: ele.invigilator1.id,
           name: ele.invigilator1.name,
           sap_id: ele.invigilator1.sap_id,
+          slot_time: ele.slot_time,
+          scan_time: ele.invigilator1.scan_time,
+          scan_date: ele.invigilator1.scan_date,
         });
       }
       if (ele.invigilator2_controller_approval === false) {
@@ -96,6 +100,9 @@ const ApproveInvigilations = () => {
           name: ele.invigilator2.name,
           sap_id: ele.invigilator2.sap_id,
           invigilator_id: ele.invigilator2.id,
+          slot_time: ele.slot_time,
+          scan_time: ele.invigilator1.scan_time,
+          scan_date: ele.invigilator1.scan_date,
         });
       }
     });
@@ -104,12 +111,33 @@ const ApproveInvigilations = () => {
 
   const cols = [
     {
+      field: "slot_time",
+      headerName: "Slot Time",
+      renderCell: (params) => {
+        return (
+          <Chip
+            variant="soft"
+            label={params.value}
+            color={
+              params.value === "Morning"
+                ? "info"
+                : params.value === "Afternoon"
+                ? "secondary"
+                : "primary"
+            }
+          />
+        );
+      },
+    },
+    {
       field: "room_no",
       headerName: "Room No.",
       flex: 1,
     },
     { field: "sap_id", headerName: "SAP ID", flex: 1 },
     { field: "name", headerName: "Name", flex: 1 },
+    { field: "scan_date", headerName: "Scan Date", flex: 1 },
+    { field: "scan_time", headerName: "Scan Time", flex: 1 },
     {
       field: "_",
       headerName: "Actions",
