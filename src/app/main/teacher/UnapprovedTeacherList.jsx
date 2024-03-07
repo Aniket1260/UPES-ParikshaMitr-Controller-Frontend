@@ -24,6 +24,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { enqueueSnackbar } from "notistack";
 import React, { useEffect, useMemo, useState } from "react";
+import DeleteConfirmationModal from "./deleteConfirmationModal";
 
 const UnapprovedTeacherList = ({ teacherData }) => {
   const queryClient = useQueryClient();
@@ -33,6 +34,10 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     teacher: null,
   });
   const [changePasswordModal, setChangePasswordModal] = useState({
+    open: false,
+    teacher: null,
+  });
+  const [deleteConfirmation, setDeleteConfirmation] = useState({
     open: false,
     teacher: null,
   });
@@ -81,6 +86,11 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       });
     },
   });
+
+  const handleDeleteConfirmation = () => {
+    deleteTeacher(deleteConfirmation.teacher);
+    setDeleteConfirmation({ open: false, teacher: null });
+  };
 
   const { mutate: changePassword } = useMutation({
     mutationFn: (body) => ChangePasswordService(body, controllerToken),
@@ -160,7 +170,10 @@ const UnapprovedTeacherList = ({ teacherData }) => {
             <Tooltip title="Delete Teacher" placement="top" arrow>
               <IconButton
                 onClick={() => {
-                  deleteTeacher(params.row._id);
+                  setDeleteConfirmation({
+                    open: true,
+                    teacher: params.row._id,
+                  });
                 }}
               >
                 <Delete color="error" />
@@ -208,6 +221,13 @@ const UnapprovedTeacherList = ({ teacherData }) => {
           changePassword(body);
           setChangePasswordModal({ open: false, teacher: null });
         }}
+      />
+      <DeleteConfirmationModal
+        open={deleteConfirmation.open}
+        handleClose={() =>
+          setDeleteConfirmation({ open: false, teacher: null })
+        }
+        confirmFn={handleDeleteConfirmation}
       />
       <Box
         sx={{
