@@ -1,7 +1,7 @@
 "use client";
 import { React, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Box,
   Button,
@@ -13,13 +13,16 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Tooltip,
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { getSlotDetailsById } from "@/services/exam-slots.service";
+import { approveRoom, getSlotDetailsById } from "@/services/exam-slots.service";
 import {
   CheckCircle,
+  Checklist,
   Groups3,
   Person4,
   QrCode,
@@ -29,6 +32,7 @@ import {
 import { useQRCode } from "next-qrcode";
 import ApproveModal from "./approveModal";
 import PendingSuppliesModal from "./pendingSuppliesModal";
+import { enqueueSnackbar } from "notistack";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -58,6 +62,10 @@ const getChipText = (status) => {
 
 const SlotDetails = ({ params }) => {
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [markAllCompletedModalOpen, setMarkAllCompletedModalOpen] = useState({
+    open: false,
+    loading: false,
+  });
   const [search, setSearch] = useState("");
   const [approveModalOpen, setApproveModalOpen] = useState({
     open: false,
@@ -69,6 +77,8 @@ const SlotDetails = ({ params }) => {
     room: null,
   });
 
+  const [roomTypeToggle, setRoomTypeToggle] = useState("all");
+
   const { Canvas } = useQRCode();
   const queryClient = useQueryClient();
 
@@ -79,123 +89,177 @@ const SlotDetails = ({ params }) => {
     var controllerToken = localStorage.getItem("token");
   }
 
+  const mutation = useMutation({
+    mutationFn: (id) => approveRoom(id, controllerToken),
+
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+  });
+
+  const submitMarkAllCompleted = async () => {
+    setMarkAllCompletedModalOpen((prev) => ({ ...prev, loading: true }));
+
+    // Get all Rooms that are not completed
+    const rooms = SlotDetailsQuery.data.rooms.filter(
+      (room) => room.status !== "COMPLETED"
+    );
+
+    // If there are no rooms to mark as completed, return
+    if (rooms.length === 0) {
+      enqueueSnackbar({
+        variant: "warning",
+        message: "No Rooms to Mark as Completed",
+      });
+      setMarkAllCompletedModalOpen({
+        open: false,
+        loading: false,
+      });
+      return;
+    }
+
+    // Mark all rooms as completed
+    for (const room of rooms) {
+      // Call the API to mark the room as completed
+      await mutation.mutateAsync(room?._id);
+    }
+    queryClient.invalidateQueries("slotDetails");
+    enqueueSnackbar({
+      variant: "success",
+      message: "All Rooms Marked as Completed",
+    });
+
+    setMarkAllCompletedModalOpen({
+      open: false,
+      loading: false,
+    });
+  };
+
   const SlotDetailsQuery = useQuery({
     queryKey: ["slotDetails", controllerToken, slotId],
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
   });
 
-  const columns = [
-    {
-      field: "room_no",
-      headerName: "Room Number",
-      width: 200,
-      renderCell: (params) => {
-        console.log(params);
-        return (
-          <>
-            <Typography mr={1}>{params.value}</Typography>
-            {params.row.status === "APPROVAL" ? (
-              <Chip
-                variant="soft"
-                label={getChipText(params.row.status)}
-                color={getChipColor(params.row.status)}
-                onClick={() =>
-                  setApproveModalOpen({
-                    open: true,
-                    room: params.row,
-                  })
-                }
-              />
-            ) : params.row.status === "PENDING_SUPPLIES" ? (
-              <Chip
-                variant="soft"
-                label={getChipText(params.row.status)}
-                color={getChipColor(params.row.status)}
-                onClick={() =>
-                  setPendingSuppliesModalOpen({
-                    open: true,
-                    room: params.row,
-                  })
-                }
-              />
-            ) : (
-              <Chip
-                variant="soft"
-                label={getChipText(params.row.status)}
-                color={getChipColor(params.row.status)}
-              />
-            )}
-          </>
-        );
+  const columns = useMemo(
+    () => [
+      {
+        field: "room_no",
+        headerName: "Room Number",
+        width: 200,
+        renderCell: (params) => {
+          console.log(params);
+          return (
+            <>
+              <Typography mr={1}>{params.value}</Typography>
+              {params.row.status === "APPROVAL" ? (
+                <Chip
+                  variant="soft"
+                  label={getChipText(params.row.status)}
+                  color={getChipColor(params.row.status)}
+                  onClick={() =>
+                    setApproveModalOpen({
+                      open: true,
+                      room: params.row,
+                    })
+                  }
+                />
+              ) : params.row.status === "PENDING_SUPPLIES" ? (
+                <Chip
+                  variant="soft"
+                  label={getChipText(params.row.status)}
+                  color={getChipColor(params.row.status)}
+                  onClick={() =>
+                    setPendingSuppliesModalOpen({
+                      open: true,
+                      room: params.row,
+                    })
+                  }
+                />
+              ) : (
+                <Chip
+                  variant="soft"
+                  label={getChipText(params.row.status)}
+                  color={getChipColor(params.row.status)}
+                />
+              )}
+            </>
+          );
+        },
       },
-    },
-    { field: "block", headerName: "Block", width: 120 },
-    { field: "floor", headerName: "Floor", width: 120 },
-    { field: "students", headerName: "No. of Students", width: 150 },
-    {
-      field: "inv1",
-      headerName: "Invigilator 1",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Typography sx={{ fontWeight: 800 }}>
-            {params.value ? params.value.name : "Not Assigned"}
-          </Typography>
-        );
+      { field: "block", headerName: "Block", width: 120 },
+      { field: "floor", headerName: "Floor", width: 120 },
+      { field: "students", headerName: "No. of Students", width: 150 },
+      {
+        field: "inv1",
+        headerName: "Invigilator 1",
+        flex: 1,
+        renderCell: (params) => {
+          return (
+            <Typography sx={{ fontWeight: 800 }}>
+              {params.value ? params.value.name : "Not Assigned"}
+            </Typography>
+          );
+        },
       },
-    },
-    {
-      field: "inv2",
-      headerName: "Invigilator 2",
-      flex: 1,
-      renderCell: (params) => {
-        return (
-          <Typography sx={{ fontWeight: 800 }}>
-            {params.value ? params.value.name : "Not Assigned"}
-          </Typography>
-        );
+      {
+        field: "inv2",
+        headerName: "Invigilator 2",
+        flex: 1,
+        renderCell: (params) => {
+          return (
+            <Typography sx={{ fontWeight: 800 }}>
+              {params.value ? params.value.name : "Not Assigned"}
+            </Typography>
+          );
+        },
       },
-    },
-    // {
-    //   field: "inv3",
-    //   headerName: "Invigilator 3",
-    //   flex: 1,
-    //   renderCell: (params) => {
-    //     return (
-    //       <Typography sx={{ fontWeight: 800 }}>
-    //         {params.value ? params.value.name : "Not Assigned"}
-    //       </Typography>
-    //     );
-    //   },
-    // },
+      // {
+      //   field: "inv3",
+      //   headerName: "Invigilator 3",
+      //   flex: 1,
+      //   renderCell: (params) => {
+      //     return (
+      //       <Typography sx={{ fontWeight: 800 }}>
+      //         {params.value ? params.value.name : "Not Assigned"}
+      //       </Typography>
+      //     );
+      //   },
+      // },
 
-    {
-      field: "room_id",
-      headerName: "Actions",
-      flex: 0.5,
-      renderCell: (params) => {
-        console.log("Actions", params);
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "blue",
-            }}
-          >
-            <Tooltip title="Student List" placement="top" arrow>
-              <IconButton
-                onClick={() => router.push(`/main/studentList/${params.value}`)}
-              >
-                <Groups3 />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        );
+      {
+        field: "room_id",
+        headerName: "Actions",
+        flex: 0.5,
+        renderCell: (params) => {
+          console.log("Actions", params);
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "blue",
+              }}
+            >
+              <Tooltip title="Student List" placement="top" arrow>
+                <IconButton
+                  onClick={() =>
+                    router.push(`/main/studentList/${params.value}`)
+                  }
+                >
+                  <Groups3 />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          );
+        },
       },
-    },
-  ];
+    ],
+    [router]
+  );
 
   const rows = useMemo(() => {
     if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
@@ -218,54 +282,38 @@ const SlotDetails = ({ params }) => {
         return roomRows.filter((row) => {
           return ("" + row.room_no)
             .toLowerCase()
-            .includes(search.toLowerCase());
+            .startsWith(search.toLowerCase());
         });
       }
 
+      if (roomTypeToggle !== "all") {
+        return roomRows.filter((row) => row.status === roomTypeToggle);
+      }
+
+      const statusOrder = [
+        "PENDING_SUPPLIES",
+        "APPROVAL",
+        "INPROGRESS",
+        "COMPLETED",
+      ];
+
       roomRows.sort((a, b) => {
-        // PENDNG_SUPPLIES status should be at the top
-        if (
-          a.status === "PENDING_SUPPLIES" &&
-          b.status !== "PENDING_SUPPLIES"
-        ) {
-          return -1; // Place "a" (with PENDING_SUPPLIES) before "b"
-        } else if (
-          b.status === "PENDING_SUPPLIES" &&
-          a.status !== "PENDING_SUPPLIES"
-        ) {
-          return 1; // Place "b" (with PENDING_SUPPLIES) before "a"
-        }
+        const aIndex = statusOrder.indexOf(a.status);
+        const bIndex = statusOrder.indexOf(b.status);
 
-        // Check for APPROVAL status first
-        if (a.status === "APPROVAL" && b.status !== "APPROVAL") {
-          return -1; // Place "a" (with APPROVAL) before "b"
-        } else if (b.status === "APPROVAL" && a.status !== "APPROVAL") {
-          return 1; // Place "b" (with APPROVAL) before "a"
+        if (aIndex !== -1 || bIndex !== -1) {
+          // If a.status or b.status is in statusOrder, sort by the order defined in statusOrder
+          return aIndex - bIndex;
+        } else {
+          // If neither a.status nor b.status is in statusOrder, sort alphabetically
+          return a.status.localeCompare(b.status);
         }
-
-        // Then check for INPROGRESS status
-        if (
-          a.status === "INPROGRESS" &&
-          b.status !== "APPROVAL" &&
-          b.status !== "INPROGRESS"
-        ) {
-          return -1; // Place "a" (with INPROGRESS) before "b" (other)
-        } else if (
-          b.status === "INPROGRESS" &&
-          a.status !== "APPROVAL" &&
-          a.status !== "INPROGRESS"
-        ) {
-          return 1; // Place "b" (with INPROGRESS) before "a" (other)
-        }
-
-        // Finally, order other statuses
-        return a.status.localeCompare(b.status); // Alphabetical order for remaining statuses
       });
 
       return roomRows;
     }
     return [];
-  }, [SlotDetailsQuery.data, search]);
+  }, [SlotDetailsQuery.data, search, roomTypeToggle]);
 
   return (
     <Box>
@@ -286,6 +334,15 @@ const SlotDetails = ({ params }) => {
         setRoom={(room) =>
           setPendingSuppliesModalOpen((prev) => ({ ...prev, room: room }))
         }
+      />
+
+      <MarkAllCompletedModal
+        open={markAllCompletedModalOpen.open}
+        handleClose={() =>
+          setMarkAllCompletedModalOpen({ open: false, loading: false })
+        }
+        submitHandler={submitMarkAllCompleted}
+        loading={markAllCompletedModalOpen.loading}
       />
 
       {SlotDetailsQuery.isLoading && <CircularProgress />}
@@ -387,33 +444,100 @@ const SlotDetails = ({ params }) => {
                 <Box
                   sx={{
                     display: "flex",
-                    justifyContent: "end",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
                   }}
                 >
-                  <Tooltip title="Refresh Data" placement="top">
-                    <IconButton
-                      sx={{ mr: 2 }}
-                      onClick={() =>
-                        queryClient.invalidateQueries("slotDetails")
-                      }
+                  <Box>
+                    <ToggleButtonGroup
+                      color="primary"
+                      value={roomTypeToggle}
+                      onChange={(event, newRoomTypeToggle) => {
+                        if (newRoomTypeToggle === null) {
+                          setRoomTypeToggle("all");
+                          return;
+                        }
+                        setRoomTypeToggle(newRoomTypeToggle);
+                      }}
+                      exclusive
                     >
-                      <Refresh />
-                    </IconButton>
-                  </Tooltip>
-                  <TextField
-                    placeholder="Search Room Nos."
-                    variant="standard"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Search />
-                        </InputAdornment>
-                      ),
-                    }}
-                    sx={{ mb: 1, minWidth: 300 }}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
+                      <ToggleButton value="all">
+                        All : {SlotDetailsQuery.data.rooms.length}
+                      </ToggleButton>
+                      <ToggleButton value="PENDING_SUPPLIES">
+                        Pending :{" "}
+                        {
+                          SlotDetailsQuery.data.rooms.filter(
+                            (room) => room.status === "PENDING_SUPPLIES"
+                          ).length
+                        }
+                      </ToggleButton>
+                      <ToggleButton value="APPROVAL">
+                        Approval :{" "}
+                        {
+                          SlotDetailsQuery.data.rooms.filter(
+                            (room) => room.status === "APPROVAL"
+                          ).length
+                        }
+                      </ToggleButton>
+                      <ToggleButton value="INPROGRESS">
+                        In Progress :{" "}
+                        {
+                          SlotDetailsQuery.data.rooms.filter(
+                            (room) => room.status === "INPROGRESS"
+                          ).length
+                        }
+                      </ToggleButton>
+                      <ToggleButton value="COMPLETED">
+                        Completed :{" "}
+                        {
+                          SlotDetailsQuery.data.rooms.filter(
+                            (room) => room.status === "COMPLETED"
+                          ).length
+                        }
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
+                  <Box>
+                    <Tooltip title="Refresh Data" placement="top">
+                      <IconButton
+                        sx={{ mr: 2 }}
+                        onClick={() =>
+                          queryClient.invalidateQueries("slotDetails")
+                        }
+                      >
+                        <Refresh />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Mark All Rooms Completed" placement="top">
+                      <IconButton
+                        sx={{ mr: 2 }}
+                        onClick={() =>
+                          setMarkAllCompletedModalOpen({
+                            open: true,
+                            loading: false,
+                          })
+                        }
+                      >
+                        <Checklist />
+                      </IconButton>
+                    </Tooltip>
+                    <TextField
+                      placeholder="Search Room Nos."
+                      variant="standard"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Search />
+                          </InputAdornment>
+                        ),
+                      }}
+                      sx={{ mb: 1, minWidth: 300 }}
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                    />
+                  </Box>
                 </Box>
                 {rows.length > 0 && (
                   <DataGrid
@@ -426,6 +550,9 @@ const SlotDetails = ({ params }) => {
                     disableColumnSelector
                     disableColumnFilter
                     rowHeight={60}
+                    initialState={{
+                      pagination: { paginationModel: { pageSize: 25 } },
+                    }}
                   />
                 )}
               </>
@@ -438,3 +565,60 @@ const SlotDetails = ({ params }) => {
 };
 
 export default SlotDetails;
+
+const MarkAllCompletedModal = ({
+  open,
+  handleClose,
+  submitHandler,
+  loading,
+}) => {
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogContent>
+        <Box>
+          <Typography variant="h5" sx={{ mb: 2 }}>
+            Mark All Rooms Completed
+          </Typography>
+          {loading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography variant="body2" sx={{ mr: 2 }}>
+                Marking all rooms as completed...
+              </Typography>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
+              <Typography variant="body2" sx={{ mb: 2 }}>
+                Are you sure you want to mark all rooms as completed?
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                }}
+              >
+                <Button variant="outlined" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={submitHandler}
+                >
+                  Confirm
+                </Button>
+              </Box>
+            </>
+          )}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};
