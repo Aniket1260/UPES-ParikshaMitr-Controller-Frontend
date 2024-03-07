@@ -19,6 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { enIN } from "date-fns/locale";
 import { DataGrid } from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -268,7 +269,9 @@ const AddSlotModal = ({ open, handleClose }) => {
   const { mutate } = useMutation({
     mutationFn: () =>
       AddExamSlot(controllerToken, {
-        date: date.toLocaleDateString(),
+        date: date.toLocaleDateString("en-US", {
+          timeZone: "Asia/Kolkata",
+        }),
         timeSlot: timeSlot,
         type: slotType,
         rooms: [],
@@ -290,7 +293,12 @@ const AddSlotModal = ({ open, handleClose }) => {
   });
 
   const handleAddNewSlot = () => {
-    console.log(date.toLocaleDateString(), slotType);
+    console.log(
+      date.toLocaleDateString("en-US", {
+        timeZone: "Asia/Kolkata",
+      }),
+      slotType
+    );
     mutate();
   };
 
@@ -298,12 +306,13 @@ const AddSlotModal = ({ open, handleClose }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Add new slot</DialogTitle>
       <DialogContent>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enIN}>
           <DatePicker
             label="Slot Date"
             value={date}
             onChange={(newValue) => setDate(newValue)}
             sx={{ m: 1 }}
+            format="dd/MM/yyyy"
           />
         </LocalizationProvider>
         <Box sx={{ m: 1 }}>
