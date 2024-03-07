@@ -2,8 +2,9 @@
 import {
   ApproveInvigilationsService,
   getUnapprovedInvigilations,
+  rejectInvigilationsService,
 } from "@/services/controller.service";
-import { Check } from "@mui/icons-material";
+import { Cancel, Check } from "@mui/icons-material";
 import {
   Box,
   CircularProgress,
@@ -35,6 +36,23 @@ const ApproveInvigilations = () => {
       enqueueSnackbar({
         variant: "success",
         message: "Invigilations Approved Successfully",
+      });
+      queryClient.invalidateQueries("unapprovedTeachers");
+    },
+  });
+
+  const { mutate: rejectInvigilations } = useMutation({
+    mutationFn: (data) => rejectInvigilationsService(controllerToken, data),
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Invigilations Rejected Successfully",
       });
       queryClient.invalidateQueries("unapprovedTeachers");
     },
@@ -98,20 +116,36 @@ const ApproveInvigilations = () => {
       flex: 1,
       renderCell: (params) => {
         return (
-          <Tooltip title="Approve Invigilator" arrow placement="top">
-            <IconButton
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                approveInvigilations({
-                  roomId: params.row.room_id,
-                  invigilatorId: params.row.invigilator_id,
-                });
-              }}
-            >
-              <Check />
-            </IconButton>
-          </Tooltip>
+          <>
+            <Tooltip title="Approve Invigilator" arrow placement="top">
+              <IconButton
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  approveInvigilations({
+                    roomId: params.row.room_id,
+                    invigilatorId: params.row.invigilator_id,
+                  });
+                }}
+              >
+                <Check />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Reject Invigilator" arrow placement="top">
+              <IconButton
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  rejectInvigilations({
+                    roomId: params.row.room_id,
+                    invigilatorId: params.row.invigilator_id,
+                  });
+                }}
+              >
+                <Cancel />
+              </IconButton>
+            </Tooltip>
+          </>
         );
       },
     },
