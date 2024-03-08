@@ -1,3 +1,4 @@
+import { alpha, darken } from "@mui/material";
 import { amber, deepOrange, grey } from "@mui/material/colors";
 
 const darkBlue = {
@@ -21,7 +22,7 @@ export const getDesignTokens = (mode) => ({
             main: amber[500],
           },
           secondary: {
-            main: deepOrange[900],
+            main: deepOrange[500],
           },
           background: {
             default: grey[100],
@@ -56,6 +57,20 @@ export const getDesignTokens = (mode) => ({
           "& .MuiDataGrid-columnHeader:focus": {
             outline: "none",
           },
+          "& .MuiDataGrid-columnHeader .MuiDataGrid-menuIcon": {
+            visibility: "visible",
+            width: "auto",
+          },
+        },
+        columnHeaders: ({ theme }) => {
+          console.log(theme);
+          return {
+            color: mode === "light" ? "black" : "white",
+            backgroundColor:
+              mode === "light"
+                ? theme.palette.secondary.main
+                : darken(theme.palette.secondary.main, 0.1),
+          };
         },
       },
     },

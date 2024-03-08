@@ -112,7 +112,7 @@ const ExamSlots = () => {
               params.value === "Morning"
                 ? "info"
                 : params.value === "Afternoon"
-                ? "secondary"
+                ? "warning"
                 : "primary"
             }
           />
