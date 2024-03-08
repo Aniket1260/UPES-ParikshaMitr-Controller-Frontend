@@ -78,7 +78,6 @@ const ApproveInvigilations = () => {
     const rows = [];
     let id = 1;
     UnapprovedTeachersQuery.data?.forEach((ele) => {
-      console.log(ele);
       if (ele.invigilator1_controller_approval === false) {
         rows.push({
           id: id++,

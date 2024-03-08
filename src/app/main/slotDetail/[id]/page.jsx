@@ -12,6 +12,8 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
+  Select,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -19,7 +21,11 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { approveRoom, getSlotDetailsById } from "@/services/exam-slots.service";
+import {
+  ChangeRoomsStatusService,
+  approveRoom,
+  getSlotDetailsById,
+} from "@/services/exam-slots.service";
 import {
   CheckCircle,
   Checklist,
@@ -76,6 +82,11 @@ const SlotDetails = ({ params }) => {
     open: false,
     room: null,
   });
+  const [rowSelected, setRowSelected] = useState([]);
+  const [selectedStatusChangeModal, setSelectedStatusChangeModal] = useState({
+    open: false,
+    status: "COMPLETED",
+  });
 
   const [roomTypeToggle, setRoomTypeToggle] = useState("all");
 
@@ -99,6 +110,43 @@ const SlotDetails = ({ params }) => {
       });
     },
   });
+
+  const changeRoomStatusesMutation = useMutation({
+    mutationFn: (data) => ChangeRoomsStatusService(controllerToken, data),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Room Status Changed Successfully",
+      });
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+  });
+
+  const markSelectedRoomsStatusChange = async () => {
+    if (rowSelected.length === 0) {
+      enqueueSnackbar({
+        variant: "warning",
+        message: "No Rooms Selected",
+      });
+      return;
+    }
+
+    await changeRoomStatusesMutation.mutateAsync({
+      room_ids: rowSelected,
+      status: selectedStatusChangeModal.status,
+    });
+    queryClient.invalidateQueries("slotDetails");
+    setSelectedStatusChangeModal({
+      open: false,
+      status: "COMPLETED",
+    });
+    setRowSelected([]);
+  };
 
   const submitMarkAllCompleted = async () => {
     setMarkAllCompletedModalOpen((prev) => ({ ...prev, loading: true }));
@@ -150,7 +198,6 @@ const SlotDetails = ({ params }) => {
         headerName: "Room Number",
         width: 200,
         renderCell: (params) => {
-          console.log(params);
           return (
             <>
               <Typography mr={1}>{params.value}</Typography>
@@ -234,7 +281,6 @@ const SlotDetails = ({ params }) => {
         headerName: "Actions",
         flex: 0.5,
         renderCell: (params) => {
-          console.log("Actions", params);
           return (
             <Box
               sx={{
@@ -539,6 +585,91 @@ const SlotDetails = ({ params }) => {
                     />
                   </Box>
                 </Box>
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    sx={{ textTransform: "uppercase", mb: 1 }}
+                  >
+                    Selected Room Actions
+                  </Typography>
+                  <Box>
+                    <Button
+                      variant="contained"
+                      disabled={rowSelected.length == 0}
+                      onClick={() => {
+                        setSelectedStatusChangeModal({
+                          open: true,
+                          status: "COMPLETED",
+                        });
+                      }}
+                    >
+                      Change Room status
+                    </Button>
+                  </Box>
+                </Box>
+                <Dialog
+                  open={selectedStatusChangeModal.open}
+                  onClose={() =>
+                    setSelectedStatusChangeModal({
+                      open: false,
+                      status: "COMPLETED",
+                    })
+                  }
+                >
+                  <DialogContent>
+                    <Box>
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        Change Selected Rooms&apos; Status To
+                      </Typography>
+
+                      <Select
+                        value={selectedStatusChangeModal.status}
+                        onChange={(e) =>
+                          setSelectedStatusChangeModal((prev) => ({
+                            ...prev,
+                            status: e.target.value,
+                          }))
+                        }
+                        fullWidth
+                      >
+                        <MenuItem value="COMPLETED">Completed</MenuItem>
+                        <MenuItem value="APPROVAL">Approval</MenuItem>
+                        <MenuItem value="INPROGRESS">In Progress</MenuItem>
+                      </Select>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: 2,
+                          mt: 2,
+                        }}
+                      >
+                        <Button
+                          onClick={() =>
+                            setSelectedStatusChangeModal({
+                              open: false,
+                              status: "COMPLETED",
+                            })
+                          }
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => {
+                            markSelectedRoomsStatusChange();
+                          }}
+                        >
+                          Confirm
+                        </Button>
+                      </Box>
+                    </Box>
+                  </DialogContent>
+                </Dialog>
+
                 {rows.length > 0 && (
                   <DataGrid
                     rows={rows}
@@ -549,10 +680,16 @@ const SlotDetails = ({ params }) => {
                     disableRowSelectionOnClick
                     disableColumnSelector
                     disableColumnFilter
+                    checkboxSelection
                     rowHeight={60}
                     initialState={{
                       pagination: { paginationModel: { pageSize: 25 } },
                     }}
+                    rowSelectionModel={rowSelected}
+                    onRowSelectionModelChange={(newSelection) => {
+                      setRowSelected(newSelection);
+                    }}
+                    getRowId={(row) => row.room_id}
                   />
                 )}
               </>

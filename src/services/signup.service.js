@@ -4,7 +4,6 @@ import { BaseUrl } from "@/config/var.config";
 export const signup = async (formData) => {
   try {
     const { name, username, password } = formData;
-    console.log("Calling login API with username:", username);
     const response = await axios.post(
       `${BaseUrl}/exam-controller`,
       {
@@ -18,7 +17,6 @@ export const signup = async (formData) => {
         },
       }
     );
-    console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
     console.error(error);

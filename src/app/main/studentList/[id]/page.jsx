@@ -89,7 +89,6 @@ const StudentListRoomID = ({ params }) => {
         eligible: selectedOption,
       };
       await updateEligibilityMutation.mutateAsync(updatedStudent);
-      console.log(updatedStudent);
       handleCloseModal();
     } catch (error) {
       console.error("Error updating eligibility:", error);
@@ -172,7 +171,6 @@ const StudentListRoomID = ({ params }) => {
 
   const rows = useMemo(() => {
     if (StudentListQuery.isSuccess) {
-      console.log(StudentListQuery.data);
       return StudentListQuery.data;
     }
     return [];

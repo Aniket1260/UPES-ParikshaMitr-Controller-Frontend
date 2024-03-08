@@ -140,7 +140,6 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
-        console.log(params);
         return (
           <Box
             sx={{

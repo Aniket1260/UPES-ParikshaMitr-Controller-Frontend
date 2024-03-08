@@ -120,7 +120,6 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
           eligible,
         };
       });
-      console.log(data);
       setCsvData(data);
     };
     reader.onloadend = () => {
@@ -298,10 +297,6 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
         total: roomIds.length,
       },
     }));
-    // console.log({
-    //   slot_id: slot._id,
-    //   rooms: roomIds,
-    // });
     await addToSlot({
       slotId: slot._id,
       roomIds: roomIds.map((ele) => ele.id),
@@ -338,7 +333,6 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
       variant: "success",
       message: "Rooms created successfully",
     });
-    console.log(roomIds);
     if (roomIds.length === 0) return;
     const roomData = roomIds.map((ele) => {
       return {
@@ -366,7 +360,6 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
           }),
       };
     });
-    console.log(roomData);
     await seatingPlanHelper(roomData);
     enqueueSnackbar({
       variant: "success",

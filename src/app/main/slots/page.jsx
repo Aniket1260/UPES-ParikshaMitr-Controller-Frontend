@@ -79,7 +79,6 @@ const ExamSlots = () => {
   });
 
   const rows = useMemo(() => {
-    console.log(SlotQuery.data);
     return SlotQuery.data?.map((ele, idx) => ({
       ...ele,
       id: idx + 1,
@@ -293,12 +292,6 @@ const AddSlotModal = ({ open, handleClose }) => {
   });
 
   const handleAddNewSlot = () => {
-    console.log(
-      date.toLocaleDateString("en-US", {
-        timeZone: "Asia/Kolkata",
-      }),
-      slotType
-    );
     mutate();
   };
 

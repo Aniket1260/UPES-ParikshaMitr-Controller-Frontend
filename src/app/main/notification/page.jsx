@@ -137,7 +137,6 @@ const Notification = () => {
             />
           </Box>
           <Box>
-            {console.log(notificationRes.data?.data?.notifications)}
             {rows.length > 0 && (
               <DataGrid
                 rows={rows}

@@ -49,7 +49,6 @@ export const AddExamSlot = async (token, data) => {
         },
       }
     );
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -247,6 +246,26 @@ export const DeleteSlotService = async (token, slotId) => {
   try {
     const response = await axios.delete(
       `${BaseUrl}/exam-controller/invigilation/slot/delete/${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const ChangeRoomsStatusService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/room/change-statuses`,
+      data,
       {
         headers: {
           "Content-Type": "application/json",

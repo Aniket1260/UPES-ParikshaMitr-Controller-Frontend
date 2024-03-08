@@ -63,7 +63,6 @@ const ApprovedTeacherList = ({ teacherData }) => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
-        console.log(1, params);
         return (
           <Box
             sx={{
