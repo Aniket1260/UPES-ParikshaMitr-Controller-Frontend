@@ -1,5 +1,5 @@
 "use client";
-import { React, useMemo, useState } from "react";
+import { React, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -197,6 +197,53 @@ const SlotDetails = ({ params }) => {
     queryKey: ["slotDetails", controllerToken, slotId],
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
   });
+
+  const moreDetails = {
+    totalRooms: 0,
+    totalStudents: 0,
+    invigilatorsAssigned: 0,
+    debarredStudents: 0,
+    fHoldStudents: 0,
+    rHoldStudents: 0,
+  };
+
+  const [addDetails, setAddDetails] = useState(moreDetails);
+
+  const getMoreDetails = () => {
+    if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
+      const newDetails = SlotDetailsQuery.data.rooms.reduce(
+        (acc, room) => {
+          acc.totalRooms++;
+          acc.totalStudents += room.students.length;
+          if (
+            room.room_invigilator_id.invigilator1_id ||
+            room.room_invigilator_id.invigilator2_id ||
+            room.room_invigilator_id.invigilator3_id
+          ) {
+            acc.invigilatorsAssigned++;
+          }
+          room.students?.forEach((student) => {
+            if (student.eligible === "DEBARRED") {
+              acc.debarredStudents++;
+            }
+            if (student.eligible === "F_HOLD") {
+              acc.fHoldStudents++;
+            }
+            if (student.eligible === "R_HOLD") {
+              acc.rHoldStudents++;
+            }
+          });
+          return acc;
+        },
+        { ...moreDetails }
+      );
+      setAddDetails(newDetails);
+    }
+  };
+
+  useEffect(() => {
+    getMoreDetails();
+  }, [SlotDetailsQuery.data]);
 
   const columns = useMemo(
     () => [
@@ -441,6 +488,50 @@ const SlotDetails = ({ params }) => {
                   </IconButton>
                 </Typography>
               </Grid>
+            </Grid>
+          </Grid>
+          <Grid container sx={1}>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Rooms
+              </Typography>
+              <Typography variant="h5">
+                {SlotDetailsQuery.data.rooms.length}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Students
+              </Typography>
+              <Typography variant="h5">{addDetails.totalStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Invigilators Assigned
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.invigilatorsAssigned}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Debarred Students
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.debarredStudents}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                F Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.fHoldStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                R Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.rHoldStudents}</Typography>
             </Grid>
           </Grid>
           <Dialog open={qrModalOpen} onClose={() => setQrModalOpen(false)}>
