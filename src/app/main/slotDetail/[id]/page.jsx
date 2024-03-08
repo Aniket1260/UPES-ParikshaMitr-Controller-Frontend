@@ -151,9 +151,16 @@ const SlotDetails = ({ params }) => {
   const submitMarkAllCompleted = async () => {
     setMarkAllCompletedModalOpen((prev) => ({ ...prev, loading: true }));
 
-    // Get all Rooms that are not completed
+    // Get all Rooms that are not completed and has at least one invigilator assigned
+    // inv1: room.room_invigilator_id.invigilator1_id,
+    //       inv2: room.room_invigilator_id.invigilator2_id,
+    //       inv3: room.room_invigilator_id.invigilator3_id,
     const rooms = SlotDetailsQuery.data.rooms.filter(
-      (room) => room.status !== "COMPLETED"
+      (room) =>
+        room.status !== "COMPLETED" &&
+        (room.room_invigilator_id.invigilator1_id ||
+          room.room_invigilator_id.invigilator2_id ||
+          room.room_invigilator_id.invigilator3_id)
     );
 
     // If there are no rooms to mark as completed, return
