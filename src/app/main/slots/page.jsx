@@ -210,7 +210,10 @@ const ExamSlots = () => {
       <UploadSeatingPlan
         open={uploadSeatingPlanModal.open}
         handleClose={() =>
-          setUploadSeatingPlanModal((prev) => ({ ...prev, open: false }))
+          setUploadSeatingPlanModal({
+            open: false,
+            slot: null,
+          })
         }
         slot={uploadSeatingPlanModal.slot}
       />

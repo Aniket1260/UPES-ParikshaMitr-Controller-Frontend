@@ -377,6 +377,7 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
       !loadingState.addToSlot.error
     ) {
       queryClient.invalidateQueries("slots");
+      setValState({ text: "", enabled: false });
       handleClose();
     }
   };

@@ -56,3 +56,21 @@ export const rejectInvigilationsService = async (token, invigilations) => {
     throw error;
   }
 };
+
+export const StudentSearchService = async (token, query) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/student/search-student?${query}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -69,7 +69,7 @@ export const getDesignTokens = (mode) => ({
             backgroundColor:
               mode === "light"
                 ? theme.palette.secondary.main
-                : darken(theme.palette.secondary.main, 0.1),
+                : darken(theme.palette.secondary.main, 0.2),
           };
         },
       },
