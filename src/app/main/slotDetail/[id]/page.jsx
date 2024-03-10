@@ -206,6 +206,26 @@ const SlotDetails = ({ params }) => {
     fHoldStudents: 0,
     rHoldStudents: 0,
   };
+  const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
+  const [newRoomData, setNewRoomData] = useState({
+    room_no: 0,
+    block: "",
+    floor: 0,
+  });
+
+  const handleAddRoom = () => {
+    const newRoomDataCopy = {
+      ...newRoomData,
+      room_no: parseInt(newRoomData.room_no, 10),
+    };
+    console.log(newRoomDataCopy);
+    setNewRoomData({
+      room_no: 0,
+      block: "",
+      floor: 0,
+    });
+    setAddRoomModalOpen(false);
+  };
 
   const [addDetails, setAddDetails] = useState(moreDetails);
 
@@ -453,9 +473,34 @@ const SlotDetails = ({ params }) => {
       )}
       {SlotDetailsQuery.isSuccess && (
         <Box>
-          <Typography variant="h4" sx={{ mb: 2 }}>
-            Slot Details
-          </Typography>
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h4">Slot Details</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setAddRoomModalOpen(true)}
+            >
+              Add Room
+            </Button>
+          </Grid>
+
+          <Dialog
+            open={addRoomModalOpen}
+            onClose={() => setAddRoomModalOpen(false)}
+          >
+            <AddRoomModal
+              open={addRoomModalOpen}
+              handleClose={() => setAddRoomModalOpen(false)}
+              handleAddRoom={handleAddRoom}
+              newRoomData={newRoomData}
+              setNewRoomData={setNewRoomData}
+            />
+          </Dialog>
           <Grid container sx={{ px: 1 }}>
             <Grid item xs={6}>
               <Grid container direction="column" spacing={1}>
@@ -490,6 +535,7 @@ const SlotDetails = ({ params }) => {
               </Grid>
             </Grid>
           </Grid>
+
           <Grid container sx={1}>
             <Grid item xs={2}>
               <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
@@ -852,6 +898,64 @@ const MarkAllCompletedModal = ({
               </Box>
             </>
           )}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const AddRoomModal = ({
+  open,
+  handleClose,
+  handleAddRoom,
+  newRoomData,
+  setNewRoomData,
+}) => {
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogContent>
+        <Typography variant="h5">Add Room</Typography>
+        <TextField
+          label="Room Number"
+          type="number"
+          fullWidth
+          value={newRoomData.room_no}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, room_no: e.target.value })
+          }
+          sx={{ mb: 2, mt: 3 }}
+        />
+        <TextField
+          label="Block"
+          fullWidth
+          value={newRoomData.block}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, block: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Floor"
+          type="number"
+          fullWidth
+          value={newRoomData.floor}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, floor: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <Box mt={2} textAlign="right">
+          <Button variant="outlined" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddRoom}
+            sx={{ ml: 1 }}
+          >
+            Add
+          </Button>
         </Box>
       </DialogContent>
     </Dialog>
