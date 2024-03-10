@@ -34,6 +34,7 @@ const StudentSearch = () => {
       setData(data?.data);
     },
     onError: (error) => {
+      setData(null);
       enqueueSnackbar({
         variant: "error",
         message: error.response?.status + " : " + error.response?.data.message,

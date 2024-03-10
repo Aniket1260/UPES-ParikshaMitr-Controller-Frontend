@@ -63,7 +63,6 @@ export const getDesignTokens = (mode) => ({
           },
         },
         columnHeaders: ({ theme }) => {
-          console.log(theme);
           return {
             color: mode === "light" ? "black" : "white",
             backgroundColor:
