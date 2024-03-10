@@ -11,9 +11,12 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormControl,
+  Grid,
   IconButton,
   MenuItem,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import {
@@ -95,6 +98,20 @@ const StudentListRoomID = ({ params }) => {
     }
   };
 
+  const [addStudentModalOpen, setAddStudentModalOpen] = useState(false);
+
+  const handleOpenAddStudentModal = () => {
+    setAddStudentModalOpen(true);
+  };
+
+  const handleCloseAddStudentModal = () => {
+    setAddStudentModalOpen(false);
+  };
+
+  const handleAddStudent = (newStudentData) => {
+    console.log(newStudentData);
+    handleCloseAddStudentModal();
+  };
   const cols = [
     { field: "sap_id", headerName: "SAP ID", width: 150 },
     { field: "roll_no", headerName: "Roll No.", width: 150 },
@@ -139,7 +156,9 @@ const StudentListRoomID = ({ params }) => {
                   ? "#EAAA08"
                   : params.value === "DEBARRED"
                   ? "#ad1313"
-                  : "#E508EA",
+                  : params.value === "UFM"
+                  ? "#E508EA"
+                  : "#fc5603",
               color: "white",
               padding: "5px",
               textAlign: "center",
@@ -178,7 +197,25 @@ const StudentListRoomID = ({ params }) => {
 
   return (
     <Box>
-      <Typography variant="h4">Student List</Typography>
+      <Grid container justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h4">Student List</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpenAddStudentModal}
+        >
+          Add Student
+        </Button>
+      </Grid>
+      <Dialog
+        open={addStudentModalOpen}
+        onClose={() => setAddStudentModalOpen(false)}
+      ></Dialog>
+      <AddStudentDialog
+        open={addStudentModalOpen}
+        onClose={handleCloseAddStudentModal}
+        onAddStudent={handleAddStudent}
+      />
       <Box sx={{ mt: 2, maxWidth: "80vw" }}>
         {StudentListQuery.isLoading && <CircularProgress />}
 
@@ -192,7 +229,7 @@ const StudentListRoomID = ({ params }) => {
               rows={rows}
               columns={cols}
               disableRowSelectionOnClick
-              disableColumnSelector
+              // disableColumnSelector
               getRowId={(row) => row?.sap_id}
               slots={{
                 toolbar: () => (
@@ -284,3 +321,131 @@ const StudentListRoomID = ({ params }) => {
 };
 
 export default StudentListRoomID;
+
+const AddStudentDialog = ({ open, onClose, onAddStudent }) => {
+  const [newStudentData, setNewStudentData] = useState({
+    roll_no: "",
+    student_name: "",
+    course: "",
+    subject: "",
+    subject_code: "",
+    sap_id: "",
+    seat_no: "",
+    eligible: "YES",
+  });
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    const sap_id = event.target.value.replace(/[^0-9]/g, "");
+    setNewStudentData((prevData) => ({ ...prevData, [name]: sap_id }));
+  };
+
+  const handleAddStudent = () => {
+    const newStudentWithNumberId = {
+      ...newStudentData,
+      sap_id: Number(newStudentData.sap_id),
+    };
+    onAddStudent(newStudentWithNumberId);
+
+    setNewStudentData({
+      roll_no: "",
+      student_name: "",
+      course: "",
+      subject: "",
+      subject_code: "",
+      sap_id: "",
+      seat_no: "",
+      eligible: "YES",
+    });
+    onClose();
+  };
+
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Add New Student</DialogTitle>
+      <DialogContent>
+        <TextField
+          label="Sap id"
+          name="sap_id"
+          value={newStudentData.sap_id}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Roll No"
+          name="roll_no"
+          value={newStudentData.roll_no}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Student Name"
+          name="student_name"
+          value={newStudentData.student_name}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Course"
+          name="course"
+          value={newStudentData.course}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Subject"
+          name="subject"
+          value={newStudentData.subject}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+
+        <TextField
+          label="Subject Code"
+          name="subject_code"
+          value={newStudentData.subject_code}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Seat No"
+          name="seat_no"
+          value={newStudentData.seat_no}
+          onChange={handleInputChange}
+          fullWidth
+          margin="normal"
+        />
+        <FormControl fullWidth margin="normal">
+          <Select
+            labelId="eligible"
+            id="eligible"
+            value={newStudentData.eligible}
+            onChange={(event) =>
+              setNewStudentData((prevData) => ({
+                ...prevData,
+                eligible: event.target.value,
+              }))
+            }
+          >
+            <MenuItem value="YES">ELIGIBLE</MenuItem>
+            <MenuItem value="F_HOLD">FINANCIAL HOLD</MenuItem>
+            <MenuItem value="DEBARRED">DEBARRED</MenuItem>
+            <MenuItem value="R_HOLD">REGISTRATION HOLD</MenuItem>
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleAddStudent} color="primary">
+          Add
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};

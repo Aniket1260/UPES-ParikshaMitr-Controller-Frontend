@@ -454,8 +454,8 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
                   rows={csvData}
                   columns={cols}
                   disableRowSelectionOnClick
-                  disableColumnSelector
-                  disableColumnFilter
+                  // disableColumnSelector
+                  // disableColumnFilter
                   getRowId={(row) => row.sap}
                   localeText={{ noRowsLabel: "This is a custom message :)" }}
                   sx={{ width: "100%" }}
@@ -470,8 +470,8 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
                   rows={room_rows}
                   columns={room_cols}
                   disableRowSelectionOnClick
-                  disableColumnSelector
-                  disableColumnFilter
+                  // disableColumnSelector
+                  // disableColumnFilter
                   getRowId={(row) => row.id}
                   localeText={{ noRowsLabel: "This is a custom message :)" }}
                   sx={{ width: "100%" }}

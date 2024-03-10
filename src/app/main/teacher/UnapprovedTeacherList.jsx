@@ -255,8 +255,8 @@ const UnapprovedTeacherList = ({ teacherData }) => {
           rows={rows}
           columns={cols}
           disableRowSelectionOnClick
-          disableColumnSelector
-          disableColumnFilter
+          // disableColumnSelector
+          // disableColumnFilter
           localeText={{ noRowsLabel: "This is a custom message :)" }}
           sx={{ width: "100%" }}
         />

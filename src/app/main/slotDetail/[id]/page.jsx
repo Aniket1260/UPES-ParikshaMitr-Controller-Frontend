@@ -1,5 +1,5 @@
 "use client";
-import { React, useMemo, useState } from "react";
+import { React, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -197,6 +197,73 @@ const SlotDetails = ({ params }) => {
     queryKey: ["slotDetails", controllerToken, slotId],
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
   });
+
+  const moreDetails = {
+    totalRooms: 0,
+    totalStudents: 0,
+    invigilatorsAssigned: 0,
+    debarredStudents: 0,
+    fHoldStudents: 0,
+    rHoldStudents: 0,
+  };
+  const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
+  const [newRoomData, setNewRoomData] = useState({
+    room_no: 0,
+    block: "",
+    floor: 0,
+  });
+
+  const handleAddRoom = () => {
+    const newRoomDataCopy = {
+      ...newRoomData,
+      room_no: parseInt(newRoomData.room_no, 10),
+    };
+    console.log(newRoomDataCopy);
+    setNewRoomData({
+      room_no: 0,
+      block: "",
+      floor: 0,
+    });
+    setAddRoomModalOpen(false);
+  };
+
+  const [addDetails, setAddDetails] = useState(moreDetails);
+
+  const getMoreDetails = () => {
+    if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
+      const newDetails = SlotDetailsQuery.data.rooms.reduce(
+        (acc, room) => {
+          acc.totalRooms++;
+          acc.totalStudents += room.students.length;
+          if (
+            room.room_invigilator_id.invigilator1_id ||
+            room.room_invigilator_id.invigilator2_id ||
+            room.room_invigilator_id.invigilator3_id
+          ) {
+            acc.invigilatorsAssigned++;
+          }
+          room.students?.forEach((student) => {
+            if (student.eligible === "DEBARRED") {
+              acc.debarredStudents++;
+            }
+            if (student.eligible === "F_HOLD") {
+              acc.fHoldStudents++;
+            }
+            if (student.eligible === "R_HOLD") {
+              acc.rHoldStudents++;
+            }
+          });
+          return acc;
+        },
+        { ...moreDetails }
+      );
+      setAddDetails(newDetails);
+    }
+  };
+
+  useEffect(() => {
+    getMoreDetails();
+  }, [SlotDetailsQuery.data]);
 
   const columns = useMemo(
     () => [
@@ -406,9 +473,34 @@ const SlotDetails = ({ params }) => {
       )}
       {SlotDetailsQuery.isSuccess && (
         <Box>
-          <Typography variant="h4" sx={{ mb: 2 }}>
-            Slot Details
-          </Typography>
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h4">Slot Details</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setAddRoomModalOpen(true)}
+            >
+              Add Room
+            </Button>
+          </Grid>
+
+          <Dialog
+            open={addRoomModalOpen}
+            onClose={() => setAddRoomModalOpen(false)}
+          >
+            <AddRoomModal
+              open={addRoomModalOpen}
+              handleClose={() => setAddRoomModalOpen(false)}
+              handleAddRoom={handleAddRoom}
+              newRoomData={newRoomData}
+              setNewRoomData={setNewRoomData}
+            />
+          </Dialog>
           <Grid container sx={{ px: 1 }}>
             <Grid item xs={6}>
               <Grid container direction="column" spacing={1}>
@@ -441,6 +533,51 @@ const SlotDetails = ({ params }) => {
                   </IconButton>
                 </Typography>
               </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={1}>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Rooms
+              </Typography>
+              <Typography variant="h5">
+                {SlotDetailsQuery.data.rooms.length}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Students
+              </Typography>
+              <Typography variant="h5">{addDetails.totalStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Invigilators Assigned
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.invigilatorsAssigned}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Debarred Students
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.debarredStudents}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                F Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.fHoldStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                R Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.rHoldStudents}</Typography>
             </Grid>
           </Grid>
           <Dialog open={qrModalOpen} onClose={() => setQrModalOpen(false)}>
@@ -685,8 +822,8 @@ const SlotDetails = ({ params }) => {
                     rowsPerPageOptions={[5]}
                     disableSelectionOnClick
                     disableRowSelectionOnClick
-                    disableColumnSelector
-                    disableColumnFilter
+                    // disableColumnSelector
+                    // disableColumnFilter
                     checkboxSelection
                     rowHeight={60}
                     initialState={{
@@ -761,6 +898,64 @@ const MarkAllCompletedModal = ({
               </Box>
             </>
           )}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const AddRoomModal = ({
+  open,
+  handleClose,
+  handleAddRoom,
+  newRoomData,
+  setNewRoomData,
+}) => {
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogContent>
+        <Typography variant="h5">Add Room</Typography>
+        <TextField
+          label="Room Number"
+          type="number"
+          fullWidth
+          value={newRoomData.room_no}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, room_no: e.target.value })
+          }
+          sx={{ mb: 2, mt: 3 }}
+        />
+        <TextField
+          label="Block"
+          fullWidth
+          value={newRoomData.block}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, block: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Floor"
+          type="number"
+          fullWidth
+          value={newRoomData.floor}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, floor: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <Box mt={2} textAlign="right">
+          <Button variant="outlined" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddRoom}
+            sx={{ ml: 1 }}
+          >
+            Add
+          </Button>
         </Box>
       </DialogContent>
     </Dialog>
