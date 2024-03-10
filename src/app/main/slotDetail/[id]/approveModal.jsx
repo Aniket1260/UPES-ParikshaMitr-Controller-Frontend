@@ -54,7 +54,8 @@ const ApproveModal = ({ open, handleClose, room }) => {
       <DialogTitle>Approve Submission</DialogTitle>
       <DialogContent>
         <div>
-          Please verify that you have received following from invigilator
+          The controller has submitted the room for approval. Please review the
+          extra items and approve the room.
         </div>
         <br></br>
         <TableContainer component={Paper}>

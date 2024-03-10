@@ -213,7 +213,7 @@ const UFMDetailPage = ({ params }) => {
         </Grid>
         <Grid item xs={2}>
           <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
-            Father's Name:
+            Father&apos;s Name:
           </Typography>
           <Typography variant="body1">
             {studentData.father_name || "N/A"}
