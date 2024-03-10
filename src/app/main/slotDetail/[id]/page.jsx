@@ -1,5 +1,5 @@
 "use client";
-import { React, useMemo, useState } from "react";
+import { React, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,6 +12,8 @@ import {
   Grid,
   IconButton,
   InputAdornment,
+  MenuItem,
+  Select,
   TextField,
   ToggleButton,
   ToggleButtonGroup,
@@ -19,7 +21,11 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { approveRoom, getSlotDetailsById } from "@/services/exam-slots.service";
+import {
+  ChangeRoomsStatusService,
+  approveRoom,
+  getSlotDetailsById,
+} from "@/services/exam-slots.service";
 import {
   CheckCircle,
   Checklist,
@@ -76,6 +82,11 @@ const SlotDetails = ({ params }) => {
     open: false,
     room: null,
   });
+  const [rowSelected, setRowSelected] = useState([]);
+  const [selectedStatusChangeModal, setSelectedStatusChangeModal] = useState({
+    open: false,
+    status: "COMPLETED",
+  });
 
   const [roomTypeToggle, setRoomTypeToggle] = useState("all");
 
@@ -100,12 +111,56 @@ const SlotDetails = ({ params }) => {
     },
   });
 
+  const changeRoomStatusesMutation = useMutation({
+    mutationFn: (data) => ChangeRoomsStatusService(controllerToken, data),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Room Status Changed Successfully",
+      });
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+  });
+
+  const markSelectedRoomsStatusChange = async () => {
+    if (rowSelected.length === 0) {
+      enqueueSnackbar({
+        variant: "warning",
+        message: "No Rooms Selected",
+      });
+      return;
+    }
+
+    await changeRoomStatusesMutation.mutateAsync({
+      room_ids: rowSelected,
+      status: selectedStatusChangeModal.status,
+    });
+    queryClient.invalidateQueries("slotDetails");
+    setSelectedStatusChangeModal({
+      open: false,
+      status: "COMPLETED",
+    });
+    setRowSelected([]);
+  };
+
   const submitMarkAllCompleted = async () => {
     setMarkAllCompletedModalOpen((prev) => ({ ...prev, loading: true }));
 
-    // Get all Rooms that are not completed
+    // Get all Rooms that are not completed and has at least one invigilator assigned
+    // inv1: room.room_invigilator_id.invigilator1_id,
+    //       inv2: room.room_invigilator_id.invigilator2_id,
+    //       inv3: room.room_invigilator_id.invigilator3_id,
     const rooms = SlotDetailsQuery.data.rooms.filter(
-      (room) => room.status !== "COMPLETED"
+      (room) =>
+        room.status !== "COMPLETED" &&
+        (room.room_invigilator_id.invigilator1_id ||
+          room.room_invigilator_id.invigilator2_id ||
+          room.room_invigilator_id.invigilator3_id)
     );
 
     // If there are no rooms to mark as completed, return
@@ -143,6 +198,73 @@ const SlotDetails = ({ params }) => {
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
   });
 
+  const moreDetails = {
+    totalRooms: 0,
+    totalStudents: 0,
+    invigilatorsAssigned: 0,
+    debarredStudents: 0,
+    fHoldStudents: 0,
+    rHoldStudents: 0,
+  };
+  const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
+  const [newRoomData, setNewRoomData] = useState({
+    room_no: 0,
+    block: "",
+    floor: 0,
+  });
+
+  const handleAddRoom = () => {
+    const newRoomDataCopy = {
+      ...newRoomData,
+      room_no: parseInt(newRoomData.room_no, 10),
+    };
+    console.log(newRoomDataCopy);
+    setNewRoomData({
+      room_no: 0,
+      block: "",
+      floor: 0,
+    });
+    setAddRoomModalOpen(false);
+  };
+
+  const [addDetails, setAddDetails] = useState(moreDetails);
+
+  const getMoreDetails = () => {
+    if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
+      const newDetails = SlotDetailsQuery.data.rooms.reduce(
+        (acc, room) => {
+          acc.totalRooms++;
+          acc.totalStudents += room.students.length;
+          if (
+            room.room_invigilator_id.invigilator1_id ||
+            room.room_invigilator_id.invigilator2_id ||
+            room.room_invigilator_id.invigilator3_id
+          ) {
+            acc.invigilatorsAssigned++;
+          }
+          room.students?.forEach((student) => {
+            if (student.eligible === "DEBARRED") {
+              acc.debarredStudents++;
+            }
+            if (student.eligible === "F_HOLD") {
+              acc.fHoldStudents++;
+            }
+            if (student.eligible === "R_HOLD") {
+              acc.rHoldStudents++;
+            }
+          });
+          return acc;
+        },
+        { ...moreDetails }
+      );
+      setAddDetails(newDetails);
+    }
+  };
+
+  useEffect(() => {
+    getMoreDetails();
+  }, [SlotDetailsQuery.data]);
+
   const columns = useMemo(
     () => [
       {
@@ -150,7 +272,6 @@ const SlotDetails = ({ params }) => {
         headerName: "Room Number",
         width: 200,
         renderCell: (params) => {
-          console.log(params);
           return (
             <>
               <Typography mr={1}>{params.value}</Typography>
@@ -234,7 +355,6 @@ const SlotDetails = ({ params }) => {
         headerName: "Actions",
         flex: 0.5,
         renderCell: (params) => {
-          console.log("Actions", params);
           return (
             <Box
               sx={{
@@ -353,9 +473,34 @@ const SlotDetails = ({ params }) => {
       )}
       {SlotDetailsQuery.isSuccess && (
         <Box>
-          <Typography variant="h4" sx={{ mb: 2 }}>
-            Slot Details
-          </Typography>
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h4">Slot Details</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setAddRoomModalOpen(true)}
+            >
+              Add Room
+            </Button>
+          </Grid>
+
+          <Dialog
+            open={addRoomModalOpen}
+            onClose={() => setAddRoomModalOpen(false)}
+          >
+            <AddRoomModal
+              open={addRoomModalOpen}
+              handleClose={() => setAddRoomModalOpen(false)}
+              handleAddRoom={handleAddRoom}
+              newRoomData={newRoomData}
+              setNewRoomData={setNewRoomData}
+            />
+          </Dialog>
           <Grid container sx={{ px: 1 }}>
             <Grid item xs={6}>
               <Grid container direction="column" spacing={1}>
@@ -388,6 +533,51 @@ const SlotDetails = ({ params }) => {
                   </IconButton>
                 </Typography>
               </Grid>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={1}>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Rooms
+              </Typography>
+              <Typography variant="h5">
+                {SlotDetailsQuery.data.rooms.length}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Total Students
+              </Typography>
+              <Typography variant="h5">{addDetails.totalStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Invigilators Assigned
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.invigilatorsAssigned}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                Debarred Students
+              </Typography>
+              <Typography variant="h5">
+                {addDetails.debarredStudents}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                F Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.fHoldStudents}</Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+                R Hold Students
+              </Typography>
+              <Typography variant="h5">{addDetails.rHoldStudents}</Typography>
             </Grid>
           </Grid>
           <Dialog open={qrModalOpen} onClose={() => setQrModalOpen(false)}>
@@ -539,6 +729,91 @@ const SlotDetails = ({ params }) => {
                     />
                   </Box>
                 </Box>
+
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    sx={{ textTransform: "uppercase", mb: 1 }}
+                  >
+                    Selected Room Actions
+                  </Typography>
+                  <Box>
+                    <Button
+                      variant="contained"
+                      disabled={rowSelected.length == 0}
+                      onClick={() => {
+                        setSelectedStatusChangeModal({
+                          open: true,
+                          status: "COMPLETED",
+                        });
+                      }}
+                    >
+                      Change Room status
+                    </Button>
+                  </Box>
+                </Box>
+                <Dialog
+                  open={selectedStatusChangeModal.open}
+                  onClose={() =>
+                    setSelectedStatusChangeModal({
+                      open: false,
+                      status: "COMPLETED",
+                    })
+                  }
+                >
+                  <DialogContent>
+                    <Box>
+                      <Typography variant="h6" sx={{ mb: 2 }}>
+                        Change Selected Rooms&apos; Status To
+                      </Typography>
+
+                      <Select
+                        value={selectedStatusChangeModal.status}
+                        onChange={(e) =>
+                          setSelectedStatusChangeModal((prev) => ({
+                            ...prev,
+                            status: e.target.value,
+                          }))
+                        }
+                        fullWidth
+                      >
+                        <MenuItem value="COMPLETED">Completed</MenuItem>
+                        <MenuItem value="APPROVAL">Approval</MenuItem>
+                        <MenuItem value="INPROGRESS">In Progress</MenuItem>
+                      </Select>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          gap: 2,
+                          mt: 2,
+                        }}
+                      >
+                        <Button
+                          onClick={() =>
+                            setSelectedStatusChangeModal({
+                              open: false,
+                              status: "COMPLETED",
+                            })
+                          }
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={() => {
+                            markSelectedRoomsStatusChange();
+                          }}
+                        >
+                          Confirm
+                        </Button>
+                      </Box>
+                    </Box>
+                  </DialogContent>
+                </Dialog>
+
                 {rows.length > 0 && (
                   <DataGrid
                     rows={rows}
@@ -547,12 +822,18 @@ const SlotDetails = ({ params }) => {
                     rowsPerPageOptions={[5]}
                     disableSelectionOnClick
                     disableRowSelectionOnClick
-                    disableColumnSelector
-                    disableColumnFilter
+                    // disableColumnSelector
+                    // disableColumnFilter
+                    checkboxSelection
                     rowHeight={60}
                     initialState={{
                       pagination: { paginationModel: { pageSize: 25 } },
                     }}
+                    rowSelectionModel={rowSelected}
+                    onRowSelectionModelChange={(newSelection) => {
+                      setRowSelected(newSelection);
+                    }}
+                    getRowId={(row) => row.room_id}
                   />
                 )}
               </>
@@ -617,6 +898,64 @@ const MarkAllCompletedModal = ({
               </Box>
             </>
           )}
+        </Box>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const AddRoomModal = ({
+  open,
+  handleClose,
+  handleAddRoom,
+  newRoomData,
+  setNewRoomData,
+}) => {
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogContent>
+        <Typography variant="h5">Add Room</Typography>
+        <TextField
+          label="Room Number"
+          type="number"
+          fullWidth
+          value={newRoomData.room_no}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, room_no: e.target.value })
+          }
+          sx={{ mb: 2, mt: 3 }}
+        />
+        <TextField
+          label="Block"
+          fullWidth
+          value={newRoomData.block}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, block: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Floor"
+          type="number"
+          fullWidth
+          value={newRoomData.floor}
+          onChange={(e) =>
+            setNewRoomData({ ...newRoomData, floor: e.target.value })
+          }
+          sx={{ mb: 2 }}
+        />
+        <Box mt={2} textAlign="right">
+          <Button variant="outlined" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleAddRoom}
+            sx={{ ml: 1 }}
+          >
+            Add
+          </Button>
         </Box>
       </DialogContent>
     </Dialog>

@@ -78,7 +78,6 @@ const ApproveInvigilations = () => {
     const rows = [];
     let id = 1;
     UnapprovedTeachersQuery.data?.forEach((ele) => {
-      console.log(ele);
       if (ele.invigilator1_controller_approval === false) {
         rows.push({
           id: id++,
@@ -88,8 +87,8 @@ const ApproveInvigilations = () => {
           name: ele.invigilator1.name,
           sap_id: ele.invigilator1.sap_id,
           slot_time: ele.slot_time,
-          scan_time: ele.invigilator1.scan_time,
-          scan_date: ele.invigilator1.scan_date,
+          scan_time: ele.invigilator1?.scan_time,
+          scan_date: ele.invigilator1?.scan_date,
         });
       }
       if (ele.invigilator2_controller_approval === false) {
@@ -101,10 +100,12 @@ const ApproveInvigilations = () => {
           sap_id: ele.invigilator2.sap_id,
           invigilator_id: ele.invigilator2.id,
           slot_time: ele.slot_time,
-          scan_time: ele.invigilator1.scan_time,
-          scan_date: ele.invigilator1.scan_date,
+          scan_time: ele.invigilator2?.scan_time,
+          scan_date: ele.invigilator2?.scan_date,
         });
       }
+
+      //TODO: Add invigilator 3
     });
     return rows;
   }, [UnapprovedTeachersQuery.data]);
@@ -193,8 +194,8 @@ const ApproveInvigilations = () => {
           rowsPerPageOptions={[5]}
           disableSelectionOnClick
           disableRowSelectionOnClick
-          disableColumnSelector
-          disableColumnFilter
+          // disableColumnSelector
+          // disableColumnFilter
         />
       )}
     </Box>

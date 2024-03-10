@@ -109,7 +109,6 @@ const ContactModal = ({ open, handleClose, slot_id }) => {
               },
             ]);
             setAddContact({ open: false, name: "", phone: "" });
-            console.log(contacts);
           }}
         />
         <Button

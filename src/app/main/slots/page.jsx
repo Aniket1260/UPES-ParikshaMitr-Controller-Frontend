@@ -19,6 +19,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import { enIN } from "date-fns/locale";
 import { DataGrid } from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
@@ -78,7 +79,6 @@ const ExamSlots = () => {
   });
 
   const rows = useMemo(() => {
-    console.log(SlotQuery.data);
     return SlotQuery.data?.map((ele, idx) => ({
       ...ele,
       id: idx + 1,
@@ -112,7 +112,7 @@ const ExamSlots = () => {
               params.value === "Morning"
                 ? "info"
                 : params.value === "Afternoon"
-                ? "secondary"
+                ? "warning"
                 : "primary"
             }
           />
@@ -210,7 +210,10 @@ const ExamSlots = () => {
       <UploadSeatingPlan
         open={uploadSeatingPlanModal.open}
         handleClose={() =>
-          setUploadSeatingPlanModal((prev) => ({ ...prev, open: false }))
+          setUploadSeatingPlanModal({
+            open: false,
+            slot: null,
+          })
         }
         slot={uploadSeatingPlanModal.slot}
       />
@@ -243,8 +246,8 @@ const ExamSlots = () => {
             rowsPerPageOptions={[5]}
             disableSelectionOnClick
             disableRowSelectionOnClick
-            disableColumnSelector
-            disableColumnFilter
+            // disableColumnSelector
+            // disableColumnFilter
           />
         )}
       </Box>
@@ -268,7 +271,9 @@ const AddSlotModal = ({ open, handleClose }) => {
   const { mutate } = useMutation({
     mutationFn: () =>
       AddExamSlot(controllerToken, {
-        date: date.toLocaleDateString(),
+        date: date.toLocaleDateString("en-US", {
+          timeZone: "Asia/Kolkata",
+        }),
         timeSlot: timeSlot,
         type: slotType,
         rooms: [],
@@ -290,7 +295,6 @@ const AddSlotModal = ({ open, handleClose }) => {
   });
 
   const handleAddNewSlot = () => {
-    console.log(date.toLocaleDateString(), slotType);
     mutate();
   };
 
@@ -298,12 +302,13 @@ const AddSlotModal = ({ open, handleClose }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Add new slot</DialogTitle>
       <DialogContent>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={enIN}>
           <DatePicker
             label="Slot Date"
             value={date}
             onChange={(newValue) => setDate(newValue)}
             sx={{ m: 1 }}
+            format="dd/MM/yyyy"
           />
         </LocalizationProvider>
         <Box sx={{ m: 1 }}>

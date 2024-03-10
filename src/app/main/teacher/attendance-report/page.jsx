@@ -108,7 +108,6 @@ const AttendanceReport = () => {
     if (!AttendanceQuery.data) {
       return [];
     }
-    console.log(AttendanceQuery.data);
     const rows = [];
     AttendanceQuery.data?.data?.teacherAttendance.forEach((teacher) => {
       const row = {
@@ -148,7 +147,6 @@ const AttendanceReport = () => {
         </Button>
       </Box>
       {AttendanceQuery.isLoading && <CircularProgress />}
-      {AttendanceQuery.isSuccess && console.log(AttendanceQuery.data, cols)}
       {AttendanceQuery.isSuccess && (
         <Box
           sx={{
