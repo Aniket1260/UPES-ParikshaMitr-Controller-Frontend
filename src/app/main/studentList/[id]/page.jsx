@@ -336,7 +336,8 @@ const AddStudentDialog = ({ open, onClose, onAddStudent }) => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setNewStudentData((prevData) => ({ ...prevData, [name]: value }));
+    const sap_id = event.target.value.replace(/[^0-9]/g, "");
+    setNewStudentData((prevData) => ({ ...prevData, [name]: sap_id }));
   };
 
   const handleAddStudent = () => {
