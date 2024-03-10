@@ -31,6 +31,10 @@ const UFMDetailPage = ({ params }) => {
 
   console.log(getUFMByIdQuery.data);
 
+  const ufmData = getUFMByIdQuery.data?.ufm;
+  const ufmByData = ufmData?.UFM_by || {};
+  const studentData = ufmData?.student || {};
+
   return (
     <Box>
       <Typography variant="h4" sx={{ mb: 2 }}>
@@ -79,8 +83,195 @@ const UFMDetailPage = ({ params }) => {
               </Typography>
             </Grid>
           </Grid>
+          <Typography variant="body2" color="primary" sx={{ mb: 2, mt: 2 }}>
+            Incriminating Material
+          </Typography>
+          <Grid container sx={1}>
+            {ufmData.incriminating_material.communication_devices > 0 && (
+              <Grid item xs={3}>
+                <Typography variant="body1">
+                  Communication Devices:{" "}
+                  {ufmData.incriminating_material.communication_devices}
+                </Typography>
+              </Grid>
+            )}
+
+            {ufmData.incriminating_material.handwritten_pages > 0 && (
+              <Grid item xs={3}>
+                <Typography variant="body1">
+                  Handwritten Pages:{" "}
+                  {ufmData.incriminating_material.handwritten_pages}
+                </Typography>
+              </Grid>
+            )}
+
+            {ufmData.incriminating_material.printed_pages > 0 && (
+              <Grid item xs={3}>
+                <Typography variant="body1">
+                  Printed Pages: {ufmData.incriminating_material.printed_pages}
+                </Typography>
+              </Grid>
+            )}
+
+            {ufmData.incriminating_material.torn_book_pages > 0 && (
+              <Grid item xs={3}>
+                <Typography variant="body1" sx={{ mb: 1 }}>
+                  Torn Book Pages:{" "}
+                  {ufmData.incriminating_material.torn_book_pages}
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+          <Grid container sx={1}>
+            <Grid item xs={6}>
+              <Typography variant="body2" color="primary" sx={{ mb: 2, mt: 2 }}>
+                New Answer Sheet Number
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                {ufmData.new_ans_sheet_number}
+              </Typography>
+            </Grid>
+            <Grid item xs={2}>
+              <Typography variant="body2" color="primary" sx={{ mb: 2, mt: 2 }}>
+                Old Answer Sheet Number
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
+                {ufmData.old_ans_sheet_number || "N/A"}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Student Remarks
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            {ufmData.student_remarks}
+          </Typography>
         </>
       )}
+      <Typography variant="h5" sx={{ mb: 2 }}>
+        UFM By
+      </Typography>
+      <Grid container sx={1}>
+        <Grid item xs={3}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Email:
+          </Typography>
+          <Typography variant="body1">{ufmByData.email || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Name:
+          </Typography>
+          <Typography variant="body1"> {ufmByData.name || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Phone:
+          </Typography>
+          <Typography variant="body1"> {ufmByData.phone || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={3}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            SAP ID:
+          </Typography>
+          <Typography variant="body1"> {ufmByData.sap_id || "N/A"}</Typography>
+        </Grid>
+      </Grid>
+      <Typography variant="h5" sx={{ mb: 2, mt: 2 }}>
+        Student Details
+      </Typography>
+      <Grid container sx={1}>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Address:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.address || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Course:
+          </Typography>
+          <Typography variant="body1">{studentData.course || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Emergency Contact Number:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.emergency_contact || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Exam Type:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.exam_type || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Father's Name:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.father_name || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Mobile:
+          </Typography>
+          <Typography variant="body1">{studentData.mobile || "N/A"}</Typography>
+        </Grid>
+      </Grid>
+      <Grid container sx={{ mt: 2 }} spacing={1}>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Name:
+          </Typography>
+          <Typography variant="body1"> {studentData.name || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Roll_No:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.roll_no || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Sap_id:
+          </Typography>
+          <Typography variant="body1">{studentData.sap_id || "N/A"}</Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Seat Number:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.seat_no || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Subject:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.subject || "N/A"}
+          </Typography>
+        </Grid>
+        <Grid item xs={2}>
+          <Typography variant="body2" color="primary" sx={{ mb: 2 }}>
+            Subject Code:
+          </Typography>
+          <Typography variant="body1">
+            {studentData.subject_code || "N/A"}
+          </Typography>
+        </Grid>
+      </Grid>
     </Box>
   );
 };
