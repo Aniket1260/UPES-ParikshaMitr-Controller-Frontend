@@ -145,8 +145,8 @@ const Notification = () => {
                 rowsPerPageOptions={[5]}
                 disableSelectionOnClick
                 disableRowSelectionOnClick
-                disableColumnSelector
-                disableColumnFilter
+                // disableColumnSelector
+                // disableColumnFilter
               />
             )}
           </Box>

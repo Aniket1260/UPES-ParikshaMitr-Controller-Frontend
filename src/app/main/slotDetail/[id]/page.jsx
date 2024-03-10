@@ -822,8 +822,8 @@ const SlotDetails = ({ params }) => {
                     rowsPerPageOptions={[5]}
                     disableSelectionOnClick
                     disableRowSelectionOnClick
-                    disableColumnSelector
-                    disableColumnFilter
+                    // disableColumnSelector
+                    // disableColumnFilter
                     checkboxSelection
                     rowHeight={60}
                     initialState={{

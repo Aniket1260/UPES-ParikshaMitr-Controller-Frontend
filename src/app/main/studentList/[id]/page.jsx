@@ -156,7 +156,9 @@ const StudentListRoomID = ({ params }) => {
                   ? "#EAAA08"
                   : params.value === "DEBARRED"
                   ? "#ad1313"
-                  : "#E508EA",
+                  : params.value === "UFM"
+                  ? "#E508EA"
+                  : "#fc5603",
               color: "white",
               padding: "5px",
               textAlign: "center",
@@ -227,7 +229,7 @@ const StudentListRoomID = ({ params }) => {
               rows={rows}
               columns={cols}
               disableRowSelectionOnClick
-              disableColumnSelector
+              // disableColumnSelector
               getRowId={(row) => row?.sap_id}
               slots={{
                 toolbar: () => (
