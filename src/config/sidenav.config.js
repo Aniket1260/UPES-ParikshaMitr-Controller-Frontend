@@ -1,7 +1,9 @@
 import {
   AccessTime,
   AddTask,
+  AssignmentLate,
   NotificationsActive,
+  PersonSearch,
   SchoolRounded,
 } from "@mui/icons-material";
 
@@ -28,5 +30,15 @@ export const invigilationMenu = [
     title: "Approve Invigilations",
     href: "/main/approve-invigilations",
     icon: <AddTask />,
+  },
+  {
+    title: "Student Search",
+    href: "/main/student-search",
+    icon: <PersonSearch />,
+  },
+  {
+    title: "UFM List",
+    href: "/main/ufm",
+    icon: <AssignmentLate />,
   },
 ];
