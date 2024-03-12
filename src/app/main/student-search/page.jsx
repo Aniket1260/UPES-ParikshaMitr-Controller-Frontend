@@ -53,7 +53,7 @@ const StudentSearch = () => {
       return;
     }
     let s = "";
-    if (search.startsWith("R")) {
+    if (search.startsWith("R") || search.startsWith("r")) {
       s = `roll_no=${search}`;
     } else {
       s = `sap_id=${search}`;

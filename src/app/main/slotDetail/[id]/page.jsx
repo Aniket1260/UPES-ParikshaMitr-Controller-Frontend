@@ -235,11 +235,13 @@ const SlotDetails = ({ params }) => {
         (acc, room) => {
           acc.totalRooms++;
           acc.totalStudents += room.students.length;
-          if (
-            room.room_invigilator_id.invigilator1_id ||
-            room.room_invigilator_id.invigilator2_id ||
-            room.room_invigilator_id.invigilator3_id
-          ) {
+          if (room.room_invigilator_id.invigilator1_id) {
+            acc.invigilatorsAssigned++;
+          }
+          if (room.room_invigilator_id.invigilator2_id) {
+            acc.invigilatorsAssigned++;
+          }
+          if (room.room_invigilator_id.invigilator3_id) {
             acc.invigilatorsAssigned++;
           }
           room.students?.forEach((student) => {
