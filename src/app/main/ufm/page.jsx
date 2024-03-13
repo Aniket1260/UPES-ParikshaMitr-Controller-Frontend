@@ -61,10 +61,14 @@ const UFMList = () => {
       field: "date",
       headerName: "Slot Date",
       flex: 1,
+      valueGetter: (params) => {
+        if (!params.value) return "";
+        return format(new Date(params.value), "do MMM yyyy");
+      },
       renderCell: (params) => {
         return (
           <Typography>
-            {format(new Date(params.value), "do MMM yyyy")}
+            {params.value}
             <Chip
               label={params.row?.timeSlot}
               color={
