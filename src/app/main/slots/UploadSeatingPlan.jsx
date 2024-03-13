@@ -450,36 +450,40 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item md={6} xs={12}>
-                <DataGrid
-                  rows={csvData}
-                  columns={cols}
-                  disableRowSelectionOnClick
-                  // disableColumnSelector
-                  // disableColumnFilter
-                  getRowId={(row) => row.sap}
-                  localeText={{ noRowsLabel: "This is a custom message :)" }}
-                  sx={{ width: "100%" }}
-                  initialState={{
-                    pagination: { paginationModel: { pageSize: 5 } },
-                  }}
-                  pageSizeOptions={[5]}
-                />
+                <Box style={{ height: 400, width: "100%" }}>
+                  <DataGrid
+                    rows={csvData}
+                    columns={cols}
+                    disableRowSelectionOnClick
+                    // disableColumnSelector
+                    // disableColumnFilter
+                    getRowId={(row) => row.sap}
+                    localeText={{ noRowsLabel: "This is a custom message :)" }}
+                    sx={{ width: "100%" }}
+                    initialState={{
+                      pagination: { paginationModel: { pageSize: 5 } },
+                    }}
+                    pageSizeOptions={[5]}
+                  />
+                </Box>
               </Grid>
               <Grid item md={6} xs={12}>
-                <DataGrid
-                  rows={room_rows}
-                  columns={room_cols}
-                  disableRowSelectionOnClick
-                  // disableColumnSelector
-                  // disableColumnFilter
-                  getRowId={(row) => row.id}
-                  localeText={{ noRowsLabel: "This is a custom message :)" }}
-                  sx={{ width: "100%" }}
-                  initialState={{
-                    pagination: { paginationModel: { pageSize: 5 } },
-                  }}
-                  pageSizeOptions={[5]}
-                />
+                <Box style={{ height: 400, width: "100%" }}>
+                  <DataGrid
+                    rows={room_rows}
+                    columns={room_cols}
+                    disableRowSelectionOnClick
+                    // disableColumnSelector
+                    // disableColumnFilter
+                    getRowId={(row) => row.id}
+                    localeText={{ noRowsLabel: "This is a custom message :)" }}
+                    sx={{ width: "100%" }}
+                    initialState={{
+                      pagination: { paginationModel: { pageSize: 5 } },
+                    }}
+                    pageSizeOptions={[5]}
+                  />
+                </Box>
               </Grid>
             </Grid>
             <Typography variant="body1" sx={{ mt: 2 }}>

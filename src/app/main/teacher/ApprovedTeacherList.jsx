@@ -108,15 +108,17 @@ const ApprovedTeacherList = ({ teacherData }) => {
       </Box>
       {rows.length === 0 && <p>No approved teachers found</p>}
       {rows.length > 0 && (
-        <DataGrid
-          rows={rows}
-          columns={cols}
-          disableRowSelectionOnClick
-          // disableColumnSelector
-          // disableColumnFilter
-          localeText={{ noRowsLabel: "This is a custom message :)" }}
-          sx={{ width: "100%" }}
-        />
+        <Box style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={cols}
+            disableRowSelectionOnClick
+            // disableColumnSelector
+            // disableColumnFilter
+            localeText={{ noRowsLabel: "This is a custom message :)" }}
+            sx={{ width: "100%" }}
+          />
+        </Box>
       )}
     </Box>
   );

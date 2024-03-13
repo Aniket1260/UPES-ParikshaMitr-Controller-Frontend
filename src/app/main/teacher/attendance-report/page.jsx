@@ -148,12 +148,7 @@ const AttendanceReport = () => {
       </Box>
       {AttendanceQuery.isLoading && <CircularProgress />}
       {AttendanceQuery.isSuccess && (
-        <Box
-          sx={{
-            maxWidth: "83vw",
-            // overflow: "scroll",
-          }}
-        >
+        <Box style={{ height: "80vh", width: "100%" }}>
           <DataGrid
             experimentalFeatures={{ columnGrouping: true }}
             rows={rows}

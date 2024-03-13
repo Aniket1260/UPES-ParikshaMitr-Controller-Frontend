@@ -187,16 +187,18 @@ const ApproveInvigilations = () => {
       </Typography>
       {UnapprovedTeachersQuery.isLoading && <CircularProgress />}
       {UnapprovedTeachersQuery.isSuccess && rows.length > 0 && (
-        <DataGrid
-          rows={rows}
-          columns={cols}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-          disableRowSelectionOnClick
-          // disableColumnSelector
-          // disableColumnFilter
-        />
+        <Box style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={cols}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+            disableRowSelectionOnClick
+            // disableColumnSelector
+            // disableColumnFilter
+          />
+        </Box>
       )}
     </Box>
   );

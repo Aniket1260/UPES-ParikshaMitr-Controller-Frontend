@@ -216,7 +216,7 @@ const StudentListRoomID = ({ params }) => {
         onClose={handleCloseAddStudentModal}
         onAddStudent={handleAddStudent}
       />
-      <Box sx={{ mt: 2, maxWidth: "80vw" }}>
+      <Box sx={{ mt: 2 }}>
         {StudentListQuery.isLoading && <CircularProgress />}
 
         {StudentListQuery.isSuccess && rows.length > 0 && (
@@ -225,22 +225,24 @@ const StudentListRoomID = ({ params }) => {
               <Text
             </Box> */}
             {/* <Box sx={{ maxWidth: "100%", overflowX: "scroll" }}> */}
-            <DataGrid
-              rows={rows}
-              columns={cols}
-              disableRowSelectionOnClick
-              // disableColumnSelector
-              getRowId={(row) => row?.sap_id}
-              slots={{
-                toolbar: () => (
-                  <GridToolbarContainer>
-                    <GridToolbarFilterButton />
-                  </GridToolbarContainer>
-                ),
-              }}
-              // sx={{ overflowX: "scroll", maxWidth: "100%" }}
-              // sx={{ width: "100%" }}
-            />
+            <Box style={{ height: "80vh", width: "100%" }}>
+              <DataGrid
+                rows={rows}
+                columns={cols}
+                disableRowSelectionOnClick
+                // disableColumnSelector
+                getRowId={(row) => row?.sap_id}
+                slots={{
+                  toolbar: () => (
+                    <GridToolbarContainer>
+                      <GridToolbarFilterButton />
+                    </GridToolbarContainer>
+                  ),
+                }}
+                // sx={{ overflowX: "scroll", maxWidth: "100%" }}
+                // sx={{ width: "100%" }}
+              />
+            </Box>
             {/* </Box> */}
           </>
         )}

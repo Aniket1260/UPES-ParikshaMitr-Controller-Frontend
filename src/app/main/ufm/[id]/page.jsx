@@ -173,7 +173,9 @@ const UFMBySlot = ({ params }) => {
               </Typography>
             </Grid>
           </Grid>
-          <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
+          <Box style={{ height: 600, width: "100%" }}>
+            <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
+          </Box>
         </>
       )}
     </Box>

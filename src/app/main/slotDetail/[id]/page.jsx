@@ -817,26 +817,28 @@ const SlotDetails = ({ params }) => {
                 </Dialog>
 
                 {rows.length > 0 && (
-                  <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    pageSize={5}
-                    rowsPerPageOptions={[5]}
-                    disableSelectionOnClick
-                    disableRowSelectionOnClick
-                    // disableColumnSelector
-                    // disableColumnFilter
-                    checkboxSelection
-                    rowHeight={60}
-                    initialState={{
-                      pagination: { paginationModel: { pageSize: 25 } },
-                    }}
-                    rowSelectionModel={rowSelected}
-                    onRowSelectionModelChange={(newSelection) => {
-                      setRowSelected(newSelection);
-                    }}
-                    getRowId={(row) => row.room_id}
-                  />
+                  <Box style={{ height: 600, width: "100%" }}>
+                    <DataGrid
+                      rows={rows}
+                      columns={columns}
+                      pageSize={5}
+                      rowsPerPageOptions={[5]}
+                      disableSelectionOnClick
+                      disableRowSelectionOnClick
+                      // disableColumnSelector
+                      // disableColumnFilter
+                      checkboxSelection
+                      rowHeight={60}
+                      initialState={{
+                        pagination: { paginationModel: { pageSize: 25 } },
+                      }}
+                      rowSelectionModel={rowSelected}
+                      onRowSelectionModelChange={(newSelection) => {
+                        setRowSelected(newSelection);
+                      }}
+                      getRowId={(row) => row.room_id}
+                    />
+                  </Box>
                 )}
               </>
             )}

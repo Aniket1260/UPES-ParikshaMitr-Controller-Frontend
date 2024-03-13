@@ -239,16 +239,18 @@ const ExamSlots = () => {
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
         {SlotQuery.isSuccess && rows.length > 0 && (
-          <DataGrid
-            rows={rows}
-            columns={cols}
-            pageSize={15}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            disableRowSelectionOnClick
-            // disableColumnSelector
-            // disableColumnFilter
-          />
+          <Box style={{ height: "80vh", width: "100%" }}>
+            <DataGrid
+              rows={rows}
+              columns={cols}
+              pageSize={15}
+              rowsPerPageOptions={[5]}
+              disableSelectionOnClick
+              disableRowSelectionOnClick
+              // disableColumnSelector
+              // disableColumnFilter
+            />
+          </Box>
         )}
       </Box>
     </Box>

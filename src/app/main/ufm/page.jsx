@@ -127,7 +127,7 @@ const UFMList = () => {
       </Typography>
       {UFMQuery.isLoading && <CircularProgress />}
       {UFMQuery.isSuccess && (
-        <Box style={{ height: 400, width: "100%" }}>
+        <Box style={{ height: "80vh", width: "100%" }}>
           <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
         </Box>
       )}
