@@ -27,6 +27,7 @@ import {
   getSlotDetailsById,
 } from "@/services/exam-slots.service";
 import {
+  Assignment,
   CheckCircle,
   Checklist,
   Groups3,
@@ -39,6 +40,7 @@ import { useQRCode } from "next-qrcode";
 import ApproveModal from "./approveModal";
 import PendingSuppliesModal from "./pendingSuppliesModal";
 import { enqueueSnackbar } from "notistack";
+import AssignTeacherModal from "./assignTeacherModal";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -267,6 +269,19 @@ const SlotDetails = ({ params }) => {
     getMoreDetails();
   }, [SlotDetailsQuery.data]);
 
+  const [assignTeacherModalOpen, setAssignTeacherModalOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const roomIds = useMemo(() => {
+    if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
+      return SlotDetailsQuery.data.rooms.map((room) => room._id).join(", ");
+    }
+    return "";
+  }, [SlotDetailsQuery.data]);
+
+  const handleSelect = (assignmentDetails) => {
+    console.log(assignmentDetails);
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -375,6 +390,16 @@ const SlotDetails = ({ params }) => {
                   <Groups3 />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Assign Invigilator" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    setSelectedRoom(params.row);
+                    setAssignTeacherModalOpen(true);
+                  }}
+                >
+                  <Assignment />
+                </IconButton>
+              </Tooltip>
             </Box>
           );
         },
@@ -439,6 +464,14 @@ const SlotDetails = ({ params }) => {
 
   return (
     <Box>
+      <AssignTeacherModal
+        open={assignTeacherModalOpen}
+        handleClose={() => setAssignTeacherModalOpen(false)}
+        room={selectedRoom}
+        roomId={roomIds}
+        slotId={slotId}
+        onSelect={handleSelect}
+      />
       <ApproveModal
         open={approveModalOpen.open}
         handleClose={() => setApproveModalOpen({ open: false, room: null })}
