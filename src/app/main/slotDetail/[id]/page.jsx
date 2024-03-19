@@ -20,6 +20,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   ChangeRoomsStatusService,
@@ -41,6 +42,7 @@ import ApproveModal from "./approveModal";
 import PendingSuppliesModal from "./pendingSuppliesModal";
 import { enqueueSnackbar } from "notistack";
 import AssignTeacherModal from "./assignTeacherModal";
+import EditInvigilatorModal from "../editInvigilatorModal";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -282,12 +284,20 @@ const SlotDetails = ({ params }) => {
     console.log(assignmentDetails);
   };
 
+  const [editInvigilatorModalOpen, setEditInvigilatorModalOpen] =
+    useState(false);
+
+  const handleEditInvigilatorClick = (params) => {
+    setSelectedRoom(params.row);
+    setEditInvigilatorModalOpen(true);
+  };
+
   const columns = useMemo(
     () => [
       {
         field: "room_no",
         headerName: "Room Number",
-        width: 200,
+        width: 170,
         renderCell: (params) => {
           return (
             <>
@@ -328,12 +338,13 @@ const SlotDetails = ({ params }) => {
         },
       },
       { field: "block", headerName: "Block", width: 120 },
-      { field: "floor", headerName: "Floor", width: 120 },
-      { field: "students", headerName: "No. of Students", width: 150 },
+      { field: "floor", headerName: "Floor", width: 80 },
+      { field: "students", headerName: "No. of Students", width: 140 },
       {
         field: "inv1",
         headerName: "Invigilator 1",
-        flex: 1,
+        // flex: 1,
+        width: 180,
         renderCell: (params) => {
           return (
             <Typography sx={{ fontWeight: 800 }}>
@@ -345,7 +356,8 @@ const SlotDetails = ({ params }) => {
       {
         field: "inv2",
         headerName: "Invigilator 2",
-        flex: 1,
+        // flex: 1,
+        width: 180,
         renderCell: (params) => {
           return (
             <Typography sx={{ fontWeight: 800 }}>
@@ -354,18 +366,19 @@ const SlotDetails = ({ params }) => {
           );
         },
       },
-      // {
-      //   field: "inv3",
-      //   headerName: "Invigilator 3",
-      //   flex: 1,
-      //   renderCell: (params) => {
-      //     return (
-      //       <Typography sx={{ fontWeight: 800 }}>
-      //         {params.value ? params.value.name : "Not Assigned"}
-      //       </Typography>
-      //     );
-      //   },
-      // },
+      {
+        field: "inv3",
+        headerName: "Invigilator 3",
+        // flex: 1,
+        width: 180,
+        renderCell: (params) => {
+          return (
+            <Typography sx={{ fontWeight: 800 }}>
+              {params.value ? params.value.name : "Not Assigned"}
+            </Typography>
+          );
+        },
+      },
 
       {
         field: "room_id",
@@ -398,6 +411,19 @@ const SlotDetails = ({ params }) => {
                   }}
                 >
                   <Assignment />
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                title="Edit Number of Invigilators"
+                placement="top"
+                arrow
+              >
+                <IconButton
+                  onClick={() => {
+                    handleEditInvigilatorClick(params);
+                  }}
+                >
+                  <AddCircleOutlineIcon />
                 </IconButton>
               </Tooltip>
             </Box>
@@ -464,6 +490,13 @@ const SlotDetails = ({ params }) => {
 
   return (
     <Box>
+      <EditInvigilatorModal
+        room={selectedRoom}
+        isOpen={editInvigilatorModalOpen}
+        onClose={() => setEditInvigilatorModalOpen(false)}
+        invigilators_assigned={addDetails.invigilatorsAssigned}
+      />
+
       <AssignTeacherModal
         open={assignTeacherModalOpen}
         handleClose={() => setAssignTeacherModalOpen(false)}
@@ -476,6 +509,7 @@ const SlotDetails = ({ params }) => {
         open={approveModalOpen.open}
         handleClose={() => setApproveModalOpen({ open: false, room: null })}
         room={approveModalOpen.room}
+        invigilatorsAssigned={addDetails.invigilatorsAssigned}
         setRoom={(room) =>
           setApproveModalOpen((prev) => ({ ...prev, room: room }))
         }
