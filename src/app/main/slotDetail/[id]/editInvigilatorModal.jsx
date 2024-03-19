@@ -15,9 +15,7 @@ const EditInvigilatorModal = ({
   invigilators_assigned,
   roomId,
 }) => {
-  const [invigilators, setInvigilators] = useState(
-    invigilators_assigned === 0 ? 1 : invigilators_assigned
-  );
+  const [invigilators, setInvigilators] = useState(invigilators_assigned);
 
   useEffect(() => {
     setInvigilators(invigilators_assigned);
@@ -53,7 +51,7 @@ const EditInvigilatorModal = ({
             type="number"
             value={invigilators}
             InputProps={{
-              inputProps: { min: 0, max: 3 },
+              inputProps: { min: 0, max: 3 }, //min is 0, bcz I'm taking invigilator count as per assignment, so if no invigilator is assigned then it would show 0
               style: { textAlign: "center" },
               onKeyDown: (e) => e.preventDefault(),
             }}

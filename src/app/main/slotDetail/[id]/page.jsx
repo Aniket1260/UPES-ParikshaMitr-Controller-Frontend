@@ -286,10 +286,13 @@ const SlotDetails = ({ params }) => {
 
   const [editInvigilatorModalOpen, setEditInvigilatorModalOpen] =
     useState(false);
+  const [editInvigilatorModalData, setEditInvigilatorModalData] =
+    useState(null);
 
   const handleEditInvigilatorClick = (params) => {
     setSelectedRoom(params.row);
     setEditInvigilatorModalOpen(true);
+    setEditInvigilatorModalData(params.row.num_inv);
   };
 
   const columns = useMemo(
@@ -346,6 +349,9 @@ const SlotDetails = ({ params }) => {
         // flex: 1,
         width: 180,
         renderCell: (params) => {
+          if (params.row.num_inv < 1) {
+            return "";
+          }
           return (
             <Typography sx={{ fontWeight: 800 }}>
               {params.value ? params.value.name : "Not Assigned"}
@@ -359,6 +365,9 @@ const SlotDetails = ({ params }) => {
         // flex: 1,
         width: 180,
         renderCell: (params) => {
+          if (params.row.num_inv < 2) {
+            return "";
+          }
           return (
             <Typography sx={{ fontWeight: 800 }}>
               {params.value ? params.value.name : "Not Assigned"}
@@ -372,6 +381,9 @@ const SlotDetails = ({ params }) => {
         // flex: 1,
         width: 180,
         renderCell: (params) => {
+          if (params.row.num_inv < 3) {
+            return "";
+          }
           return (
             <Typography sx={{ fontWeight: 800 }}>
               {params.value ? params.value.name : "Not Assigned"}
@@ -448,6 +460,7 @@ const SlotDetails = ({ params }) => {
           inv2: room.room_invigilator_id.invigilator2_id,
           inv3: room.room_invigilator_id.invigilator3_id,
           status: room.status,
+          num_inv: room.num_invigilators,
         };
       });
 
@@ -494,7 +507,7 @@ const SlotDetails = ({ params }) => {
         room={selectedRoom}
         isOpen={editInvigilatorModalOpen}
         onClose={() => setEditInvigilatorModalOpen(false)}
-        invigilators_assigned={addDetails.invigilatorsAssigned}
+        invigilators_assigned={editInvigilatorModalData}
         roomId={roomIds}
       />
 
