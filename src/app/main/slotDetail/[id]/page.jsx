@@ -42,7 +42,7 @@ import ApproveModal from "./approveModal";
 import PendingSuppliesModal from "./pendingSuppliesModal";
 import { enqueueSnackbar } from "notistack";
 import AssignTeacherModal from "./assignTeacherModal";
-import EditInvigilatorModal from "../editInvigilatorModal";
+import EditInvigilatorModal from "./editInvigilatorModal";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -495,6 +495,7 @@ const SlotDetails = ({ params }) => {
         isOpen={editInvigilatorModalOpen}
         onClose={() => setEditInvigilatorModalOpen(false)}
         invigilators_assigned={addDetails.invigilatorsAssigned}
+        roomId={roomIds}
       />
 
       <AssignTeacherModal

@@ -13,6 +13,7 @@ const EditInvigilatorModal = ({
   isOpen,
   onClose,
   invigilators_assigned,
+  roomId,
 }) => {
   const [invigilators, setInvigilators] = useState(invigilators_assigned);
 
@@ -25,7 +26,11 @@ const EditInvigilatorModal = ({
   };
 
   const handleSave = () => {
-    console.log("Updated invigilators:", invigilators);
+    const invigilatorUpdated = {
+      room_id: roomId,
+      num_inv: invigilators,
+    };
+    console.log(invigilatorUpdated);
     onClose();
   };
 
