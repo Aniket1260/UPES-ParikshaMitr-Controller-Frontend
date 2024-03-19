@@ -301,6 +301,26 @@ const EditTeacherModal = ({
             }
             sx={{ my: 1 }}
           />
+          <TextField
+            label="Phone"
+            type="number"
+            fullWidth
+            value={teacher?.phone}
+            onChange={(e) =>
+              changeTeacher({ ...teacher, phone: e.target.value })
+            }
+            sx={{ my: 1 }}
+          />
+          <TextField
+            label="Email"
+            type="text"
+            fullWidth
+            value={teacher?.email}
+            onChange={(e) =>
+              changeTeacher({ ...teacher, email: e.target.value })
+            }
+            sx={{ my: 1 }}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
