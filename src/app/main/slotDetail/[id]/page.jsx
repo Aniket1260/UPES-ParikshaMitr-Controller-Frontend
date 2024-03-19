@@ -280,8 +280,8 @@ const SlotDetails = ({ params }) => {
     return "";
   }, [SlotDetailsQuery.data]);
 
-  const handleSelect = (assignmentDetails) => {
-    console.log(assignmentDetails);
+  const handleSelect = (response) => {
+    console.log(response);
   };
 
   const [editInvigilatorModalOpen, setEditInvigilatorModalOpen] =

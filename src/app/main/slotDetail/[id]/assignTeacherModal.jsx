@@ -11,6 +11,7 @@ import {
 import Autocomplete from "@mui/material/Autocomplete";
 import { getApprovedTeachers } from "@/services/cont-teacher.service";
 import { useQuery } from "@tanstack/react-query";
+import { ManualAssignInvigilatorService } from "@/services/controller.service";
 
 const AssignTeacherModal = ({
   open,
@@ -52,8 +53,16 @@ const AssignTeacherModal = ({
         slotId: slotId,
         invigilatorId: invigilatorId,
       };
-      onSelect(assignmentDetails);
-      handleClose();
+      try {
+        const response = await ManualAssignInvigilatorService(
+          controllerToken,
+          assignmentDetails
+        );
+        onSelect(response);
+        handleClose();
+      } catch (error) {
+        console.log("error", error);
+      }
     }
   };
 
