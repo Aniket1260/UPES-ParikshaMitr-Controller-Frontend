@@ -7,6 +7,7 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import { SetNumInvigilators } from "@/services/controller.service";
 
 const EditInvigilatorModal = ({
   room,
@@ -15,6 +16,10 @@ const EditInvigilatorModal = ({
   invigilators_assigned,
   roomId,
 }) => {
+  if (global?.window !== undefined) {
+    var controllerToken = localStorage.getItem("token");
+  }
+
   const [invigilators, setInvigilators] = useState(invigilators_assigned);
 
   useEffect(() => {
@@ -25,13 +30,21 @@ const EditInvigilatorModal = ({
     onClose();
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const invigilatorUpdated = {
       room_id: roomId,
       num_inv: invigilators,
     };
-    console.log(invigilatorUpdated);
-    onClose();
+    try {
+      const response = await SetNumInvigilators(
+        controllerToken,
+        invigilatorUpdated
+      );
+      console.log(response);
+      handleClose();
+    } catch (error) {
+      console.log("error", error);
+    }
   };
 
   return (
@@ -51,7 +64,7 @@ const EditInvigilatorModal = ({
             type="number"
             value={invigilators}
             InputProps={{
-              inputProps: { min: 0, max: 3 }, //min is 0, bcz I'm taking invigilator count as per assignment, so if no invigilator is assigned then it would show 0
+              inputProps: { min: 1, max: 3 },
               style: { textAlign: "center" },
               onKeyDown: (e) => e.preventDefault(),
             }}
