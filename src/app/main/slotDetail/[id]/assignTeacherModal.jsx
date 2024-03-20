@@ -13,14 +13,7 @@ import { getApprovedTeachers } from "@/services/cont-teacher.service";
 import { useQuery } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
 
-const AssignTeacherModal = ({
-  open,
-  handleClose,
-  roomId,
-  onSelect,
-  room,
-  slotId,
-}) => {
+const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
@@ -58,7 +51,7 @@ const AssignTeacherModal = ({
           controllerToken,
           assignmentDetails
         );
-        onSelect(response);
+        console.log(response);
         handleClose();
       } catch (error) {
         console.log("error", error);

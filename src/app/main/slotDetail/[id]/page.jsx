@@ -239,13 +239,13 @@ const SlotDetails = ({ params }) => {
         (acc, room) => {
           acc.totalRooms++;
           acc.totalStudents += room.students.length;
-          if (room.room_invigilator_id.invigilator1_id) {
+          if (room.room_invigilator_id?.invigilator1_id) {
             acc.invigilatorsAssigned++;
           }
-          if (room.room_invigilator_id.invigilator2_id) {
+          if (room.room_invigilator_id?.invigilator2_id) {
             acc.invigilatorsAssigned++;
           }
-          if (room.room_invigilator_id.invigilator3_id) {
+          if (room.room_invigilator_id?.invigilator3_id) {
             acc.invigilatorsAssigned++;
           }
           room.students?.forEach((student) => {
@@ -272,16 +272,13 @@ const SlotDetails = ({ params }) => {
   }, [SlotDetailsQuery.data]);
 
   const [assignTeacherModalOpen, setAssignTeacherModalOpen] = useState(false);
+  const [assignTeacherModalData, setAssignTeacherModalData] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
-  const roomIds = useMemo(() => {
-    if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
-      return SlotDetailsQuery.data.rooms.map((room) => room._id).join(", ");
-    }
-    return "";
-  }, [SlotDetailsQuery.data]);
 
-  const handleSelect = (response) => {
-    console.log(response);
+  const handleAssignTeacherClick = (params) => {
+    setSelectedRoom(params.row);
+    setAssignTeacherModalOpen(true);
+    setAssignTeacherModalData(params.row.room_id);
   };
 
   const [editInvigilatorModalOpen, setEditInvigilatorModalOpen] =
@@ -292,7 +289,10 @@ const SlotDetails = ({ params }) => {
   const handleEditInvigilatorClick = (params) => {
     setSelectedRoom(params.row);
     setEditInvigilatorModalOpen(true);
-    setEditInvigilatorModalData(params.row.num_inv);
+    setEditInvigilatorModalData({
+      roomId: params.row.room_id,
+      invigilators_num: params.row.num_inv,
+    });
   };
 
   const columns = useMemo(
@@ -341,7 +341,6 @@ const SlotDetails = ({ params }) => {
         },
       },
       { field: "block", headerName: "Block", width: 95 },
-      // { field: "floor", headerName: "Floor", width: 80 },
       { field: "students", headerName: "No. of Students", width: 135 },
       {
         field: "Invigilators",
@@ -430,8 +429,7 @@ const SlotDetails = ({ params }) => {
               <Tooltip title="Assign Invigilator" placement="top" arrow>
                 <IconButton
                   onClick={() => {
-                    setSelectedRoom(params.row);
-                    setAssignTeacherModalOpen(true);
+                    handleAssignTeacherClick(params);
                   }}
                 >
                   <Assignment />
@@ -468,9 +466,9 @@ const SlotDetails = ({ params }) => {
           block: room.block,
           floor: room.floor,
           students: room.students.length,
-          inv1: room.room_invigilator_id.invigilator1_id,
-          inv2: room.room_invigilator_id.invigilator2_id,
-          inv3: room.room_invigilator_id.invigilator3_id,
+          inv1: room.room_invigilator_id?.invigilator1_id,
+          inv2: room.room_invigilator_id?.invigilator2_id,
+          inv3: room.room_invigilator_id?.invigilator3_id,
           status: room.status,
           num_inv: room.num_invigilators,
         };
@@ -478,9 +476,14 @@ const SlotDetails = ({ params }) => {
 
       if (search) {
         return roomRows.filter((row) => {
-          return ("" + row.room_no)
-            .toLowerCase()
-            .startsWith(search.toLowerCase());
+          return (
+            (row.inv1 &&
+              row.inv1.name.toLowerCase().startsWith(search.toLowerCase())) ||
+            (row.inv2 &&
+              row.inv2.name.toLowerCase().startsWith(search.toLowerCase())) ||
+            (row.inv3 &&
+              row.inv3.name.toLowerCase().startsWith(search.toLowerCase()))
+          );
         });
       }
 
@@ -519,17 +522,16 @@ const SlotDetails = ({ params }) => {
         room={selectedRoom}
         isOpen={editInvigilatorModalOpen}
         onClose={() => setEditInvigilatorModalOpen(false)}
-        invigilators_assigned={editInvigilatorModalData}
-        roomId={roomIds}
+        invigilators_assigned={editInvigilatorModalData?.invigilators_num}
+        roomId={editInvigilatorModalData?.roomId}
       />
 
       <AssignTeacherModal
         open={assignTeacherModalOpen}
         handleClose={() => setAssignTeacherModalOpen(false)}
         room={selectedRoom}
-        roomId={roomIds}
+        roomId={assignTeacherModalData}
         slotId={slotId}
-        onSelect={handleSelect}
       />
       <ApproveModal
         open={approveModalOpen.open}
@@ -809,7 +811,7 @@ const SlotDetails = ({ params }) => {
                       </IconButton>
                     </Tooltip>
                     <TextField
-                      placeholder="Search Room Nos."
+                      placeholder="Search Invigilator Name"
                       variant="standard"
                       InputProps={{
                         startAdornment: (
