@@ -300,7 +300,7 @@ const SlotDetails = ({ params }) => {
       {
         field: "room_no",
         headerName: "Room Number",
-        width: 170,
+        width: 160,
         renderCell: (params) => {
           return (
             <>
@@ -340,14 +340,26 @@ const SlotDetails = ({ params }) => {
           );
         },
       },
-      { field: "block", headerName: "Block", width: 120 },
-      { field: "floor", headerName: "Floor", width: 80 },
-      { field: "students", headerName: "No. of Students", width: 140 },
+      { field: "block", headerName: "Block", width: 95 },
+      // { field: "floor", headerName: "Floor", width: 80 },
+      { field: "students", headerName: "No. of Students", width: 135 },
+      {
+        field: "Invigilators",
+        headerName: "Invigilators accepted",
+        width: 145,
+        renderCell: (params) => {
+          return (
+            <Typography sx={{ fontWeight: 800 }}>
+              {params.row.num_inv}
+            </Typography>
+          );
+        },
+      },
       {
         field: "inv1",
         headerName: "Invigilator 1",
         // flex: 1,
-        width: 180,
+        width: 175,
         renderCell: (params) => {
           if (params.row.num_inv < 1) {
             return "";
@@ -363,7 +375,7 @@ const SlotDetails = ({ params }) => {
         field: "inv2",
         headerName: "Invigilator 2",
         // flex: 1,
-        width: 180,
+        width: 175,
         renderCell: (params) => {
           if (params.row.num_inv < 2) {
             return "";
@@ -379,7 +391,7 @@ const SlotDetails = ({ params }) => {
         field: "inv3",
         headerName: "Invigilator 3",
         // flex: 1,
-        width: 180,
+        width: 175,
         renderCell: (params) => {
           if (params.row.num_inv < 3) {
             return "";
