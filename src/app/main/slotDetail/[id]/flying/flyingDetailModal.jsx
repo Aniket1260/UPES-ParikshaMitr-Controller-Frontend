@@ -5,6 +5,7 @@ import {
   AccordionSummary,
   Box,
   Button,
+  Chip,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -29,7 +30,7 @@ const DetailsModal = ({ isOpen, onClose, selectedRow }) => {
               <Typography color="primary" variant="body1">
                 Name
               </Typography>
-              <Typography variant="body1">
+              <Typography variant="h6">
                 {selectedRow.teacher_id.name}
               </Typography>
             </Box>
@@ -39,7 +40,7 @@ const DetailsModal = ({ isOpen, onClose, selectedRow }) => {
                 <Typography color="primary" variant="body1">
                   SAP ID
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="h6">
                   {selectedRow.teacher_id.sap_id}
                 </Typography>
               </Grid>
@@ -47,42 +48,45 @@ const DetailsModal = ({ isOpen, onClose, selectedRow }) => {
                 <Typography color="primary" variant="body1">
                   Phone
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="h6">
                   {selectedRow.teacher_id.phone}
                 </Typography>
               </Grid>
             </Grid>
 
             <Box sx={{ marginTop: 2 }}>
-              <Typography variant="subtitle1">Room Details</Typography>
-              <List>
-                {selectedRow.rooms_assigned.map((room) => (
-                  <ListItem key={room._id}>
-                    <ListItemText
-                      primary={`Room No: ${room.room_no}`}
-                      secondary={`Remark: ${room.remark}`}
+              <Typography color="primary" variant="body1">
+                Room Details
+              </Typography>
+              {selectedRow.rooms_assigned.map((room) => (
+                <Accordion key={room}>
+                  <AccordionSummary
+                    expandIcon={<GridExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography variant="subtitle1" mr={1}>
+                      {room.room_id?.room_no}
+                    </Typography>{" "}
+                    <Chip
+                      label={room.status}
+                      color={
+                        room.status === "approved"
+                          ? "success"
+                          : room.status === "requested"
+                          ? "warning"
+                          : "default"
+                      }
                     />
-                  </ListItem>
-                ))}
-              </List>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="body1">
+                      {room.room_remarks ? room.room_remarks : "No remarks yet"}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
             </Box>
-
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<GridExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography variant="subtitle1">Remarks</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography variant="body1">
-                  {selectedRow.final_remarks
-                    ? selectedRow.final_remarks
-                    : "No remarks yet"}
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
           </>
         )}
         <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>

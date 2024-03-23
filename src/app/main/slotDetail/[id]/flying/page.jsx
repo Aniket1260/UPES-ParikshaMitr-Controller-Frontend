@@ -14,6 +14,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import DetailsModal from "./flyingDetailModal";
+import AssignRoomModal from "./AssignRoomsModal";
 
 const SlotFlying = ({ params }) => {
   if (global?.window !== undefined) {
@@ -22,6 +23,12 @@ const SlotFlying = ({ params }) => {
 
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [assignModal, setAssignModal] = useState({
+    isOpen: false,
+    flyingId: null,
+    rooms_assigned: [],
+    name: null,
+  });
   const handleViewDetails = (row) => {
     setSelectedRow(row);
     setIsModalOpen(true);
@@ -164,6 +171,12 @@ const SlotFlying = ({ params }) => {
               <IconButton
                 onClick={() => {
                   console.log(params.row);
+                  setAssignModal({
+                    isOpen: true,
+                    flyingId: params.row._id,
+                    name: params.row.teacher_id?.name,
+                    rooms_assigned: params.row.rooms_assigned,
+                  });
                 }}
               >
                 <Add />
@@ -183,6 +196,21 @@ const SlotFlying = ({ params }) => {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           selectedRow={selectedRow}
+        />
+        <AssignRoomModal
+          isOpen={assignModal.isOpen}
+          onClose={() =>
+            setAssignModal({
+              isOpen: false,
+              flyingId: null,
+              name: null,
+              rooms_assigned: [],
+            })
+          }
+          slotId={slotId}
+          flyingId={assignModal.flyingId}
+          name={assignModal.name}
+          rooms_assigned={assignModal.rooms_assigned}
         />
         {FlyingQuery.isLoading && <CircularProgress />}
         {FlyingQuery.isSuccess && (
