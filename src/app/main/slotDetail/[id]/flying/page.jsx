@@ -12,12 +12,20 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import DetailsModal from "./flyingDetailModal";
 
 const SlotFlying = ({ params }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
+
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleViewDetails = (row) => {
+    setSelectedRow(row);
+    setIsModalOpen(true);
+  };
   const queryClient = useQueryClient();
   const { id: slotId } = params;
 
@@ -146,6 +154,7 @@ const SlotFlying = ({ params }) => {
               <IconButton
                 onClick={() => {
                   console.log(params.row);
+                  handleViewDetails(params.row);
                 }}
               >
                 <Visibility />
@@ -170,6 +179,11 @@ const SlotFlying = ({ params }) => {
     <Box>
       <Typography variant="h4">Flying Details</Typography>
       <Box sx={{ mt: 2 }}>
+        <DetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          selectedRow={selectedRow}
+        />
         {FlyingQuery.isLoading && <CircularProgress />}
         {FlyingQuery.isSuccess && (
           <Box style={{ height: "80vh", width: "100%" }}>
