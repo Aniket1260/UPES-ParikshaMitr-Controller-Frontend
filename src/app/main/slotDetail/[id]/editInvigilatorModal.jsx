@@ -8,6 +8,8 @@ import {
   TextField,
 } from "@mui/material";
 import { SetNumInvigilators } from "@/services/controller.service";
+import { enqueueSnackbar } from "notistack";
+import { useQueryClient } from "@tanstack/react-query";
 
 const EditInvigilatorModal = ({
   room,
@@ -19,6 +21,8 @@ const EditInvigilatorModal = ({
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
+
+  const queryClient = useQueryClient();
 
   const [invigilators, setInvigilators] = useState(invigilators_assigned);
 
@@ -40,10 +44,15 @@ const EditInvigilatorModal = ({
         controllerToken,
         invigilatorUpdated
       );
+      queryClient.invalidateQueries("rooms");
       console.log(response);
       handleClose();
     } catch (error) {
       console.log("error", error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.data.message,
+      });
     }
   };
 
