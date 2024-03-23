@@ -280,3 +280,22 @@ export const ChangeRoomsStatusService = async (token, data) => {
     throw error;
   }
 };
+
+export const UploadDutyService = async (token, data) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/invigilation/slot/duty-sheet-upload`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

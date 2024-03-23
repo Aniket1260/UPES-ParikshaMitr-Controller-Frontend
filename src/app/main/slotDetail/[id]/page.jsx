@@ -577,13 +577,22 @@ const SlotDetails = ({ params }) => {
             mb={2}
           >
             <Typography variant="h4">Slot Details</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setAddRoomModalOpen(true)}
-            >
-              Add Room
-            </Button>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => router.push(`/main/slotDetail/${slotId}/flying`)}
+              >
+                Manage Flying
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setAddRoomModalOpen(true)}
+              >
+                Add Room
+              </Button>
+            </Box>
           </Grid>
 
           <Dialog

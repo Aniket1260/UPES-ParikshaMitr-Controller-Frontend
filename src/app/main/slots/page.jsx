@@ -4,7 +4,7 @@ import {
   DeleteSlotService,
   getAllExamSlots,
 } from "@/services/exam-slots.service";
-import { Ballot, Call, Delete, Visibility } from "@mui/icons-material";
+import { Ballot, Call, Delete, Groups, Visibility } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -32,6 +32,7 @@ import { enqueueSnackbar } from "notistack";
 import React, { useMemo } from "react";
 import UploadSeatingPlan from "./UploadSeatingPlan";
 import ContactModal from "./ContactModal";
+import UploadDutyPlan from "./UploadDutyChart";
 
 const ExamSlots = () => {
   const [addModal, setAddModal] = React.useState({
@@ -41,6 +42,10 @@ const ExamSlots = () => {
   const queryClient = useQueryClient();
 
   const [uploadSeatingPlanModal, setUploadSeatingPlanModal] = React.useState({
+    open: false,
+    slot: null,
+  });
+  const [uploadDutyPlanModal, setUploadDutyPlanModal] = React.useState({
     open: false,
     slot: null,
   });
@@ -146,6 +151,18 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            <Tooltip title="Upload Duty Chart" placement="top" arrow>
+              <IconButton
+                onClick={() =>
+                  setUploadDutyPlanModal({
+                    open: true,
+                    slot: row,
+                  })
+                }
+              >
+                <Groups />
+              </IconButton>
+            </Tooltip>
             {/* <Tooltip title="Slot Contact Details" placement="top" arrow>
               <IconButton
                 onClick={() =>
@@ -216,6 +233,16 @@ const ExamSlots = () => {
           })
         }
         slot={uploadSeatingPlanModal.slot}
+      />
+      <UploadDutyPlan
+        open={uploadDutyPlanModal.open}
+        handleClose={() =>
+          setUploadDutyPlanModal({
+            open: false,
+            slot: null,
+          })
+        }
+        slot={uploadDutyPlanModal.slot}
       />
       <Box
         sx={{

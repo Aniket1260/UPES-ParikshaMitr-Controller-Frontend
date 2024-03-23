@@ -10,13 +10,16 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getApprovedTeachers } from "@/services/cont-teacher.service";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
+import { enqueueSnackbar } from "notistack";
 
 const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
+
+  const queryClient = useQueryClient();
 
   const approvedTeacherResult = useQuery({
     queryKey: ["teachers", { type: "approved" }, controllerToken],
@@ -52,9 +55,14 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
           assignmentDetails
         );
         console.log(response);
+        queryClient.invalidateQueries("rooms");
         handleClose();
       } catch (error) {
         console.log("error", error);
+        enqueueSnackbar({
+          variant: "error",
+          message: error.response?.data.message,
+        });
       }
     }
   };
