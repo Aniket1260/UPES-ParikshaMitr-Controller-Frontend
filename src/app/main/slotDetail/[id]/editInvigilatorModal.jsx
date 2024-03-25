@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { SetNumInvigilators } from "@/services/controller.service";
 import { enqueueSnackbar } from "notistack";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const EditInvigilatorModal = ({
   room,
@@ -34,26 +34,32 @@ const EditInvigilatorModal = ({
     onClose();
   };
 
+  const editNumInvigilatorMutation = useMutation({
+    mutationFn: (invigilatorUpdated) =>
+      SetNumInvigilators(controllerToken, invigilatorUpdated),
+    onSuccess: () => {
+      queryClient.invalidateQueries("rooms");
+      handleClose();
+      enqueueSnackbar({
+        variant: "success",
+        message: "Invigilators updated successfully",
+      });
+    },
+    onError: (error) => {
+      console.log("error", error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.message,
+      });
+    },
+  });
+
   const handleSave = async () => {
     const invigilatorUpdated = {
       room_id: roomId,
       num_inv: invigilators,
     };
-    try {
-      const response = await SetNumInvigilators(
-        controllerToken,
-        invigilatorUpdated
-      );
-      queryClient.invalidateQueries("rooms");
-      console.log(response);
-      handleClose();
-    } catch (error) {
-      console.log("error", error);
-      enqueueSnackbar({
-        variant: "error",
-        message: error.response?.data.message,
-      });
-    }
+    editNumInvigilatorMutation.mutate(invigilatorUpdated);
   };
 
   return (
