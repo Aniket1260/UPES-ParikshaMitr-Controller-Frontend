@@ -1,6 +1,6 @@
 "use client";
 import { getFlyingDetailsBySlotID } from "@/services/flying.service";
-import { Add, Visibility } from "@mui/icons-material";
+import { Add, Refresh, Visibility } from "@mui/icons-material";
 import {
   Box,
   Chip,
@@ -190,7 +190,16 @@ const SlotFlying = ({ params }) => {
 
   return (
     <Box>
-      <Typography variant="h4">Flying Details</Typography>
+      <Typography variant="h4">
+        Flying Details{" "}
+        <IconButton
+          onClick={() =>
+            queryClient.invalidateQueries(["flying", slotId, controllerToken])
+          }
+        >
+          <Refresh />
+        </IconButton>
+      </Typography>
       <Box sx={{ mt: 2 }}>
         <DetailsModal
           isOpen={isModalOpen}
