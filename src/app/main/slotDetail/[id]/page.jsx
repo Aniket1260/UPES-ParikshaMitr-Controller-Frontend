@@ -24,6 +24,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   ChangeRoomsStatusService,
+  CreateRoomService,
   approveRoom,
   getSlotDetailsById,
 } from "@/services/exam-slots.service";
@@ -131,6 +132,23 @@ const SlotDetails = ({ params }) => {
     },
   });
 
+  const createRoomService = useMutation({
+    mutationFn: (data) => CreateRoomService(controllerToken, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("slotDetails");
+      enqueueSnackbar({
+        variant: "success",
+        message: "Room Added Successfully",
+      });
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+  });
+
   const markSelectedRoomsStatusChange = async () => {
     if (rowSelected.length === 0) {
       enqueueSnackbar({
@@ -212,7 +230,7 @@ const SlotDetails = ({ params }) => {
   };
   const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
   const [newRoomData, setNewRoomData] = useState({
-    room_no: 0,
+    roomNo: 0,
     block: "",
     floor: 0,
   });
@@ -220,15 +238,16 @@ const SlotDetails = ({ params }) => {
   const handleAddRoom = () => {
     const newRoomDataCopy = {
       ...newRoomData,
-      room_no: parseInt(newRoomData.room_no, 10),
+      roomNo: parseInt(newRoomData.roomNo, 10),
     };
     console.log(newRoomDataCopy);
     setNewRoomData({
-      room_no: 0,
+      roomNo: 0,
       block: "",
       floor: 0,
     });
     setAddRoomModalOpen(false);
+    createRoomService.mutate(newRoomDataCopy);
   };
 
   const [addDetails, setAddDetails] = useState(moreDetails);
@@ -1027,9 +1046,9 @@ const AddRoomModal = ({
           label="Room Number"
           type="number"
           fullWidth
-          value={newRoomData.room_no}
+          value={newRoomData.roomNo}
           onChange={(e) =>
-            setNewRoomData({ ...newRoomData, room_no: e.target.value })
+            setNewRoomData({ ...newRoomData, roomNo: e.target.value })
           }
           sx={{ mb: 2, mt: 3 }}
         />
