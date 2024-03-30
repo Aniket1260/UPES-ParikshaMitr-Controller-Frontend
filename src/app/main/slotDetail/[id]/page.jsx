@@ -23,6 +23,7 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { DataGrid } from "@mui/x-data-grid";
 import {
+  AddRoomtoSlotService,
   ChangeRoomsStatusService,
   CreateRoomService,
   approveRoom,
@@ -87,6 +88,7 @@ const SlotDetails = ({ params }) => {
     open: false,
     room: null,
   });
+  const [addRoomLoading, setAddRoomLoading] = useState(false);
   const [rowSelected, setRowSelected] = useState([]);
   const [selectedStatusChangeModal, setSelectedStatusChangeModal] = useState({
     open: false,
@@ -96,6 +98,7 @@ const SlotDetails = ({ params }) => {
   const [roomTypeToggle, setRoomTypeToggle] = useState("all");
 
   const { Canvas } = useQRCode();
+
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -134,12 +137,35 @@ const SlotDetails = ({ params }) => {
 
   const createRoomService = useMutation({
     mutationFn: (data) => CreateRoomService(controllerToken, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries("slotDetails");
-      enqueueSnackbar({
-        variant: "success",
-        message: "Room Added Successfully",
-      });
+    onMutate: () => {
+      setAddRoomLoading(true);
+    },
+    onSettled: () => {
+      setAddRoomLoading(false);
+    },
+    onSuccess: async (data) => {
+      try {
+        const roomidResponse = data.message.split("ID: ")[1];
+        const room_id = roomidResponse ? [roomidResponse] : [];
+        const roomDetails = {
+          slotId: slotId,
+          roomIds: room_id,
+        };
+        console.log(roomDetails);
+        await AddRoomtoSlotService(controllerToken, roomDetails);
+
+        queryClient.invalidateQueries("slotDetails");
+        enqueueSnackbar({
+          variant: "success",
+          message: "Room Added Successfully",
+        });
+      } catch (error) {
+        enqueueSnackbar({
+          variant: "error",
+          message:
+            error.response?.status + " : " + error.response?.data.message,
+        });
+      }
     },
     onError: (error) => {
       enqueueSnackbar({
@@ -239,6 +265,8 @@ const SlotDetails = ({ params }) => {
     const newRoomDataCopy = {
       ...newRoomData,
       roomNo: parseInt(newRoomData.roomNo, 10),
+      block: "BLOCK-" + newRoomData.block,
+      floor: parseInt(newRoomData.floor, 10),
     };
     console.log(newRoomDataCopy);
     setNewRoomData({
@@ -614,18 +642,15 @@ const SlotDetails = ({ params }) => {
             </Box>
           </Grid>
 
-          <Dialog
+          <AddRoomModal
             open={addRoomModalOpen}
-            onClose={() => setAddRoomModalOpen(false)}
-          >
-            <AddRoomModal
-              open={addRoomModalOpen}
-              handleClose={() => setAddRoomModalOpen(false)}
-              handleAddRoom={handleAddRoom}
-              newRoomData={newRoomData}
-              setNewRoomData={setNewRoomData}
-            />
-          </Dialog>
+            handleClose={() => setAddRoomModalOpen(false)}
+            handleAddRoom={handleAddRoom}
+            newRoomData={newRoomData}
+            setNewRoomData={setNewRoomData}
+            loading={addRoomLoading}
+          />
+
           <Grid container sx={{ px: 1 }}>
             <Grid item xs={6}>
               <Grid container direction="column" spacing={1}>
@@ -1037,6 +1062,7 @@ const AddRoomModal = ({
   handleAddRoom,
   newRoomData,
   setNewRoomData,
+  loading,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -1080,8 +1106,9 @@ const AddRoomModal = ({
             color="primary"
             onClick={handleAddRoom}
             sx={{ ml: 1 }}
+            disabled={loading}
           >
-            Add
+            {loading ? <CircularProgress size={24} /> : "Add Room"}
           </Button>
         </Box>
       </DialogContent>
