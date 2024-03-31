@@ -1,6 +1,7 @@
 import {
   AccessTime,
   AddTask,
+  Assessment,
   AssignmentLate,
   NotificationsActive,
   PersonSearch,
@@ -17,6 +18,11 @@ export const userMenu = [
     title: "Notifications",
     href: "/main/notification",
     icon: <NotificationsActive />,
+  },
+  {
+    title: "Duty Status",
+    href: "/main/duty-status",
+    icon: <Assessment />,
   },
 ];
 

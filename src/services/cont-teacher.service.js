@@ -148,3 +148,21 @@ export const ChangePasswordService = async (data, token) => {
     throw error;
   }
 };
+
+export const getSlotsByDate = async (date, token) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/slot/by-date?date=${date}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
