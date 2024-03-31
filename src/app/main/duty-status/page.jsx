@@ -5,6 +5,8 @@ import {
   Button,
   ButtonGroup,
   CircularProgress,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
@@ -21,6 +23,7 @@ const DutyStatus = () => {
   }
 
   const [date, setDate] = useState(new Date());
+  const [timeSlot, setTimeSlot] = useState("Morning");
 
   const SlotGetQuery = useQuery({
     queryKey: ["slot-date", date, controllerToken],
@@ -51,7 +54,10 @@ const DutyStatus = () => {
             <DatePicker
               label="Slot Date"
               value={date}
-              onChange={(newValue) => setDate(newValue)}
+              onChange={(newValue) => {
+                setDate(newValue);
+                setTimeSlot("");
+              }}
               sx={{ m: 1 }}
               format="dd/MM/yyyy"
             />
@@ -59,11 +65,24 @@ const DutyStatus = () => {
         </Box>
         <Box>
           {SlotGetQuery.isSuccess && (
-            <ButtonGroup size="large" variant="outlined" sx={{ ml: 2 }}>
+            <ToggleButtonGroup
+              value={timeSlot}
+              exclusive
+              onChange={(e, newSlot) => {
+                if (newSlot !== null) {
+                  setTimeSlot(newSlot);
+                }
+              }}
+              size="large"
+              variant="outlined"
+              sx={{ ml: 2 }}
+            >
               {SlotGetQuery.data.data?.map((slot) => (
-                <Button key={slot.slotId}>{slot?.timeSlot}</Button>
+                <ToggleButton value={slot?._id} key={slot?._id}>
+                  {slot?.timeSlot}
+                </ToggleButton>
               ))}
-            </ButtonGroup>
+            </ToggleButtonGroup>
           )}
         </Box>
       </Box>
