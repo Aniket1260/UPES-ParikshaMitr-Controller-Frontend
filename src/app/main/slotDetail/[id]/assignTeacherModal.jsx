@@ -31,12 +31,15 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
 
   const [filterValue, setFilterValue] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [selectedTeacherId, setSelectedTeacherId] = useState([]);
 
   const filteredOptions = approvedTeacherResult.data
-    ? approvedTeacherResult.data.filter((teacher) =>
-        `${teacher.name} ${teacher.sap_id}`
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())
+    ? approvedTeacherResult.data.filter(
+        (teacher) =>
+          `${teacher.name} ${teacher.sap_id}`
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) &&
+          !selectedTeacherId.includes(teacher._id)
       )
     : [];
 
@@ -63,13 +66,14 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
   const handleSelect = async () => {
     if (selectedTeacher) {
       const { _id: invigilatorId } = selectedTeacher;
-
+      setSelectedTeacherId([...selectedTeacherId, invigilatorId]);
       const assignmentDetails = {
         roomId: roomId,
         slotId: slotId,
         invigilatorId: invigilatorId,
       };
       assignInvigilatorMutation.mutate(assignmentDetails);
+      setSelectedTeacher(null);
     }
   };
 
