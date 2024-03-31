@@ -45,6 +45,8 @@ import PendingSuppliesModal from "./pendingSuppliesModal";
 import { enqueueSnackbar } from "notistack";
 import AssignTeacherModal from "./assignTeacherModal";
 import EditInvigilatorModal from "./editInvigilatorModal";
+import DeleteInvigilatorModal from "./deleteInvigilatorModal";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -322,6 +324,17 @@ const SlotDetails = ({ params }) => {
   const [assignTeacherModalData, setAssignTeacherModalData] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
 
+  const [deleteInvigilatorModalOpen, setDeleteInvigilatorModalOpen] =
+    useState(false);
+  const [deleteInvigilatorModalData, setDeleteInvigilatorModalData] =
+    useState(null);
+
+  const handleDeleteInviglatorClick = (params) => {
+    setSelectedRoom(params.row);
+    setDeleteInvigilatorModalOpen(true);
+    setDeleteInvigilatorModalData(params.row.room_id);
+  };
+
   const handleAssignTeacherClick = (params) => {
     setSelectedRoom(params.row);
     setAssignTeacherModalOpen(true);
@@ -473,6 +486,15 @@ const SlotDetails = ({ params }) => {
                   <Groups3 />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Delete Invigilator" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    handleDeleteInviglatorClick(params);
+                  }}
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Assign Invigilator" placement="top" arrow>
                 <IconButton
                   onClick={() => {
@@ -579,6 +601,12 @@ const SlotDetails = ({ params }) => {
         room={selectedRoom}
         roomId={assignTeacherModalData}
         slotId={slotId}
+      />
+      <DeleteInvigilatorModal
+        open={deleteInvigilatorModalOpen}
+        handleClose={() => setDeleteInvigilatorModalOpen(false)}
+        room={selectedRoom}
+        roomId={deleteInvigilatorModalData}
       />
       <ApproveModal
         open={approveModalOpen.open}
