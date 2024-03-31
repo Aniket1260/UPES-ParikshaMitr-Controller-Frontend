@@ -16,6 +16,17 @@ import React, { useMemo, useState } from "react";
 import DetailsModal from "./flyingDetailModal";
 import AssignRoomModal from "./AssignRoomsModal";
 
+const getChipColor = (status) => {
+  switch (status.toLowerCase()) {
+    case "not started":
+      return "warning";
+    case "ongoing":
+      return "info";
+    case "completed":
+      return "success";
+  }
+};
+
 const SlotFlying = ({ params }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
@@ -83,12 +94,15 @@ const SlotFlying = ({ params }) => {
       headerName: "Teacher Name",
       flex: 1,
       renderCell: (params) => {
+        const status = params.row?.status.replace(/\b\w/g, (char) =>
+          char.toUpperCase()
+        );
         return (
           <Box sx={{ display: "flex", gap: 1 }}>
             <Typography variant="body1">
               {params.row?.teacher_id?.name}
             </Typography>
-            <Chip label={params.row?.status} />
+            <Chip label={status} color={getChipColor(params.row.status)} />
           </Box>
         );
       },
