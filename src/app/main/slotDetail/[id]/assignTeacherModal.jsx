@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import { getApprovedTeachers } from "@/services/cont-teacher.service";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
 import { enqueueSnackbar } from "notistack";
 
@@ -31,39 +31,49 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
 
   const [filterValue, setFilterValue] = useState("");
   const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [selectedTeacherId, setSelectedTeacherId] = useState([]);
 
   const filteredOptions = approvedTeacherResult.data
-    ? approvedTeacherResult.data.filter((teacher) =>
-        `${teacher.name} ${teacher.sap_id}`
-          .toLowerCase()
-          .includes(filterValue.toLowerCase())
+    ? approvedTeacherResult.data.filter(
+        (teacher) =>
+          `${teacher.name} ${teacher.sap_id}`
+            .toLowerCase()
+            .includes(filterValue.toLowerCase()) &&
+          !selectedTeacherId.includes(teacher._id)
       )
     : [];
+
+  const assignInvigilatorMutation = useMutation({
+    mutationFn: (assignmentDetails) =>
+      ManualAssignInvigilatorService(controllerToken, assignmentDetails),
+    onSuccess: () => {
+      queryClient.invalidateQueries("rooms");
+      handleClose();
+      enqueueSnackbar({
+        variant: "success",
+        message: "Invigilator assigned successfully",
+      });
+    },
+    onError: (error) => {
+      console.log("error", error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.message,
+      });
+    },
+  });
 
   const handleSelect = async () => {
     if (selectedTeacher) {
       const { _id: invigilatorId } = selectedTeacher;
-
+      setSelectedTeacherId([...selectedTeacherId, invigilatorId]);
       const assignmentDetails = {
         roomId: roomId,
         slotId: slotId,
         invigilatorId: invigilatorId,
       };
-      try {
-        const response = await ManualAssignInvigilatorService(
-          controllerToken,
-          assignmentDetails
-        );
-        console.log(response);
-        queryClient.invalidateQueries("rooms");
-        handleClose();
-      } catch (error) {
-        console.log("error", error);
-        enqueueSnackbar({
-          variant: "error",
-          message: error.response?.data.message,
-        });
-      }
+      assignInvigilatorMutation.mutate(assignmentDetails);
+      setSelectedTeacher(null);
     }
   };
 
@@ -130,9 +140,9 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
           <Button
             variant="contained"
             onClick={handleSelect}
-            disabled={!selectedTeacher}
+            disabled={!selectedTeacher || assignInvigilatorMutation.isLoading}
           >
-            Select
+            {assignInvigilatorMutation.isLoading ? "Assigning..." : "Select"}
           </Button>
         </Box>
       </DialogContent>

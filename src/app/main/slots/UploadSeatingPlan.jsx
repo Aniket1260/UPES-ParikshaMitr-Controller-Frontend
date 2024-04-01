@@ -83,51 +83,64 @@ const UploadSeatingPlan = ({ open, handleClose, slot }) => {
       alert("Please upload a .csv file");
       return;
     }
+
     const file = e.target.files[0];
     const reader = new FileReader();
+
     reader.onload = (e) => {
       let data = e.target.result;
-      data = data.split("\n").slice(1).slice(0, -1);
-      data = data.map((ele) => {
-        if (ele === "") return;
-        ele = ele.trim("\r");
-        const [
-          prog,
-          sem,
-          roll,
-          sap,
-          name,
-          batch,
-          building,
-          room,
-          seat,
-          sub,
-          sub_code,
-          eligible,
-        ] = ele.split(",");
+      const rows = data.split("\n");
+      const headers = rows[0].split(",").map((header) => header.trim()); // extracting headers
+      const sapIndex = headers.findIndex((header) => header === "SAP_ID"); // finding index of SAP_ID and other headers
+      const progIndex = headers.findIndex((header) => header === "Prog");
+      const semIndex = headers.findIndex((header) => header === "Sem");
+      const rollIndex = headers.findIndex((header) => header === "Roll No.");
+      const nameIndex = headers.findIndex((header) => header === "Name");
+      const batchIndex = headers.findIndex((header) => header === "Batch No.");
+      const buildingIndex = headers.findIndex(
+        (header) => header === "Building"
+      );
+      const roomIndex = headers.findIndex((header) => header === "Room No.");
+      const seatIndex = headers.findIndex((header) => header === "Seat No.");
+      const subIndex = headers.findIndex((header) => header === "Subject");
+      const subCodeIndex = headers.findIndex(
+        (header) => header === "Subject Code"
+      );
+      const eligibleIndex = headers.findIndex(
+        (header) => header === "Eligible"
+      );
+
+      data = rows.slice(1).filter((row) => row.trim() !== ""); // removing empty rows-> just a check
+
+      // creating object with headers as keys and values as values
+      const parsedData = data.map((row) => {
+        const rowData = row.split(",").map((value) => value.trim());
         return {
-          prog,
-          sem,
-          roll,
-          sap,
-          name,
-          batch,
-          building,
-          room,
-          seat,
-          sub,
-          sub_code,
-          eligible,
+          sap: rowData[sapIndex],
+          prog: rowData[progIndex],
+          sem: rowData[semIndex],
+          roll: rowData[rollIndex],
+          name: rowData[nameIndex],
+          batch: rowData[batchIndex],
+          building: rowData[buildingIndex],
+          room: rowData[roomIndex],
+          seat: rowData[seatIndex],
+          sub: rowData[subIndex],
+          sub_code: rowData[subCodeIndex],
+          eligible: rowData[eligibleIndex],
         };
       });
-      setCsvData(data);
+
+      setCsvData(parsedData);
     };
+
     reader.onloadend = () => {
       enqueueSnackbar({
         variant: "success",
         message: "CSV Parse Successful",
       });
     };
+
     reader.readAsText(file);
   };
 

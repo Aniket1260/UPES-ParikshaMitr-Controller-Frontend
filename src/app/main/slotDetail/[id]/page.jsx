@@ -23,7 +23,9 @@ import {
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { DataGrid } from "@mui/x-data-grid";
 import {
+  AddRoomtoSlotService,
   ChangeRoomsStatusService,
+  CreateRoomService,
   approveRoom,
   getSlotDetailsById,
 } from "@/services/exam-slots.service";
@@ -43,6 +45,8 @@ import PendingSuppliesModal from "./pendingSuppliesModal";
 import { enqueueSnackbar } from "notistack";
 import AssignTeacherModal from "./assignTeacherModal";
 import EditInvigilatorModal from "./editInvigilatorModal";
+import DeleteInvigilatorModal from "./deleteInvigilatorModal";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -86,6 +90,7 @@ const SlotDetails = ({ params }) => {
     open: false,
     room: null,
   });
+  const [addRoomLoading, setAddRoomLoading] = useState(false);
   const [rowSelected, setRowSelected] = useState([]);
   const [selectedStatusChangeModal, setSelectedStatusChangeModal] = useState({
     open: false,
@@ -95,6 +100,7 @@ const SlotDetails = ({ params }) => {
   const [roomTypeToggle, setRoomTypeToggle] = useState("all");
 
   const { Canvas } = useQRCode();
+
   const queryClient = useQueryClient();
 
   const router = useRouter();
@@ -122,6 +128,46 @@ const SlotDetails = ({ params }) => {
         variant: "success",
         message: "Room Status Changed Successfully",
       });
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+  });
+
+  const createRoomService = useMutation({
+    mutationFn: (data) => CreateRoomService(controllerToken, data),
+    onMutate: () => {
+      setAddRoomLoading(true);
+    },
+    onSettled: () => {
+      setAddRoomLoading(false);
+    },
+    onSuccess: async (data) => {
+      try {
+        const roomidResponse = data.message.split("ID: ")[1];
+        const room_id = roomidResponse ? [roomidResponse] : [];
+        const roomDetails = {
+          slotId: slotId,
+          roomIds: room_id,
+        };
+        console.log(roomDetails);
+        await AddRoomtoSlotService(controllerToken, roomDetails);
+
+        queryClient.invalidateQueries("slotDetails");
+        enqueueSnackbar({
+          variant: "success",
+          message: "Room Added Successfully",
+        });
+      } catch (error) {
+        enqueueSnackbar({
+          variant: "error",
+          message:
+            error.response?.status + " : " + error.response?.data.message,
+        });
+      }
     },
     onError: (error) => {
       enqueueSnackbar({
@@ -212,7 +258,7 @@ const SlotDetails = ({ params }) => {
   };
   const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
   const [newRoomData, setNewRoomData] = useState({
-    room_no: 0,
+    roomNo: 0,
     block: "",
     floor: 0,
   });
@@ -220,15 +266,18 @@ const SlotDetails = ({ params }) => {
   const handleAddRoom = () => {
     const newRoomDataCopy = {
       ...newRoomData,
-      room_no: parseInt(newRoomData.room_no, 10),
+      roomNo: parseInt(newRoomData.roomNo, 10),
+      block: "BLOCK-" + newRoomData.block,
+      floor: parseInt(newRoomData.floor, 10),
     };
     console.log(newRoomDataCopy);
     setNewRoomData({
-      room_no: 0,
+      roomNo: 0,
       block: "",
       floor: 0,
     });
     setAddRoomModalOpen(false);
+    createRoomService.mutate(newRoomDataCopy);
   };
 
   const [addDetails, setAddDetails] = useState(moreDetails);
@@ -274,6 +323,17 @@ const SlotDetails = ({ params }) => {
   const [assignTeacherModalOpen, setAssignTeacherModalOpen] = useState(false);
   const [assignTeacherModalData, setAssignTeacherModalData] = useState(null);
   const [selectedRoom, setSelectedRoom] = useState(null);
+
+  const [deleteInvigilatorModalOpen, setDeleteInvigilatorModalOpen] =
+    useState(false);
+  const [deleteInvigilatorModalData, setDeleteInvigilatorModalData] =
+    useState(null);
+
+  const handleDeleteInviglatorClick = (params) => {
+    setSelectedRoom(params.row);
+    setDeleteInvigilatorModalOpen(true);
+    setDeleteInvigilatorModalData(params.row.room_id);
+  };
 
   const handleAssignTeacherClick = (params) => {
     setSelectedRoom(params.row);
@@ -426,6 +486,15 @@ const SlotDetails = ({ params }) => {
                   <Groups3 />
                 </IconButton>
               </Tooltip>
+              <Tooltip title="Delete Invigilator" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    handleDeleteInviglatorClick(params);
+                  }}
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Assign Invigilator" placement="top" arrow>
                 <IconButton
                   onClick={() => {
@@ -534,6 +603,12 @@ const SlotDetails = ({ params }) => {
         roomId={assignTeacherModalData}
         slotId={slotId}
       />
+      <DeleteInvigilatorModal
+        open={deleteInvigilatorModalOpen}
+        handleClose={() => setDeleteInvigilatorModalOpen(false)}
+        room={selectedRoom}
+        roomId={deleteInvigilatorModalData}
+      />
       <ApproveModal
         open={approveModalOpen.open}
         handleClose={() => setApproveModalOpen({ open: false, room: null })}
@@ -596,18 +671,15 @@ const SlotDetails = ({ params }) => {
             </Box>
           </Grid>
 
-          <Dialog
+          <AddRoomModal
             open={addRoomModalOpen}
-            onClose={() => setAddRoomModalOpen(false)}
-          >
-            <AddRoomModal
-              open={addRoomModalOpen}
-              handleClose={() => setAddRoomModalOpen(false)}
-              handleAddRoom={handleAddRoom}
-              newRoomData={newRoomData}
-              setNewRoomData={setNewRoomData}
-            />
-          </Dialog>
+            handleClose={() => setAddRoomModalOpen(false)}
+            handleAddRoom={handleAddRoom}
+            newRoomData={newRoomData}
+            setNewRoomData={setNewRoomData}
+            loading={addRoomLoading}
+          />
+
           <Grid container sx={{ px: 1 }}>
             <Grid item xs={6}>
               <Grid container direction="column" spacing={1}>
@@ -1019,6 +1091,7 @@ const AddRoomModal = ({
   handleAddRoom,
   newRoomData,
   setNewRoomData,
+  loading,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -1028,9 +1101,9 @@ const AddRoomModal = ({
           label="Room Number"
           type="number"
           fullWidth
-          value={newRoomData.room_no}
+          value={newRoomData.roomNo}
           onChange={(e) =>
-            setNewRoomData({ ...newRoomData, room_no: e.target.value })
+            setNewRoomData({ ...newRoomData, roomNo: e.target.value })
           }
           sx={{ mb: 2, mt: 3 }}
         />
@@ -1062,8 +1135,9 @@ const AddRoomModal = ({
             color="primary"
             onClick={handleAddRoom}
             sx={{ ml: 1 }}
+            disabled={loading}
           >
-            Add
+            {loading ? <CircularProgress size={24} /> : "Add Room"}
           </Button>
         </Box>
       </DialogContent>

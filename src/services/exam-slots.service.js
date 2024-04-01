@@ -299,3 +299,21 @@ export const UploadDutyService = async (token, data) => {
     throw error;
   }
 };
+export const AddStudentService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/room/add-student`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
