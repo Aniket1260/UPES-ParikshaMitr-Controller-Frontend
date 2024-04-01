@@ -14,7 +14,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
 import { enqueueSnackbar } from "notistack";
 
-const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
+const AssignTeacherModal = ({
+  open,
+  handleClose,
+  roomId,
+  room,
+  slotId,
+  assignedTeachersIdList,
+}) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
@@ -33,13 +40,15 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [selectedTeacherId, setSelectedTeacherId] = useState([]);
 
+  console.log(assignedTeachersIdList);
+
   const filteredOptions = approvedTeacherResult.data
     ? approvedTeacherResult.data.filter(
         (teacher) =>
           `${teacher.name} ${teacher.sap_id}`
             .toLowerCase()
             .includes(filterValue.toLowerCase()) &&
-          !selectedTeacherId.includes(teacher._id)
+          !assignedTeachersIdList.includes(teacher._id)
       )
     : [];
 
@@ -58,7 +67,7 @@ const AssignTeacherModal = ({ open, handleClose, roomId, room, slotId }) => {
       console.log("error", error);
       enqueueSnackbar({
         variant: "error",
-        message: error.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
     },
   });

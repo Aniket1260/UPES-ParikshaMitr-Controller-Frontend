@@ -282,6 +282,22 @@ const SlotDetails = ({ params }) => {
 
   const [addDetails, setAddDetails] = useState(moreDetails);
 
+  const assignedTeachersIdList = () => {
+    const a = [];
+    SlotDetailsQuery.data?.rooms.forEach((room) => {
+      if (room?.room_invigilator_id?.invigilator1_id) {
+        a.push(room?.room_invigilator_id?.invigilator1_id?._id);
+      }
+      if (room?.room_invigilator_id?.invigilator2_id) {
+        a.push(room?.room_invigilator_id?.invigilator2_id?._id);
+      }
+      if (room?.room_invigilator_id?.invigilator3_id) {
+        a.push(room?.room_invigilator_id?.invigilator3_id?._id);
+      }
+    });
+    return a;
+  };
+
   const getMoreDetails = () => {
     if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
       const newDetails = SlotDetailsQuery.data.rooms.reduce(
@@ -531,16 +547,17 @@ const SlotDetails = ({ params }) => {
       const roomRows = SlotDetailsQuery.data.rooms.map((room, index) => {
         return {
           id: index + 1,
-          room_id: room._id,
-          room_no: room.room_no,
-          block: room.block,
-          floor: room.floor,
-          students: room.students.length,
-          inv1: room.room_invigilator_id?.invigilator1_id,
-          inv2: room.room_invigilator_id?.invigilator2_id,
-          inv3: room.room_invigilator_id?.invigilator3_id,
-          status: room.status,
-          num_inv: room.num_invigilators,
+          room_id: room?._id,
+          room_no: room?.room_no,
+          block: room?.block,
+          floor: room?.floor,
+          students: room?.students.length,
+          inv1: room?.room_invigilator_id?.invigilator1_id,
+          inv2: room?.room_invigilator_id?.invigilator2_id,
+          inv3: room?.room_invigilator_id?.invigilator3_id,
+          status: room?.status,
+          num_inv: room?.num_invigilators,
+          isDeletable: SlotDetailsQuery.data?.isDeletable,
         };
       });
 
@@ -602,12 +619,14 @@ const SlotDetails = ({ params }) => {
         room={selectedRoom}
         roomId={assignTeacherModalData}
         slotId={slotId}
+        assignedTeachersIdList={assignedTeachersIdList()}
       />
       <DeleteInvigilatorModal
         open={deleteInvigilatorModalOpen}
         handleClose={() => setDeleteInvigilatorModalOpen(false)}
         room={selectedRoom}
         roomId={deleteInvigilatorModalData}
+        slotId={slotId}
       />
       <ApproveModal
         open={approveModalOpen.open}

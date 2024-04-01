@@ -57,7 +57,9 @@ const UploadDutyPlan = ({ open, handleClose, slot }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.message,
+        message:
+          error.response?.status + " : " + error.response?.data.message ||
+          "An error occurred",
       });
     },
   });
@@ -128,10 +130,7 @@ const UploadDutyPlan = ({ open, handleClose, slot }) => {
 
       handleClose();
     } catch (error) {
-      enqueueSnackbar({
-        variant: "error",
-        message: error.message,
-      });
+      console.error(error);
     }
   };
 

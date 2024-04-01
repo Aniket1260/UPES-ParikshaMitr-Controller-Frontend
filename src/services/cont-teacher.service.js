@@ -166,3 +166,22 @@ export const getSlotsByDate = async (date, token) => {
     throw error;
   }
 };
+
+export const deleteInvigilatorService = async (data, token) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/invigilation/delete`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        data,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

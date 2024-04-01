@@ -151,18 +151,20 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Upload Duty Chart" placement="top" arrow>
-              <IconButton
-                onClick={() =>
-                  setUploadDutyPlanModal({
-                    open: true,
-                    slot: row,
-                  })
-                }
-              >
-                <Groups />
-              </IconButton>
-            </Tooltip>
+            {row.flying_squad.length == 0 && (
+              <Tooltip title="Upload Duty Chart" placement="top" arrow>
+                <IconButton
+                  onClick={() =>
+                    setUploadDutyPlanModal({
+                      open: true,
+                      slot: row,
+                    })
+                  }
+                >
+                  <Groups />
+                </IconButton>
+              </Tooltip>
+            )}
             {/* <Tooltip title="Slot Contact Details" placement="top" arrow>
               <IconButton
                 onClick={() =>
