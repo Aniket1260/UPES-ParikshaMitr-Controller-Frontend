@@ -40,6 +40,16 @@ const AddStudentDialog = ({ open, onClose, room_id }) => {
       AddStudentService(controllerToken, newstudentData),
     onSuccess: () => {
       queryClient.invalidateQueries(["studentList", controllerToken, room_id]);
+      setNewStudentData({
+        roll_no: "",
+        student_name: "",
+        course: "",
+        subject: "",
+        subject_code: "",
+        sap_id: "",
+        seat_no: "",
+        eligible: "YES",
+      });
       onClose();
       enqueueSnackbar({
         variant: "success",
@@ -50,7 +60,7 @@ const AddStudentDialog = ({ open, onClose, room_id }) => {
       console.log("error", error);
       enqueueSnackbar({
         variant: "error",
-        message: error.message,
+        message: error.response?.status + " : " + error.response?.data.message,
       });
     },
   });
@@ -66,18 +76,6 @@ const AddStudentDialog = ({ open, onClose, room_id }) => {
     };
     console.log(newStudentWithNumberId);
     addStudentMutation.mutate(newStudentWithNumberId);
-
-    setNewStudentData({
-      roll_no: "",
-      student_name: "",
-      course: "",
-      subject: "",
-      subject_code: "",
-      sap_id: "",
-      seat_no: "",
-      eligible: "YES",
-    });
-    onClose();
   };
 
   return (

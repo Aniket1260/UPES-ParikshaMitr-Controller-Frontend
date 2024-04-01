@@ -502,24 +502,29 @@ const SlotDetails = ({ params }) => {
                   <Groups3 />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Delete Invigilator" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    handleDeleteInviglatorClick(params);
-                  }}
-                >
-                  <RemoveIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Assign Invigilator" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    handleAssignTeacherClick(params);
-                  }}
-                >
-                  <Assignment />
-                </IconButton>
-              </Tooltip>
+
+              {params.row.isDeletable && (
+                <Tooltip title="Assign Invigilator" placement="top" arrow>
+                  <IconButton
+                    onClick={() => {
+                      handleAssignTeacherClick(params);
+                    }}
+                  >
+                    <Assignment />
+                  </IconButton>
+                </Tooltip>
+              )}
+              {params.row.isDeletable && (
+                <Tooltip title="Delete Invigilator" placement="top" arrow>
+                  <IconButton
+                    onClick={() => {
+                      handleDeleteInviglatorClick(params);
+                    }}
+                  >
+                    <RemoveIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Tooltip
                 title="Edit Number of Invigilators"
                 placement="top"
