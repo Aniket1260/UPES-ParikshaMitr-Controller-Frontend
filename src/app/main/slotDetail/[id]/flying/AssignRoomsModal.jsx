@@ -123,6 +123,14 @@ const AssignRoomModal = ({
                                 <Checkbox
                                   checked={room.checked}
                                   onChange={(e) => {
+                                    // If this is in rooms_assigned, then don't allow unchecking
+                                    if (
+                                      rooms_assigned
+                                        .map((room) => room?.room_id?._id)
+                                        .includes(room._id)
+                                    ) {
+                                      return;
+                                    }
                                     setRooms((prev) =>
                                       prev.map((r) =>
                                         r.id === room.id
