@@ -12,6 +12,7 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { useQuery } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { enIN } from "date-fns/locale";
 import { enqueueSnackbar } from "notistack";
 import React, { useState } from "react";
@@ -27,7 +28,11 @@ const DutyStatus = () => {
 
   const SlotGetQuery = useQuery({
     queryKey: ["slot-date", date, controllerToken],
-    queryFn: () => getSlotsByDate(date, controllerToken),
+    queryFn: () =>
+      getSlotsByDate(
+        format(date, "yyyy-MM-dd", { locale: enIN }),
+        controllerToken
+      ),
   });
 
   if (SlotGetQuery.isError) {
@@ -49,7 +54,7 @@ const DutyStatus = () => {
         <Box>
           <LocalizationProvider
             dateAdapter={AdapterDateFns}
-            adapterLocale={enIN}
+            // adapterLocale={enIN}
           >
             <DatePicker
               label="Slot Date"
