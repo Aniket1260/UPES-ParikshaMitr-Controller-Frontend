@@ -71,14 +71,25 @@ const UploadDutyPlan = ({ open, handleClose, slot }) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       let data = e.target.result;
-      data = data.split("\n").slice(1).slice(0, -1);
-      data = data.map((ele) => {
-        if (ele === "") return;
-        ele = ele.trim("\r");
-        const [sap, duty] = ele.split(",");
+      const rows = data.split("\n");
+      const headers = rows[0].split(","); // extracting headers
+      const sapIndex = headers.findIndex(
+        // finding index of SAP_ID and other headers
+        (header) => header.trim() === "SAP_ID"
+      );
+      const dutyIndex = headers.findIndex((header) => header.trim() === "Duty");
+      data = rows.slice(1).filter((row) => row.trim() !== ""); // removing empty rows-> just a check
+      // console.log("Data:", data);
+
+      // creating object with sap and duty as keys and their values as values
+      const parsedData = data.map((row) => {
+        const rowData = row.trim().split(",");
+        const sap = rowData[sapIndex];
+        const duty = dutyIndex !== -1 ? rowData[dutyIndex] : "";
         return { sap, duty };
       });
-      setCsvData(data);
+      // console.log("Parsed Data:", parsedData);
+      setCsvData(parsedData);
     };
     reader.readAsText(file);
   };
