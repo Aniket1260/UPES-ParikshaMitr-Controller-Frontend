@@ -526,6 +526,7 @@ const SlotDetails = ({ params }) => {
   );
 
   const rows = useMemo(() => {
+    console.log(SlotDetailsQuery.data);
     if (SlotDetailsQuery.data && SlotDetailsQuery.data.rooms) {
       const roomRows = SlotDetailsQuery.data.rooms.map((room, index) => {
         return {
