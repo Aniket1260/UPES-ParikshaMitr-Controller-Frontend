@@ -1,6 +1,6 @@
 "use client";
 import { getFlyingDetailsBySlotID } from "@/services/flying.service";
-import { Add, Refresh, Visibility } from "@mui/icons-material";
+import { Add, Assignment, Refresh, Visibility } from "@mui/icons-material";
 import {
   Box,
   Chip,
@@ -15,6 +15,7 @@ import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import DetailsModal from "./flyingDetailModal";
 import AssignRoomModal from "./AssignRoomsModal";
+import CompleteFlyingModal from "./CompleteFlyingModal";
 
 const getChipColor = (status) => {
   switch (status.toLowerCase()) {
@@ -61,6 +62,13 @@ const SlotFlying = ({ params }) => {
         FlyingQuery.error.response?.data.message,
     });
   }
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [flyingToComplete, setFlyingToComplete] = useState(null);
+
+  const handleCompleteFlying = (flying) => {
+    setFlyingToComplete(flying);
+    setIsCompleteModalOpen(true);
+  };
   const rows = useMemo(() => {
     if (FlyingQuery.data) {
       console.log(FlyingQuery.data);
@@ -75,12 +83,12 @@ const SlotFlying = ({ params }) => {
     {
       field: "id",
       headerName: "ID",
-      width: 100,
+      width: 70,
     },
     {
       field: "sap_id",
       headerName: "SAP ID",
-      width: 150,
+      width: 140,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -196,6 +204,16 @@ const SlotFlying = ({ params }) => {
                 <Add />
               </IconButton>
             </Tooltip>
+            <Tooltip
+              title="Complete Duty of Flying"
+              placement="top"
+              arrow
+              onClick={() => handleCompleteFlying(params.row)}
+            >
+              <IconButton>
+                {params.row.status === "ongoing" && <Assignment />}
+              </IconButton>
+            </Tooltip>
           </Box>
         );
       },
@@ -234,6 +252,11 @@ const SlotFlying = ({ params }) => {
           flyingId={assignModal.flyingId}
           name={assignModal.name}
           rooms_assigned={assignModal.rooms_assigned}
+        />
+        <CompleteFlyingModal
+          isOpen={isCompleteModalOpen}
+          onClose={() => setIsCompleteModalOpen(false)}
+          flying={flyingToComplete}
         />
         {FlyingQuery.isLoading && <CircularProgress />}
         {FlyingQuery.isSuccess && (
