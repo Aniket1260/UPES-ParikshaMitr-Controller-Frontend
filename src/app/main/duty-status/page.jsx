@@ -1,5 +1,8 @@
 "use client";
-import { getSlotsByDate } from "@/services/cont-teacher.service";
+import {
+  getDutyStatusService,
+  getSlotsByDate,
+} from "@/services/cont-teacher.service";
 import {
   Box,
   Button,
@@ -15,7 +18,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { enIN } from "date-fns/locale";
+import { da, enIN } from "date-fns/locale";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
@@ -28,7 +31,7 @@ const DutyStatus = () => {
 
   const [activeTab, setActiveTab] = useState("invigilator");
   const [date, setDate] = useState(new Date());
-  const [timeSlot, setTimeSlot] = useState("Morning");
+  const [timeSlot, setTimeSlot] = useState(null);
 
   const SlotGetQuery = useQuery({
     queryKey: ["slot-date", date, controllerToken],
@@ -39,12 +42,33 @@ const DutyStatus = () => {
       ),
   });
 
+  const DataQuery = useQuery({
+    queryKey: ["slot-date", date, controllerToken, timeSlot],
+    queryFn: () =>
+      getDutyStatusService(
+        format(date, "yyyy-MM-dd", { locale: enIN }),
+        timeSlot,
+        controllerToken
+      ),
+    enabled: !!date && !!timeSlot,
+  });
+
   if (SlotGetQuery.isError) {
     enqueueSnackbar({
       message:
         SlotGetQuery.error.response?.status +
         " : " +
         SlotGetQuery.error.response?.data.message,
+      variant: "error",
+    });
+  }
+
+  if (DataQuery.isError) {
+    enqueueSnackbar({
+      message:
+        DataQuery.error.response?.status +
+        " : " +
+        DataQuery.error.response?.data.message,
       variant: "error",
     });
   }
@@ -74,21 +98,21 @@ const DutyStatus = () => {
     activeTab === "invigilator"
       ? [
           { field: "id", headerName: "ID", width: 150 },
-          { field: "name", headerName: "Name", width: 200 },
-          { field: "sapid", headerName: "SAP ID", width: 150 },
+          { field: "Name", headerName: "Name", width: 200 },
+          { field: "sap_id", headerName: "SAP ID", width: 150 },
           { field: "phone", headerName: "Phone", width: 150 },
           { field: "email", headerName: "Email", width: 150 },
-          { field: "scanTime", headerName: "Scan Time", width: 150 },
+          { field: "scan_time", headerName: "Scan Time", width: 150 },
           { field: "room", headerName: "Room", width: 150 },
           { field: "attendance", headerName: "Attendance", width: 150 },
         ]
       : [
           { field: "id", headerName: "ID", width: 100 },
-          { field: "name", headerName: "Name", width: 150 },
-          { field: "sapid", headerName: "SAP ID", width: 100 },
-          { field: "inTime", headerName: "In Time", width: 100 },
-          { field: "outTime", headerName: "Out Time", width: 100 },
-          { field: "room", headerName: "Room", width: 100 },
+          { field: "Name", headerName: "Name", flex: 1 },
+          { field: "sap_id", headerName: "SAP ID", width: 100 },
+          { field: "in_time", headerName: "In Time", width: 100 },
+          { field: "out_time", headerName: "Out Time", width: 100 },
+          { field: "rooms", headerName: "Rooms Assigned", width: 150 },
           { field: "phone", headerName: "Phone", width: 100 },
           { field: "email", headerName: "Email", width: 150 },
           { field: "status", headerName: "Status", width: 150 },
@@ -96,9 +120,23 @@ const DutyStatus = () => {
         ];
 
   const rows = useMemo(() => {
-    // here we will define the row data
+    if (DataQuery.isSuccess) {
+      if (activeTab === "invigilator") {
+        console.log(DataQuery.data?.invigilators);
+        return DataQuery.data?.invigilators.map((invigilator, index) => ({
+          id: index + 1,
+          ...invigilator,
+        }));
+      } else {
+        return DataQuery.data?.flying.map((flyingSquad, index) => ({
+          id: index + 1,
+          ...flyingSquad,
+        }));
+      }
+    }
+
     return [];
-  });
+  }, [DataQuery.data, activeTab, DataQuery.isSuccess]);
 
   return (
     <Box>
@@ -139,7 +177,7 @@ const DutyStatus = () => {
               sx={{ ml: 2 }}
             >
               {SlotGetQuery.data.data?.map((slot) => (
-                <ToggleButton value={slot?._id} key={slot?._id}>
+                <ToggleButton value={slot?.timeSlot} key={slot?._id}>
                   {slot?.timeSlot}
                 </ToggleButton>
               ))}
@@ -148,28 +186,32 @@ const DutyStatus = () => {
         </Box>
       </Box>
       {/* {SlotGetQuery.isSuccess && console.log(SlotGetQuery.data)} */}
+      {DataQuery.isLoading && <CircularProgress />}
+      {DataQuery.isSuccess && (
+        <Box>
+          <Tabs
+            value={activeTab}
+            onChange={(event, newValue) => setActiveTab(newValue)}
+            sx={{ my: 2 }}
+          >
+            <Tab value="invigilator" label="Invigilator" />
+            <Tab value="flyingSquad" label="Flying Squad" />
+          </Tabs>
 
-      <Tabs
-        value={activeTab}
-        onChange={(event, newValue) => setActiveTab(newValue)}
-        sx={{ mt: 2 }}
-      >
-        <Tab value="invigilator" label="Invigilator" />
-        <Tab value="flyingSquad" label="Flying Squad" />
-      </Tabs>
-
-      {/* {getDataQuery.isSuccess && ( */}
-      <Box style={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          pageSize={5}
-          checkboxSelection={false}
-          disableSelectionOnClick
-          // loading={getDataQuery.isLoading}
-        />
-      </Box>
-      {/* )} */}
+          {/* {getDataQuery.isSuccess && ( */}
+          <Box style={{ height: 400, width: "100%" }}>
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              pageSize={5}
+              checkboxSelection={false}
+              disableSelectionOnClick
+              // loading={getDataQuery.isLoading}
+            />
+          </Box>
+          {/* )} */}
+        </Box>
+      )}
     </Box>
   );
 };

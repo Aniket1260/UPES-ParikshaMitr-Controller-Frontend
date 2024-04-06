@@ -19,11 +19,11 @@ export const userMenu = [
     href: "/main/notification",
     icon: <NotificationsActive />,
   },
-  // {
-  //   title: "Duty Status",
-  //   href: "/main/duty-status",
-  //   icon: <Assessment />,
-  // },
+  {
+    title: "Duty Status",
+    href: "/main/duty-status",
+    icon: <Assessment />,
+  },
 ];
 
 export const invigilationMenu = [

@@ -185,3 +185,21 @@ export const deleteInvigilatorService = async (data, token) => {
     throw error;
   }
 };
+
+export const getDutyStatusService = async (date, timeslot, token) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/teacher/duty-status?date=${date}&timeslot=${timeslot}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
