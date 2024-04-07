@@ -1,6 +1,12 @@
 "use client";
 import { getFlyingDetailsBySlotID } from "@/services/flying.service";
-import { Add, Assignment, Refresh, Visibility } from "@mui/icons-material";
+import {
+  Add,
+  Assignment,
+  Check,
+  Refresh,
+  Visibility,
+} from "@mui/icons-material";
 import {
   Box,
   Chip,
@@ -204,16 +210,18 @@ const SlotFlying = ({ params }) => {
                 <Add />
               </IconButton>
             </Tooltip>
-            <Tooltip
-              title="Complete Duty of Flying"
-              placement="top"
-              arrow
-              onClick={() => handleCompleteFlying(params.row)}
-            >
-              <IconButton>
-                {params.row.status === "ongoing" && <Assignment />}
-              </IconButton>
-            </Tooltip>
+            {params.row.status === "ongoing" && (
+              <Tooltip
+                title="Complete Duty of Flying"
+                placement="top"
+                arrow
+                onClick={() => handleCompleteFlying(params.row)}
+              >
+                <IconButton>
+                  <Check />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         );
       },

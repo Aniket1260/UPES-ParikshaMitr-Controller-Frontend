@@ -58,3 +58,22 @@ export const assignRoomsToFlying = async (token, flyingId, roomIds) => {
     throw error;
   }
 };
+
+export const completeFlyingService = async (token, body) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/flying/complete-duty`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
   Dialog,
@@ -8,14 +9,42 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { completeFlyingService } from "@/services/flying.service";
+import { enqueueSnackbar } from "notistack";
 
 const CompleteFlyingModal = ({ isOpen, onClose, flying }) => {
+  if (global?.window !== undefined) {
+    var controllerToken = localStorage.getItem("token");
+  }
+
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (body) => completeFlyingService(controllerToken, body),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Flying duty completed successfully",
+      });
+      queryClient.invalidateQueries("flying");
+      onClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.data.message,
+      });
+    },
+  });
+
   const handleComplete = () => {
     const flyingDetails = {
       slot_id: flying.slot,
       teacher_id: flying.teacher_id._id,
     };
     console.log("Details:", flyingDetails);
+    mutation.mutate(flyingDetails);
     onClose();
   };
 
