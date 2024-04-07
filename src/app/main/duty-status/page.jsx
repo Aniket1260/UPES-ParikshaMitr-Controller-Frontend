@@ -40,6 +40,9 @@ const DutyStatus = () => {
         format(date, "yyyy-MM-dd", { locale: enIN }),
         controllerToken
       ),
+    cacheTime: 1000,
+    refetchIntervalInBackground: true,
+    refetchInterval: 1000,
   });
 
   const DataQuery = useQuery({
@@ -98,13 +101,35 @@ const DutyStatus = () => {
     activeTab === "invigilator"
       ? [
           { field: "id", headerName: "ID", width: 150 },
-          { field: "Name", headerName: "Name", width: 200 },
+          { field: "Name", headerName: "Name", flex: 1 },
           { field: "sap_id", headerName: "SAP ID", width: 150 },
           { field: "phone", headerName: "Phone", width: 150 },
           { field: "email", headerName: "Email", width: 150 },
           { field: "scan_time", headerName: "Scan Time", width: 150 },
           { field: "room", headerName: "Room", width: 150 },
-          { field: "attendance", headerName: "Attendance", width: 150 },
+          {
+            field: "attendance",
+            headerName: "Attendance",
+            width: 100,
+            valueGetter: (params) =>
+              params.row.attendance === true ? "P" : "A",
+            renderCell: (params) => (
+              <Box
+                sx={{
+                  backgroundColor:
+                    params.value === "P" ? "darkgreen" : "#ad1313",
+                  color: "white",
+                  padding: "5px",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <Typography variant="body1" py={1}>
+                  {params.value}
+                </Typography>
+              </Box>
+            ),
+          },
         ]
       : [
           { field: "id", headerName: "ID", width: 100 },
@@ -123,15 +148,40 @@ const DutyStatus = () => {
     if (DataQuery.isSuccess) {
       if (activeTab === "invigilator") {
         console.log(DataQuery.data?.invigilators);
-        return DataQuery.data?.invigilators.map((invigilator, index) => ({
-          id: index + 1,
-          ...invigilator,
-        }));
+        return DataQuery.data?.invigilators
+          .sort((a, b) => {
+            if (a.scan_time && b.scan_time) {
+              // console.log(new Date("1/1/1999 " + a.scan_time));
+              return new Date("1/1/1999 " + a.scan_time) >
+                new Date("1/1/1999 " + b.scan_time)
+                ? -1
+                : 1;
+            } else {
+              return 0;
+            }
+          })
+          .map((invigilator, index) => ({
+            id: index + 1,
+            ...invigilator,
+          }));
+        // Sort by scan time, latest first
       } else {
-        return DataQuery.data?.flying.map((flyingSquad, index) => ({
-          id: index + 1,
-          ...flyingSquad,
-        }));
+        return DataQuery.data?.flying
+          .sort((a, b) => {
+            if (a.scan_time && b.scan_time) {
+              // console.log(new Date("1/1/1999 " + a.scan_time));
+              return new Date("1/1/1999 " + a.scan_time) >
+                new Date("1/1/1999 " + b.scan_time)
+                ? -1
+                : 1;
+            } else {
+              return 0;
+            }
+          })
+          .map((flyingSquad, index) => ({
+            id: index + 1,
+            ...flyingSquad,
+          }));
       }
     }
 
@@ -199,13 +249,14 @@ const DutyStatus = () => {
           </Tabs>
 
           {/* {getDataQuery.isSuccess && ( */}
-          <Box style={{ height: 400, width: "100%" }}>
+          <Box style={{ height: 600, width: "100%" }}>
             <DataGrid
               rows={rows}
               columns={columns}
               pageSize={5}
               checkboxSelection={false}
               disableSelectionOnClick
+              disableRowSelectionOnClick
               // loading={getDataQuery.isLoading}
             />
           </Box>
