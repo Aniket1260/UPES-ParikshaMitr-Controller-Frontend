@@ -482,7 +482,7 @@ const SlotDetails = ({ params }) => {
       {
         field: "room_id",
         headerName: "Actions",
-        flex: 0.5,
+        width: 200,
         renderCell: (params) => {
           return (
             <Box
