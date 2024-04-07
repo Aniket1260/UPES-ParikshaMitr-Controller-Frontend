@@ -7,6 +7,7 @@ import {
   PersonSearch,
   SchoolRounded,
 } from "@mui/icons-material";
+import AssignmentIcon from "@mui/icons-material/Assignment";
 
 export const userMenu = [
   {
@@ -23,6 +24,11 @@ export const userMenu = [
     title: "Duty Status",
     href: "/main/duty-status",
     icon: <Assessment />,
+  },
+  {
+    title: "Copy Distribution",
+    href: "/main/copy-distribution",
+    icon: <AssignmentIcon />,
   },
 ];
 
