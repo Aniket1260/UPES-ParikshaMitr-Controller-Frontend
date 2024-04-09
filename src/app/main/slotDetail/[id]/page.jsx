@@ -47,6 +47,7 @@ import AssignTeacherModal from "./assignTeacherModal";
 import EditInvigilatorModal from "./editInvigilatorModal";
 import DeleteInvigilatorModal from "./deleteInvigilatorModal";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { refetchInterval } from "@/config/var.config";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -246,6 +247,9 @@ const SlotDetails = ({ params }) => {
   const SlotDetailsQuery = useQuery({
     queryKey: ["slotDetails", controllerToken, slotId],
     queryFn: () => getSlotDetailsById(controllerToken, slotId),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   const moreDetails = {
@@ -503,17 +507,17 @@ const SlotDetails = ({ params }) => {
                 </IconButton>
               </Tooltip>
 
-              {params.row.isDeletable && (
-                <Tooltip title="Assign Invigilator" placement="top" arrow>
-                  <IconButton
-                    onClick={() => {
-                      handleAssignTeacherClick(params);
-                    }}
-                  >
-                    <Assignment />
-                  </IconButton>
-                </Tooltip>
-              )}
+              {/* {params.row.isDeletable && ( */}
+              <Tooltip title="Assign Invigilator" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    handleAssignTeacherClick(params);
+                  }}
+                >
+                  <Assignment />
+                </IconButton>
+              </Tooltip>
+              {/* )} */}
               {params.row.isDeletable && (
                 <Tooltip title="Delete Invigilator" placement="top" arrow>
                   <IconButton

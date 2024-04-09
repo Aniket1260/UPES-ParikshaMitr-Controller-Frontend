@@ -22,6 +22,7 @@ import { da, enIN } from "date-fns/locale";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { refetchInterval } from "@/config/var.config";
 
 const DutyStatus = () => {
   if (global?.window !== undefined) {
@@ -40,9 +41,9 @@ const DutyStatus = () => {
         format(date, "yyyy-MM-dd", { locale: enIN }),
         controllerToken
       ),
-    cacheTime: 1000,
+    cacheTime: 0,
     refetchIntervalInBackground: true,
-    refetchInterval: 1000,
+    refetchInterval: refetchInterval,
   });
 
   const DataQuery = useQuery({
