@@ -105,6 +105,20 @@ const ApproveInvigilations = () => {
         });
       }
 
+      if (ele.invigilator3_controller_approval === false) {
+        rows.push({
+          id: id++,
+          room_no: ele.room_no,
+          room_id: ele.room_id,
+          name: ele.invigilator3.name,
+          sap_id: ele.invigilator3.sap_id,
+          invigilator_id: ele.invigilator3.id,
+          slot_time: ele.slot_time,
+          scan_time: ele.invigilator3?.scan_time,
+          scan_date: ele.invigilator3?.scan_date,
+        });
+      }
+
       //TODO: Add invigilator 3
     });
     return rows;

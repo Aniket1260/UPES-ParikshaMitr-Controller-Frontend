@@ -94,7 +94,7 @@ const ExamSlots = () => {
     {
       field: "date",
       headerName: "Slot Date",
-      flex: 1,
+      width: 140,
       renderCell: (params) => {
         return format(new Date(params.value), "do MMM yyyy");
       },
@@ -102,7 +102,7 @@ const ExamSlots = () => {
     {
       field: "type",
       headerName: "Slot Type",
-      flex: 1,
+      width: 120,
     },
     {
       field: "timeSlot",
@@ -268,7 +268,13 @@ const ExamSlots = () => {
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
         {SlotQuery.isSuccess && rows.length > 0 && (
-          <Box style={{ height: "80vh", width: "100%" }}>
+          //TODO: Add this width to each parent element of the DataGrid
+          <Box
+            style={{
+              height: "80vh",
+              width: "calc(100vw - 280px)",
+            }}
+          >
             <DataGrid
               rows={rows}
               columns={cols}
