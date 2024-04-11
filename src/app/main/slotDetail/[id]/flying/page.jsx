@@ -14,6 +14,7 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  Button,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +23,7 @@ import React, { useMemo, useState } from "react";
 import DetailsModal from "./flyingDetailModal";
 import AssignRoomModal from "./AssignRoomsModal";
 import CompleteFlyingModal from "./CompleteFlyingModal";
+import AddFlyingModal from "./AddFlyingModal";
 
 const getChipColor = (status) => {
   switch (status.toLowerCase()) {
@@ -70,11 +72,17 @@ const SlotFlying = ({ params }) => {
   }
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [flyingToComplete, setFlyingToComplete] = useState(null);
+  const [isAddFlyingModalOpen, setIsAddFlyingModalOpen] = useState(false);
 
   const handleCompleteFlying = (flying) => {
     setFlyingToComplete(flying);
     setIsCompleteModalOpen(true);
   };
+
+  const handleAddFlying = () => {
+    setIsAddFlyingModalOpen(true);
+  };
+
   const rows = useMemo(() => {
     if (FlyingQuery.data) {
       console.log(FlyingQuery.data);
@@ -230,21 +238,33 @@ const SlotFlying = ({ params }) => {
 
   return (
     <Box>
-      <Typography variant="h4">
-        Flying Details{" "}
-        <IconButton
-          onClick={() =>
-            queryClient.invalidateQueries(["flying", slotId, controllerToken])
-          }
-        >
-          <Refresh />
-        </IconButton>
-      </Typography>
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Typography variant="h4">
+          Flying Details{" "}
+          <IconButton
+            onClick={() =>
+              queryClient.invalidateQueries(["flying", slotId, controllerToken])
+            }
+          >
+            <Refresh />
+          </IconButton>
+        </Typography>
+        <Typography variant="h6">
+          <Button color="primary" variant="contained" onClick={handleAddFlying}>
+            Add Flying
+          </Button>
+        </Typography>
+      </Box>
       <Box sx={{ mt: 2 }}>
         <DetailsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           selectedRow={selectedRow}
+        />
+        <AddFlyingModal
+          isOpen={isAddFlyingModalOpen}
+          onClose={() => setIsAddFlyingModalOpen(false)}
+          slotId={slotId}
         />
         <AssignRoomModal
           isOpen={assignModal.isOpen}

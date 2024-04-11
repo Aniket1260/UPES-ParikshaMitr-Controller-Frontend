@@ -77,3 +77,21 @@ export const completeFlyingService = async (token, body) => {
     throw error;
   }
 };
+
+export const getFreeTeachersBySlotID = async (token, slotId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/free-teachers?slot_id=${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
