@@ -25,11 +25,11 @@ export const userMenu = [
     href: "/main/duty-status",
     icon: <Assessment />,
   },
-  // {
-  //   title: "Copy Distribution",
-  //   href: "/main/copy-distribution",
-  //   icon: <AssignmentIcon />,
-  // },
+  {
+    title: "Copy Distribution",
+    href: "/main/copy-distribution",
+    icon: <AssignmentIcon />,
+  },
 ];
 
 export const invigilationMenu = [
