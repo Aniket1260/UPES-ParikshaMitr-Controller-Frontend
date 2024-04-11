@@ -13,6 +13,9 @@ import {
 import { CloudUpload } from "@mui/icons-material";
 import { DataGrid } from "@mui/x-data-grid";
 import styled from "@emotion/styled";
+import { useMutation } from "@tanstack/react-query";
+import { uploadBundleService } from "@/services/copy-distribution";
+import { enqueueSnackbar } from "notistack";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -27,10 +30,19 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 const UploadBundleModal = ({ open, onClose }) => {
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
+
   const [csvData, setCsvData] = useState(null);
   const [valState, setValState] = useState({
     text: "",
     enabled: false,
+  });
+  const [progress, setProgress] = useState({
+    loading: false,
+    bundles_uploaded: 0,
   });
 
   useEffect(() => {
@@ -40,6 +52,25 @@ const UploadBundleModal = ({ open, onClose }) => {
       setValState((prev) => ({ ...prev, enabled: false }));
     }
   }, [valState.text]);
+
+  const UploadBundleMutation = useMutation({
+    mutationFn: (data) => uploadBundleService(controllerToken, data),
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      console.error(error);
+      enqueueSnackbar({
+        message:
+          "Error Uploading Bundle No " +
+          (progress.bundles_uploaded + 1) +
+          ": " +
+          error.response?.data.message,
+        variant: "error",
+        autoHideDuration: 10000,
+      });
+    },
+  });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -120,11 +151,28 @@ const UploadBundleModal = ({ open, onClose }) => {
     reader.readAsText(file);
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
+    setProgress({ loading: true, bundles_uploaded: 0 });
     const response = {
       data: csvData,
     };
     console.log(response);
+    for (const bundle of response.data) {
+      try {
+        await UploadBundleMutation.mutateAsync(bundle);
+      } catch (e) {
+        console.error(e);
+      }
+      setProgress((prev) => ({
+        ...prev,
+        bundles_uploaded: prev.bundles_uploaded + 1,
+      }));
+    }
+    enqueueSnackbar({
+      message: "All Bundles Uploaded",
+      variant: "success",
+    });
+    setProgress({ loading: false, bundles_uploaded: 0 });
     handleClose();
   };
 
@@ -145,8 +193,8 @@ const UploadBundleModal = ({ open, onClose }) => {
     { field: "evaluatorSap", headerName: "Evaluator's SAPID", flex: 1 },
     { field: "evaluatorSchool", headerName: "Evaluator School", flex: 1 },
     { field: "dateOfExam", headerName: "Date of Exam", flex: 1 },
-    { field: "slotDate", headerName: "Slot Date", flex: 1 },
-    { field: "slotTime", headerName: "Slot Time", flex: 1 },
+    // { field: "slotDate", headerName: "Slot Date", flex: 1 },
+    // { field: "slotTime", headerName: "Slot Time", flex: 1 },
   ];
 
   return (
@@ -208,6 +256,17 @@ const UploadBundleModal = ({ open, onClose }) => {
               value={valState.text}
               onChange={(e) => setValState({ text: e.target.value })}
             />
+            {progress.loading && (
+              <Box>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                  Uploading Bundles
+                </Typography>
+                <Typography>
+                  {progress.bundles_uploaded} of {csvData.length} Bundles
+                  Uploaded
+                </Typography>
+              </Box>
+            )}
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
               <Button
                 color="primary"
@@ -222,8 +281,8 @@ const UploadBundleModal = ({ open, onClose }) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={handleUpload}
-                disabled={!valState.enabled}
+                onClick={() => handleUpload()}
+                disabled={!valState.enabled || progress.loading}
                 sx={{ mt: 2 }}
               >
                 Upload
