@@ -126,6 +126,7 @@ const ApproveInvigilations = () => {
     {
       field: "slot_time",
       headerName: "Slot Time",
+      minWidth: 160,
       renderCell: (params) => {
         return (
           <Chip
@@ -145,16 +146,16 @@ const ApproveInvigilations = () => {
     {
       field: "room_no",
       headerName: "Room No.",
-      flex: 1,
+      minWidth: 150,
     },
-    { field: "sap_id", headerName: "SAP ID", flex: 1 },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "scan_date", headerName: "Scan Date", flex: 1 },
-    { field: "scan_time", headerName: "Scan Time", flex: 1 },
+    { field: "sap_id", headerName: "SAP ID", minWidth: 150 },
+    { field: "name", headerName: "Name", minWidth: 170 },
+    { field: "scan_date", headerName: "Scan Date", minWidth: 170 },
+    { field: "scan_time", headerName: "Scan Time", minWidth: 170 },
     {
       field: "_",
       headerName: "Actions",
-      flex: 1,
+      minWidth: 200,
       renderCell: (params) => {
         return (
           <>
@@ -199,7 +200,12 @@ const ApproveInvigilations = () => {
       </Typography>
       {UnapprovedTeachersQuery.isLoading && <CircularProgress />}
       {UnapprovedTeachersQuery.isSuccess && rows.length > 0 && (
-        <Box style={{ height: 400, width: "100%" }}>
+        <Box
+          style={{
+            height: "80vh",
+            width: "calc(100vw - 280px)",
+          }}
+        >
           <DataGrid
             rows={rows}
             columns={cols}

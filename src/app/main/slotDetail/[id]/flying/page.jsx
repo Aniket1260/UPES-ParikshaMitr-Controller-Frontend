@@ -97,12 +97,12 @@ const SlotFlying = ({ params }) => {
     {
       field: "id",
       headerName: "ID",
-      width: 70,
+      minWidth: 70,
     },
     {
       field: "sap_id",
       headerName: "SAP ID",
-      width: 140,
+      minWidth: 140,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -114,7 +114,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "teacher_name",
       headerName: "Teacher Name",
-      flex: 1,
+      minWidth: 340,
       renderCell: (params) => {
         const status = params.row?.status.replace(/\b\w/g, (char) =>
           char.toUpperCase()
@@ -133,7 +133,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "phone",
       headerName: "Phone Number",
-      width: 150,
+      minWidth: 130,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -145,7 +145,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "rooms_assigned",
       headerName: "Rooms Assigned",
-      width: 150,
+      minWidth: 110,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -157,7 +157,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "rooms_requested",
       headerName: "Approvals Pending",
-      width: 150,
+      minWidth: 110,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -173,7 +173,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "rooms_completed",
       headerName: "Rooms Completed",
-      width: 150,
+      minWidth: 130,
       renderCell: (params) => {
         return (
           <Typography variant="body1">
@@ -189,7 +189,7 @@ const SlotFlying = ({ params }) => {
     {
       field: "actions",
       headerName: "Actions",
-      flex: 0.5,
+      minWidth: 150,
       renderCell: (params) => {
         return (
           <Box>
@@ -288,7 +288,12 @@ const SlotFlying = ({ params }) => {
         />
         {FlyingQuery.isLoading && <CircularProgress />}
         {FlyingQuery.isSuccess && (
-          <Box style={{ height: "80vh", width: "100%" }}>
+          <Box
+            style={{
+              height: "80vh",
+              width: "calc(100vw - 280px)",
+            }}
+          >
             <DataGrid
               rows={rows}
               columns={cols}

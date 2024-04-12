@@ -48,6 +48,7 @@ import EditInvigilatorModal from "./editInvigilatorModal";
 import DeleteInvigilatorModal from "./deleteInvigilatorModal";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { refetchInterval } from "@/config/var.config";
+import ManageInvigilatorModal from "./manageInvigilator";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -103,6 +104,14 @@ const SlotDetails = ({ params }) => {
   const { Canvas } = useQRCode();
 
   const queryClient = useQueryClient();
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  };
 
   const router = useRouter();
   const { id: slotId } = params;
@@ -261,6 +270,15 @@ const SlotDetails = ({ params }) => {
     rHoldStudents: 0,
   };
   const [addRoomModalOpen, setAddRoomModalOpen] = useState(false);
+  const [invigilatorModalOpen, setInvigilatorModalOpen] = useState(false);
+
+  const handleInvigilatorModalOpen = () => {
+    setInvigilatorModalOpen(true);
+  };
+  const handleInvigilatorModalClose = () => {
+    setInvigilatorModalOpen(false);
+  };
+
   const [newRoomData, setNewRoomData] = useState({
     roomNo: 0,
     block: "",
@@ -380,10 +398,10 @@ const SlotDetails = ({ params }) => {
       {
         field: "room_no",
         headerName: "Room Number",
-        width: 160,
+        minWidth: 220,
         renderCell: (params) => {
           return (
-            <>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography mr={1}>{params.value}</Typography>
               {params.row.status === "APPROVAL" ? (
                 <Chip
@@ -416,16 +434,16 @@ const SlotDetails = ({ params }) => {
                   color={getChipColor(params.row.status)}
                 />
               )}
-            </>
+            </Box>
           );
         },
       },
-      { field: "block", headerName: "Block", width: 95 },
-      { field: "students", headerName: "No. of Students", width: 135 },
+      { field: "block", headerName: "Block", minWidth: 95 },
+      { field: "students", headerName: "Students", minWidth: 95 },
       {
         field: "Invigilators",
-        headerName: "Invigilators accepted",
-        width: 145,
+        headerName: "Inv Slots",
+        minWidth: 50,
         renderCell: (params) => {
           return (
             <Typography sx={{ fontWeight: 800 }}>
@@ -438,7 +456,7 @@ const SlotDetails = ({ params }) => {
         field: "inv1",
         headerName: "Invigilator 1",
         // flex: 1,
-        width: 175,
+        minWidth: 160,
         renderCell: (params) => {
           if (params.row.num_inv < 1) {
             return "";
@@ -454,7 +472,7 @@ const SlotDetails = ({ params }) => {
         field: "inv2",
         headerName: "Invigilator 2",
         // flex: 1,
-        width: 175,
+        minWidth: 160,
         renderCell: (params) => {
           if (params.row.num_inv < 2) {
             return "";
@@ -470,7 +488,7 @@ const SlotDetails = ({ params }) => {
         field: "inv3",
         headerName: "Invigilator 3",
         // flex: 1,
-        width: 175,
+        minWidth: 160,
         renderCell: (params) => {
           if (params.row.num_inv < 3) {
             return "";
@@ -486,7 +504,7 @@ const SlotDetails = ({ params }) => {
       {
         field: "room_id",
         headerName: "Actions",
-        width: 200,
+        minWidth: 200,
         renderCell: (params) => {
           return (
             <Box
@@ -621,7 +639,10 @@ const SlotDetails = ({ params }) => {
         invigilators_assigned={editInvigilatorModalData?.invigilators_num}
         roomId={editInvigilatorModalData?.roomId}
       />
-
+      <ManageInvigilatorModal
+        open={invigilatorModalOpen}
+        handleClose={handleInvigilatorModalClose}
+      />
       <AssignTeacherModal
         open={assignTeacherModalOpen}
         handleClose={() => setAssignTeacherModalOpen(false)}
@@ -685,16 +706,23 @@ const SlotDetails = ({ params }) => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => router.push(`/main/slotDetail/${slotId}/flying`)}
+                onClick={() => setAddRoomModalOpen(true)}
               >
-                Manage Flying
+                Add Room
               </Button>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setAddRoomModalOpen(true)}
+                onClick={() => setInvigilatorModalOpen(true)}
               >
-                Add Room
+                Manage Invigilator
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => router.push(`/main/slotDetail/${slotId}/flying`)}
+              >
+                Manage Flying
               </Button>
             </Box>
           </Grid>
@@ -715,7 +743,7 @@ const SlotDetails = ({ params }) => {
                   Date
                 </Typography>
                 <Typography variant="h5">
-                  {SlotDetailsQuery.data.date}
+                  {formatDate(SlotDetailsQuery.data.date)}
                 </Typography>
                 <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
                   Type of Slot
@@ -798,7 +826,7 @@ const SlotDetails = ({ params }) => {
                   }}
                 >
                   <Typography variant="h6">
-                    {SlotDetailsQuery.data.date}
+                    {formatDate(SlotDetailsQuery.data.date)}
                   </Typography>
                   <Typography variant="h6">
                     {" "}
@@ -1022,7 +1050,12 @@ const SlotDetails = ({ params }) => {
                 </Dialog>
 
                 {rows.length > 0 && (
-                  <Box style={{ height: 600, width: "100%" }}>
+                  <Box
+                    style={{
+                      height: "80vh",
+                      width: "calc(100vw - 280px)",
+                    }}
+                  >
                     <DataGrid
                       rows={rows}
                       columns={columns}

@@ -110,16 +110,16 @@ const StudentListRoomID = ({ params }) => {
   };
 
   const cols = [
-    { field: "sap_id", headerName: "SAP ID", width: 150 },
-    { field: "roll_no", headerName: "Roll No.", width: 150 },
-    { field: "student_name", headerName: "Name", width: 150 },
-    { field: "seat_no", headerName: "Seat No", width: 120 },
-    { field: "subject", headerName: "Subject", width: 150 },
-    { field: "subject_code", headerName: "Subject Code", width: 150 },
+    { field: "sap_id", headerName: "SAP ID", minWidth: 140 },
+    { field: "roll_no", headerName: "Roll No.", minWidth: 150 },
+    { field: "student_name", headerName: "Name", minWidth: 150 },
+    { field: "seat_no", headerName: "Seat No", minWidth: 100 },
+    { field: "subject", headerName: "Subject", minWidth: 140 },
+    { field: "subject_code", headerName: "Subject Code", minWidth: 150 },
     {
       field: "attendance",
       headerName: "Attendance",
-      width: 120,
+      minWidth: 120,
       renderCell: (params) => {
         return (
           <Box
@@ -141,7 +141,7 @@ const StudentListRoomID = ({ params }) => {
     {
       field: "eligible",
       headerName: "Eligible",
-      width: 150,
+      minWidth: 130,
       renderCell: (params) => {
         return (
           <Box
@@ -172,7 +172,7 @@ const StudentListRoomID = ({ params }) => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      minWidth: 130,
       renderCell: (params) => (
         <div>
           <Tooltip title="Edit students eligibility" arrow placement="top">
@@ -222,7 +222,12 @@ const StudentListRoomID = ({ params }) => {
               <Text
             </Box> */}
             {/* <Box sx={{ maxWidth: "100%", overflowX: "scroll" }}> */}
-            <Box style={{ height: "80vh", width: "100%" }}>
+            <Box
+              style={{
+                height: "80vh",
+                width: "calc(100vw - 280px)",
+              }}
+            >
               <DataGrid
                 rows={rows}
                 columns={cols}

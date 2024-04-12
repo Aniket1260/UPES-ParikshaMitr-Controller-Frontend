@@ -101,19 +101,19 @@ const DutyStatus = () => {
   const columns =
     activeTab === "invigilator"
       ? [
-          { field: "id", headerName: "ID", width: 150 },
-          { field: "Name", headerName: "Name", flex: 1 },
-          { field: "sap_id", headerName: "SAP ID", width: 150 },
-          { field: "phone", headerName: "Phone", width: 150 },
-          { field: "email", headerName: "Email", width: 150 },
-          { field: "scan_time", headerName: "Scan Time", width: 150 },
-          { field: "room", headerName: "Room", width: 150 },
+          { field: "id", headerName: "ID", minWidth: 100 },
+          { field: "Name", headerName: "Name", minWidth: 170 },
+          { field: "sap_id", headerName: "SAP ID", minWidth: 120 },
+          { field: "phone", headerName: "Phone", minWidth: 130 },
+          { field: "email", headerName: "Email", minWidth: 220 },
+          { field: "scan_time", headerName: "Scan Time", minWidth: 170 },
+          { field: "room", headerName: "Room", minWidth: 120 },
           {
             field: "attendance",
             headerName: "Attendance",
-            width: 100,
+            minWidth: 180,
             valueGetter: (params) =>
-              params.row.attendance === true ? "P" : "A",
+              params?.row?.attendance === true ? "P" : "A",
             renderCell: (params) => (
               <Box
                 sx={{
@@ -133,16 +133,20 @@ const DutyStatus = () => {
           },
         ]
       : [
-          { field: "id", headerName: "ID", width: 100 },
-          { field: "Name", headerName: "Name", flex: 1 },
-          { field: "sap_id", headerName: "SAP ID", width: 100 },
-          { field: "in_time", headerName: "In Time", width: 100 },
-          { field: "out_time", headerName: "Out Time", width: 100 },
-          { field: "rooms", headerName: "Rooms Assigned", width: 150 },
-          { field: "phone", headerName: "Phone", width: 100 },
-          { field: "email", headerName: "Email", width: 150 },
-          { field: "status", headerName: "Status", width: 150 },
-          { field: "final_remarks", headerName: "Final Remarks", width: 150 },
+          { field: "id", headerName: "ID", minWidth: 30 },
+          { field: "Name", headerName: "Name", minWidth: 170 },
+          { field: "sap_id", headerName: "SAP ID", minWidth: 120 },
+          { field: "in_time", headerName: "In Time", minWidth: 100 },
+          { field: "out_time", headerName: "Out Time", minWidth: 100 },
+          { field: "rooms", headerName: "Rooms Assigned", minWidth: 90 },
+          { field: "phone", headerName: "Phone", minWidth: 130 },
+          { field: "email", headerName: "Email", minWidth: 200 },
+          { field: "status", headerName: "Status", minWidth: 100 },
+          {
+            field: "final_remarks",
+            headerName: "Final Remarks",
+            minWidth: 150,
+          },
         ];
 
   const rows = useMemo(() => {
@@ -250,7 +254,12 @@ const DutyStatus = () => {
           </Tabs>
 
           {/* {getDataQuery.isSuccess && ( */}
-          <Box style={{ height: 600, width: "100%" }}>
+          <Box
+            style={{
+              height: "80vh",
+              width: "calc(100vw - 280px)",
+            }}
+          >
             <DataGrid
               rows={rows}
               columns={columns}

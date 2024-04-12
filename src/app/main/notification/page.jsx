@@ -45,12 +45,12 @@ const Notification = () => {
   }
 
   const cols = [
-    { field: "title", headerName: "Title", flex: 1 },
-    { field: "message", headerName: "Message", flex: 1 },
+    { field: "title", headerName: "Title", minWidth: 310 },
+    { field: "message", headerName: "Message", minWidth: 400 },
     {
       field: "sender.name",
       headerName: "Sender",
-      flex: 1,
+      minWidth: 250,
       renderCell: ({ row }) => {
         return row?.sender?.name;
       },
@@ -58,7 +58,7 @@ const Notification = () => {
     {
       field: "createdAt",
       headerName: "Sent At",
-      flex: 0.5,
+      minWidth: 250,
       renderCell: (params) => {
         return format(new Date(params.value), "do MMM yyyy");
       },
@@ -138,7 +138,12 @@ const Notification = () => {
           </Box>
           <Box>
             {rows.length > 0 && (
-              <Box style={{ height: "70vh", width: "100%" }}>
+              <Box
+                style={{
+                  height: "70vh",
+                  width: "calc(100vw - 280px)",
+                }}
+              >
                 <DataGrid
                   rows={rows}
                   columns={cols}

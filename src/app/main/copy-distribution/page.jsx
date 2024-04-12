@@ -8,10 +8,19 @@ import { getBundleService } from "@/services/copy-distribution";
 import { enqueueSnackbar } from "notistack";
 import { Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import ManualEntryModal from "./manualEntryModal";
 
 const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear().toString();
+    return `${day}/${month}/${year}`;
+  };
 
   const queryClient = useQueryClient();
   if (global?.window !== undefined) {
@@ -28,18 +37,36 @@ const CopyDistribution = () => {
     setOpen(false);
   };
 
+  const [manualEntryOpen, setManualEntryOpen] = useState(false);
+  const handleManualEntryClose = () => {
+    setManualEntryOpen(false);
+  };
+
+  const handleManualEntryOpen = () => {
+    setManualEntryOpen(true);
+  };
+
   const rows = useMemo(() => {
     return (
-      CopyQuery.data?.map((ele) => ({
-        ...ele,
-        evaluatorName: ele.evaluator?.name, // Accessing the name field under evaluator
-        sap: ele.evaluator?.sap_id, // Accessing the sap_id field under evaluator
-        dateofexam: ele.date_of_exam, // Directly accessing the date_of_exam field
-        evaluationMode: ele.evaluation_mode, // Directly accessing the evaluation_mode field
-        subjectName: ele.subject_name, // Directly accessing the subject_name field
-        subjectCode: ele.subject_code, // Directly accessing the subject_code field
-        id: ele._id,
-      })) || []
+      CopyQuery.data?.map((ele) => {
+        const formattedDate = formatDate(ele.date_of_exam);
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formattedDate)) {
+          enqueueSnackbar({
+            variant: "error",
+            message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
+          });
+        }
+        return {
+          ...ele,
+          evaluatorName: ele.evaluator?.name,
+          sap: ele.evaluator?.sap_id,
+          dateofexam: formattedDate,
+          evaluationMode: ele.evaluation_mode,
+          subjectName: ele.subject_name,
+          subjectCode: ele.subject_code,
+          id: ele._id,
+        };
+      }) || []
     );
   }, [CopyQuery.data]);
 
@@ -60,37 +87,37 @@ const CopyDistribution = () => {
     {
       field: "evaluatorName",
       headerName: "Evaluator Name",
-      flex: 1,
+      minWidth: 200,
     },
     {
       field: "sap",
       headerName: "Evaluator SapId",
-      flex: 1,
+      minWidth: 150,
     },
     {
       field: "dateofexam",
       headerName: "Date Of Examination",
-      flex: 1,
+      minWidth: 170,
     },
     {
       field: "evaluationMode",
       headerName: "Evaluation Mode",
-      flex: 1,
+      minWidth: 170,
     },
     {
       field: "subjectName",
       headerName: "Subject Name",
-      flex: 1,
+      minWidth: 175,
     },
     {
       field: "subjectCode",
       headerName: "Subject Code",
-      flex: 1,
+      minWidth: 170,
     },
     {
       field: "actions",
       headerName: "Actions",
-      flex: 1,
+      minWidth: 170,
       renderCell: ({ row }) => {
         return (
           <Box>
@@ -113,18 +140,37 @@ const CopyDistribution = () => {
     <div>
       <Box display="flex" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Copy Distribution Bundle</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setOpen(true)}
-        >
-          Add Bundles
-        </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleManualEntryOpen}
+          >
+            Manual Entry
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setOpen(true)}
+          >
+            Add Bundles
+          </Button>
+        </Box>
       </Box>
       <UploadBundleModal open={open} onClose={handleClose} />
-      <div style={{ height: 400, width: "100%" }}>
+      <ManualEntryModal
+        open={manualEntryOpen}
+        onClose={handleManualEntryClose}
+        columns={cols}
+      />
+      <Box
+        style={{
+          height: "80vh",
+          width: "calc(100vw - 280px)",
+        }}
+      >
         <DataGrid rows={rows} columns={cols} pageSize={5} />
-      </div>
+      </Box>
     </div>
   );
 };

@@ -121,14 +121,14 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     {
       field: "id",
       headerName: "ID",
-      flex: 0.5,
+      minWidth: 170,
     },
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "sap_id", headerName: "SAP ID", flex: 1 },
+    { field: "name", headerName: "Name", minWidth: 300 },
+    { field: "sap_id", headerName: "SAP ID", minWidth: 170 },
     {
       field: "onboardedAt",
       headerName: "Onboarding Date",
-      flex: 1,
+      minWidth: 270,
       renderCell: (params) => {
         return format(new Date(params.value), "do MMM yyyy hh:mm a");
       },
@@ -136,7 +136,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
     {
       field: "action",
       headerName: "Action",
-      flex: 0.8,
+      minWidth: 300,
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
@@ -251,7 +251,12 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       </Box>
       {rows.length === 0 && <p>No unapproved teachers found</p>}
       {rows.length > 0 && (
-        <Box style={{ height: 400, width: "100%" }}>
+        <Box
+          style={{
+            height: "80vh",
+            width: "calc(100vw - 280px)",
+          }}
+        >
           <DataGrid
             rows={rows}
             columns={cols}

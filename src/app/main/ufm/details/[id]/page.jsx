@@ -1,6 +1,13 @@
 "use client";
 import { getUFMByIdService } from "@/services/cont-ufm.service";
-import { Box, Chip, CircularProgress, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  CircularProgress,
+  Grid,
+  Typography,
+  Divider,
+} from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { enqueueSnackbar } from "notistack";
 import React from "react";
@@ -83,13 +90,13 @@ const UFMDetailPage = ({ params }) => {
               </Typography>
             </Grid>
           </Grid>
-          <Typography variant="body2" color="primary" sx={{ mb: 2, mt: 2 }}>
+          <Typography variant="body2" color="primary" sx={{ mt: 2 }}>
             Incriminating Material
           </Typography>
           <Grid container sx={1}>
             {ufmData.incriminating_material.communication_devices > 0 && (
               <Grid item xs={3}>
-                <Typography variant="body1">
+                <Typography variant="h6">
                   Communication Devices:{" "}
                   {ufmData.incriminating_material.communication_devices}
                 </Typography>
@@ -98,7 +105,7 @@ const UFMDetailPage = ({ params }) => {
 
             {ufmData.incriminating_material.handwritten_pages > 0 && (
               <Grid item xs={3}>
-                <Typography variant="body1">
+                <Typography variant="h6">
                   Handwritten Pages:{" "}
                   {ufmData.incriminating_material.handwritten_pages}
                 </Typography>
@@ -107,7 +114,7 @@ const UFMDetailPage = ({ params }) => {
 
             {ufmData.incriminating_material.printed_pages > 0 && (
               <Grid item xs={3}>
-                <Typography variant="body1">
+                <Typography variant="h6">
                   Printed Pages: {ufmData.incriminating_material.printed_pages}
                 </Typography>
               </Grid>
@@ -115,7 +122,7 @@ const UFMDetailPage = ({ params }) => {
 
             {ufmData.incriminating_material.torn_book_pages > 0 && (
               <Grid item xs={3}>
-                <Typography variant="body1" sx={{ mb: 1 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>
                   Torn Book Pages:{" "}
                   {ufmData.incriminating_material.torn_book_pages}
                 </Typography>
@@ -124,10 +131,10 @@ const UFMDetailPage = ({ params }) => {
           </Grid>
           <Grid container sx={1}>
             <Grid item xs={6}>
-              <Typography variant="body2" color="primary" sx={{ mb: 2, mt: 2 }}>
+              <Typography variant="body2" color="primary" sx={{ mt: 2 }}>
                 New Answer Sheet Number
               </Typography>
-              <Typography variant="body1" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
                 {ufmData.new_ans_sheet_number}
               </Typography>
             </Grid>
@@ -144,11 +151,12 @@ const UFMDetailPage = ({ params }) => {
             Student Remarks
           </Typography>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            {ufmData.student_remarks}
+            {ufmData.student_remarks}s
           </Typography>
         </>
       )}
-      <Typography variant="h5" sx={{ mb: 2 }}>
+      <Divider sx={{ my: 2 }}></Divider>
+      <Typography variant="h4" sx={{ mb: 2 }}>
         UFM By
       </Typography>
       <Grid container sx={1}>

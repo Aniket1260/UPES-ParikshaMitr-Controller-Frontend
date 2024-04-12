@@ -55,12 +55,12 @@ const UFMList = () => {
     {
       field: "id",
       headerName: "#",
-      width: 100,
+      minWidth: 150,
     },
     {
       field: "date",
       headerName: "Slot Date",
-      flex: 1,
+      minWidth: 250,
       valueGetter: (params) => {
         if (!params.value) return "";
         return format(new Date(params.value), "do MMM yyyy");
@@ -87,7 +87,7 @@ const UFMList = () => {
     {
       headerName: "Total Rooms",
       field: "totalRooms",
-      flex: 1,
+      minWidth: 270,
       renderCell: (params) => {
         return <Typography>{params.row?.rooms?.length}</Typography>;
       },
@@ -95,7 +95,7 @@ const UFMList = () => {
     {
       headerName: "Total UFMS",
       field: "totalUFM",
-      flex: 1,
+      minWidth: 270,
       renderCell: (params) => {
         return <Typography>{params.row?.ufms?.length}</Typography>;
       },
@@ -103,7 +103,7 @@ const UFMList = () => {
     {
       headerName: "Actions",
       field: "actions",
-      flex: 0.5,
+      minWidth: 270,
       renderCell: (params) => {
         return (
           <Box>
@@ -131,7 +131,12 @@ const UFMList = () => {
       </Typography>
       {UFMQuery.isLoading && <CircularProgress />}
       {UFMQuery.isSuccess && (
-        <Box style={{ height: "80vh", width: "100%" }}>
+        <Box
+          style={{
+            height: "80vh",
+            width: "calc(100vw - 280px)",
+          }}
+        >
           <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
         </Box>
       )}

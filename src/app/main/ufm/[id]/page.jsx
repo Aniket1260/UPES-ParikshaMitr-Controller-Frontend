@@ -55,12 +55,12 @@ const UFMBySlot = ({ params }) => {
     {
       field: "id",
       headerName: "#",
-      width: 100,
+      minWidth: 150,
     },
     {
       field: "sap_id",
       headerName: "SAP ID",
-      width: 150,
+      minWidth: 250,
       renderCell: (params) => {
         return <Typography>{params.row.student?.sap_id}</Typography>;
       },
@@ -68,7 +68,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "roll+np",
       headerName: "Roll No.",
-      width: 150,
+      minWidth: 250,
       renderCell: (params) => {
         return <Typography>{params.row.student?.roll_no}</Typography>;
       },
@@ -76,7 +76,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "name",
       headerName: "Student Name",
-      flex: 1,
+      minWidth: 250,
       renderCell: (params) => {
         return <Typography>{params.row.student?.name}</Typography>;
       },
@@ -84,7 +84,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "room",
       headerName: "Room",
-      width: 200,
+      minWidth: 150,
       renderCell: (params) => {
         return (
           <Typography>
@@ -96,7 +96,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "seat",
       headerName: "Seat No.",
-      width: 100,
+      minWidth: 100,
       renderCell: (params) => {
         return <Typography>{params.row.student?.seat_no}</Typography>;
       },
@@ -104,7 +104,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "subject",
       headerName: "Subject",
-      flex: 1,
+      minWidth: 100,
       renderCell: (params) => {
         return <Typography>{params.row.subject?.subject_name}</Typography>;
       },
@@ -112,7 +112,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "actions",
       headerName: "Actions",
-      width: 150,
+      minWidth: 150,
       renderCell: (params) => {
         return (
           <Box>
@@ -173,7 +173,12 @@ const UFMBySlot = ({ params }) => {
               </Typography>
             </Grid>
           </Grid>
-          <Box style={{ height: 600, width: "100%" }}>
+          <Box
+            style={{
+              height: "80vh",
+              width: "calc(100vw - 280px)",
+            }}
+          >
             <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
           </Box>
         </>

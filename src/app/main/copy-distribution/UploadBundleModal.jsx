@@ -183,18 +183,16 @@ const UploadBundleModal = ({ open, onClose }) => {
   };
 
   const cols = [
-    { field: "subjectName", headerName: "Subject Name", flex: 1 },
-    { field: "subjectCode", headerName: "Subject Code", flex: 1 },
-    { field: "evaluationMode", headerName: "Evaluation Mode", flex: 1 },
-    { field: "program", headerName: "Program", flex: 1 },
-    { field: "batch", headerName: "Batch", flex: 1 },
-    { field: "noOfStudents", headerName: "Number of Students", flex: 1 },
-    { field: "evaluatorName", headerName: "Evaluator Name", flex: 1 },
-    { field: "evaluatorSap", headerName: "Evaluator's SAPID", flex: 1 },
-    { field: "evaluatorSchool", headerName: "Evaluator School", flex: 1 },
-    { field: "dateOfExam", headerName: "Date of Exam", flex: 1 },
-    // { field: "slotDate", headerName: "Slot Date", flex: 1 },
-    // { field: "slotTime", headerName: "Slot Time", flex: 1 },
+    { field: "subjectName", headerName: "Subject Name", minWidth: 150 },
+    { field: "subjectCode", headerName: "Subject Code", minWidth: 150 },
+    { field: "evaluationMode", headerName: "Evaluation Mode", minWidth: 150 },
+    { field: "program", headerName: "Program", minWidth: 150 },
+    { field: "batch", headerName: "Batch", minWidth: 150 },
+    { field: "noOfStudents", headerName: "Number of Students", minWidth: 150 },
+    { field: "evaluatorName", headerName: "Evaluator Name", minWidth: 150 },
+    { field: "evaluatorSap", headerName: "Evaluator's SAPID", minWidth: 150 },
+    { field: "evaluatorSchool", headerName: "Evaluator School", minWidth: 150 },
+    { field: "dateOfExam", headerName: "Date of Exam", minWidth: 150 },
   ];
 
   return (

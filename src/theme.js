@@ -71,6 +71,12 @@ export const getDesignTokens = (mode) => ({
                 : darken(theme.palette.secondary.main, 0.2),
           };
         },
+        cell: ({ theme }) => {
+          return {
+            display: "flex",
+            alignItems: "center",
+          };
+        },
       },
     },
   },

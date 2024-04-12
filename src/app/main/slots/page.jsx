@@ -94,7 +94,7 @@ const ExamSlots = () => {
     {
       field: "date",
       headerName: "Slot Date",
-      width: 140,
+      minWidth: 180,
       renderCell: (params) => {
         return format(new Date(params.value), "do MMM yyyy");
       },
@@ -102,12 +102,12 @@ const ExamSlots = () => {
     {
       field: "type",
       headerName: "Slot Type",
-      width: 120,
+      minWidth: 180,
     },
     {
       field: "timeSlot",
       headerName: "Time Slot",
-      flex: 1,
+      minWidth: 180,
       renderCell: (params) => {
         return (
           <Chip
@@ -127,12 +127,12 @@ const ExamSlots = () => {
     {
       field: "uniqueCode",
       headerName: "Unique Code",
-      flex: 1,
+      minWidth: 250,
     },
     {
       field: "rooms",
       headerName: "No. of Rooms Alloted",
-      flex: 0.5,
+      minWidth: 180,
       renderCell: ({ row }) => {
         return row?.rooms?.length;
       },
@@ -140,7 +140,7 @@ const ExamSlots = () => {
     {
       field: "_",
       headerName: "Actions",
-      flex: 0.6,
+      minWidth: 240,
       renderCell: ({ row }) => {
         return (
           <Box>
