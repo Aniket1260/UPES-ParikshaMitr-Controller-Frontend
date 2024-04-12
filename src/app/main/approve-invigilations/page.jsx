@@ -118,8 +118,6 @@ const ApproveInvigilations = () => {
           scan_date: ele.invigilator3?.scan_date,
         });
       }
-
-      //TODO: Add invigilator 3
     });
     return rows;
   }, [UnapprovedTeachersQuery.data]);
