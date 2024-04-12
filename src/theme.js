@@ -62,7 +62,7 @@ export const getDesignTokens = (mode) => ({
             width: "auto",
           },
         },
-        columnHeaders: ({ theme }) => {
+        columnHeader: ({ theme }) => {
           return {
             color: mode === "light" ? "black" : "white",
             backgroundColor:
