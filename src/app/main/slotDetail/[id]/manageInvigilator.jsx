@@ -59,7 +59,10 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
     onError: (error) => {
       enqueueSnackbar({
         variant: "error",
-        message: error.response?.data.status + error.response?.data.message,
+        message:
+          error.response?.data.statusCode +
+          " : " +
+          error.response?.data.message,
       });
     },
   });

@@ -121,7 +121,7 @@ const UploadBundleModal = ({ open, onClose }) => {
       );
       data = rows.slice(1).filter((row) => row.trim() !== "");
 
-      const parsedData = data.map((row) => {
+      const parsedData = data.map((row, idx) => {
         const rowData = row.trim().split(",");
         const subjectName = rowData[SubjectNameIndex];
         const subjectCode = rowData[SubjectCodeIndex];
@@ -134,6 +134,7 @@ const UploadBundleModal = ({ open, onClose }) => {
         const evaluatorSchool = rowData[EvaluatorSchoolIndex];
         const dateOfExam = rowData[DateOfExamIndex];
         return {
+          id: idx,
           subjectName,
           subjectCode,
           evaluationMode,
@@ -239,7 +240,7 @@ const UploadBundleModal = ({ open, onClose }) => {
               <DataGrid
                 rows={csvData}
                 columns={cols}
-                getRowId={(row) => row.dateOfExam}
+                getRowId={(row) => row.id}
                 pageSizeOptions={[5]}
               />
             </div>
