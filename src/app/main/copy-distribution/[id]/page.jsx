@@ -1,6 +1,6 @@
 "use client";
 import { getBundleByIdService } from "@/services/copy-distribution";
-
+import StatusUpdateModal from "./statusUpdateModal";
 import { Grid, Typography, Box, Chip, Button } from "@mui/material";
 import {
   DataGrid,
@@ -86,6 +86,28 @@ const CopyDetails = ({ params }) => {
     });
   }
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedCopy, setSelectedCopy] = useState(null);
+
+  const handleChipClick = (status, copy) => {
+    if (status === "COMPLETED") return;
+    setSelectedCopy(copy);
+    setOpenModal(true);
+  };
+
+  const handleConfirm = () => {
+    console.log({
+      batch: selectedCopy?.batch,
+      program: selectedCopy?.program,
+      bundle_id: bundleId,
+    });
+    setOpenModal(false);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+  };
+
   const cols = [
     {
       field: "batch",
@@ -114,6 +136,7 @@ const CopyDetails = ({ params }) => {
             <Chip
               label={getChipText(status, dueIn)}
               color={getChipColor(params.value)}
+              onClick={() => handleChipClick(status, params.row)}
             >
               {params.value}
             </Chip>
@@ -234,6 +257,7 @@ const CopyDetails = ({ params }) => {
           rows={rows || []}
           columns={cols}
           pageSize={5}
+          disableRowSelectionOnClick
           slots={{
             toolbar: () => (
               <GridToolbarContainer>
@@ -246,6 +270,17 @@ const CopyDetails = ({ params }) => {
             ),
           }}
         />
+        {selectedCopy && (
+          <StatusUpdateModal
+            open={openModal}
+            onClose={handleClose}
+            onConfirm={handleConfirm}
+            status={selectedCopy.status}
+            batch={selectedCopy?.batch}
+            program={selectedCopy?.program}
+            bundle_id={bundleId}
+          />
+        )}
       </Box>
     </Box>
   );

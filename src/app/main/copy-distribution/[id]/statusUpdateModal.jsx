@@ -1,21 +1,45 @@
 import React from "react";
 import { Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { statusChangeService } from "@/services/copy-distribution";
 
-const StatusUpdateModal = ({ open, onClose, onConfirm, status }) => {
-  const queryClient = useQueryClient;
-  const mutation = useMutation({
-    mutationFn: () => statusChangeService(bundleId, batch, program, status),
-    onSuccess: (data) => {
-      console.log("Response from statusChangeService API:", data);
+const StatusUpdateModal = ({
+  open,
+  onClose,
+  onConfirm,
+  status,
+  batch,
+  program,
+  bundle_id,
+}) => {
+  if (global?.window !== undefined) {
+    var controllerToken = localStorage.getItem("token");
+  }
+  const queryClient = useQueryClient();
+
+  const statusChangeMutation = useMutation({
+    mutationFn: (statusData) =>
+      statusChangeService(controllerToken, statusData),
+    onSuccess: () => {
       queryClient.invalidateQueries("bundle");
-      onConfirm();
-      onClose();
+      handleClose();
+      enqueueSnackbar({
+        variant: "success",
+        message: "Status chnaged successfully",
+      });
     },
     onError: (error) => {
-      console.error("Error occurred:", error);
+      console.log("error", error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.message,
+      });
     },
   });
+
+  const handleClose = () => {
+    onClose();
+  };
 
   let message = "";
   let action = "";
@@ -34,8 +58,14 @@ const StatusUpdateModal = ({ open, onClose, onConfirm, status }) => {
       break;
   }
 
-  const handleConfirm = () => {
-    mutation.mutate();
+  const handleConfirm = async () => {
+    const statusData = {
+      bundle_id: bundle_id,
+      batch: batch,
+      program: program,
+    };
+    console.log(statusData);
+    statusChangeMutation.mutate(statusData);
   };
 
   return (
