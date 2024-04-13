@@ -62,13 +62,13 @@ export const getDesignTokens = (mode) => ({
             width: "auto",
           },
         },
-        columnHeader: ({ theme }) => {
+        columnHeaderRow: ({ theme }) => {
           return {
             color: mode === "light" ? "black" : "white",
-            backgroundColor:
+            background:
               mode === "light"
-                ? theme.palette.secondary.main
-                : darken(theme.palette.secondary.main, 0.2),
+                ? theme.palette.secondary.main + " !important"
+                : darken(theme.palette.secondary.main, 0.2) + " !important",
           };
         },
         cell: ({ theme }) => {
