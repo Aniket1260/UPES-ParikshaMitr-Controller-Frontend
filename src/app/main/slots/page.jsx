@@ -129,6 +129,23 @@ const ExamSlots = () => {
       },
     },
     {
+      field: "ab",
+      headerName: "Status",
+      minWidth: 180,
+      renderCell: ({ row }) => {
+        // Not completed if event one room status is not completed
+        const isCompleted = row.rooms.every(
+          (room) => room.status === "COMPLETED"
+        );
+        return (
+          <Chip
+            label={isCompleted ? "Completed" : "Not Completed"}
+            color={isCompleted ? "success" : "error"}
+          />
+        );
+      },
+    },
+    {
       field: "uniqueCode",
       headerName: "Unique Code",
       minWidth: 250,
