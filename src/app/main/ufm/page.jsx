@@ -55,16 +55,17 @@ const UFMList = () => {
     {
       field: "id",
       headerName: "#",
-      minWidth: 150,
+      minWidth: 100,
     },
     {
       field: "date",
       headerName: "Slot Date",
-      minWidth: 250,
+      minWidth: 300,
       valueGetter: (params) => {
-        if (!params.value) return "";
-        return format(new Date(params.value), "do MMM yyyy");
+        if (!params) return "";
+        return format(new Date(params), "do MMM yyyy");
       },
+
       renderCell: (params) => {
         return (
           <Typography>
@@ -84,6 +85,7 @@ const UFMList = () => {
         );
       },
     },
+
     {
       headerName: "Total Rooms",
       field: "totalRooms",
@@ -103,7 +105,7 @@ const UFMList = () => {
     {
       headerName: "Actions",
       field: "actions",
-      minWidth: 270,
+      minWidth: 320,
       renderCell: (params) => {
         return (
           <Box>
