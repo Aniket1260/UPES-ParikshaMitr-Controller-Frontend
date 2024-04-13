@@ -13,8 +13,13 @@ import {
   Tabs,
 } from "@mui/material";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
-import { GetInvigilatorsInSlotService } from "@/services/exam-slots.service";
+import {
+  GetInvigilatorsInSlotService,
+  addInvDutytoSlotService,
+  removeInvDutyfromSlotService,
+} from "@/services/exam-slots.service";
 import { getFreeTeachersBySlotID } from "@/services/flying.service";
+import { enqueueSnackbar } from "notistack";
 
 const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
   if (global?.window !== undefined) {
@@ -31,6 +36,32 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
     queryKey: ["freeTeachers", controllerToken, slotId],
     queryFn: () => getFreeTeachersBySlotID(controllerToken, slotId),
     enabled: open,
+  });
+
+  const AddInvigilatorMutation = useMutation({
+    mutationFn: (data) => addInvDutytoSlotService(controllerToken, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("invigilators");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.data.status + error.response?.data.message,
+      });
+    },
+  });
+
+  const RemoveInvigilatorMutation = useMutation({
+    mutationFn: (data) => removeInvDutyfromSlotService(controllerToken, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries("invigilators");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.data.status + error.response?.data.message,
+      });
+    },
   });
 
   const queryClient = useQueryClient();
@@ -59,9 +90,17 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
 
   const handleAction = () => {
     if (selectedTab === "add") {
-      console.log("Add invigilator");
+      AddInvigilatorMutation.mutate({
+        slot_id: slotId,
+        teacher_id: selectedTeacher._id,
+      });
+      console.log("Add invigilator", selectedTeacher);
       closeDialog();
     } else {
+      RemoveInvigilatorMutation.mutate({
+        slot_id: slotId,
+        teacher_id: selectedTeacher._id,
+      });
       console.log("Remove invigilator", selectedTeacher);
       closeDialog();
     }
@@ -99,7 +138,11 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
           >
             Close
           </Button>
-          <Button variant="contained" onClick={handleAction}>
+          <Button
+            variant="contained"
+            onClick={handleAction}
+            disabled={selectedTeacher === null}
+          >
             {selectedTab === "add" ? "Add" : "Remove"}
           </Button>
         </Box>
