@@ -54,7 +54,7 @@ const CopyDetails = ({ params }) => {
     queryKey: ["bundle", controllerToken, bundleId],
     queryFn: () => getBundleByIdService(controllerToken, bundleId),
   });
-  console.log(BundleQuery);
+  console.log(BundleQuery.data);
 
   const sapId = BundleQuery.data && BundleQuery.data[0].evaluator.sap_id;
   const subjectCode = BundleQuery.data && BundleQuery.data[0].subject_code;
@@ -70,7 +70,7 @@ const CopyDetails = ({ params }) => {
         status: copy.status,
         allottedDate: copy.allotted_date,
         startDate: copy.start_date,
-        submissionDate: copy.submission_date,
+        submissionDate: copy.submit_date,
         due_in: copy.due_in,
       }));
     }
