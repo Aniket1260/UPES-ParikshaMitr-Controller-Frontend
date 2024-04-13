@@ -37,3 +37,21 @@ export const getBundleService = async (token) => {
     throw error;
   }
 };
+
+export const getBundleByIdService = async (token, bundleId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/copy-distribution/bundle-by-id?bundle_id=${bundleId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

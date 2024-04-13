@@ -70,9 +70,6 @@ const CopyDistribution = () => {
     );
   }, [CopyQuery.data]);
 
-  console.log(CopyQuery.data);
-  console.log("rows:", rows);
-
   if (CopyQuery.isError) {
     enqueueSnackbar({
       variant: "error",
@@ -97,7 +94,7 @@ const CopyDistribution = () => {
     {
       field: "dateofexam",
       headerName: "Date Of Examination",
-      minWidth: 170,
+      minWidth: 200,
     },
     {
       field: "evaluationMode",
@@ -117,7 +114,7 @@ const CopyDistribution = () => {
     {
       field: "actions",
       headerName: "Actions",
-      minWidth: 170,
+      minWidth: 190,
       renderCell: ({ row }) => {
         return (
           <Box>
@@ -169,7 +166,7 @@ const CopyDistribution = () => {
           width: "calc(100vw - 280px)",
         }}
       >
-        <DataGrid rows={rows} columns={cols} pageSize={5} />
+        <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
       </Box>
     </div>
   );

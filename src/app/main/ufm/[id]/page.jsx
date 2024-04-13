@@ -55,12 +55,12 @@ const UFMBySlot = ({ params }) => {
     {
       field: "id",
       headerName: "#",
-      minWidth: 150,
+      minWidth: 100,
     },
     {
       field: "sap_id",
       headerName: "SAP ID",
-      minWidth: 250,
+      minWidth: 170,
       renderCell: (params) => {
         return <Typography>{params.row.student?.sap_id}</Typography>;
       },
@@ -76,7 +76,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "name",
       headerName: "Student Name",
-      minWidth: 250,
+      minWidth: 230,
       renderCell: (params) => {
         return <Typography>{params.row.student?.name}</Typography>;
       },
@@ -104,7 +104,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "subject",
       headerName: "Subject",
-      minWidth: 100,
+      minWidth: 160,
       renderCell: (params) => {
         return <Typography>{params.row.subject?.subject_name}</Typography>;
       },
@@ -112,7 +112,7 @@ const UFMBySlot = ({ params }) => {
     {
       field: "actions",
       headerName: "Actions",
-      minWidth: 150,
+      minWidth: 100,
       renderCell: (params) => {
         return (
           <Box>
