@@ -166,7 +166,12 @@ const CopyDistribution = () => {
           width: "calc(100vw - 280px)",
         }}
       >
-        <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
+        <DataGrid
+          rows={rows}
+          columns={cols}
+          pageSize={5}
+          disableRowSelectionOnClick
+        />
       </Box>
     </div>
   );

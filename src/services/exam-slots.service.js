@@ -317,3 +317,59 @@ export const AddStudentService = async (token, data) => {
     throw error;
   }
 };
+
+export const GetInvigilatorsInSlotService = async (token, slotId) => {
+  try {
+    const response = await axios.get(
+      `${BaseUrl}/exam-controller/invigilation/inv-in-slot?slot_id=${slotId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const addInvDutytoSlotService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/add-duty`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const removeInvDutyfromSlotService = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/invigilation/remove-duty`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

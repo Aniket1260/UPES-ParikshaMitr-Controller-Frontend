@@ -20,7 +20,11 @@ import {
   Typography,
 } from "@mui/material";
 import { enIN } from "date-fns/locale";
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 // import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -120,6 +124,23 @@ const ExamSlots = () => {
                 ? "warning"
                 : "primary"
             }
+          />
+        );
+      },
+    },
+    {
+      field: "ab",
+      headerName: "Status",
+      minWidth: 180,
+      renderCell: ({ row }) => {
+        // Not completed if event one room status is not completed
+        const isCompleted = row.rooms.every(
+          (room) => room.status === "COMPLETED"
+        );
+        return (
+          <Chip
+            label={isCompleted ? "Completed" : "Not Completed"}
+            color={isCompleted ? "success" : "error"}
           />
         );
       },
@@ -282,6 +303,17 @@ const ExamSlots = () => {
               rowsPerPageOptions={[5]}
               disableSelectionOnClick
               disableRowSelectionOnClick
+              slots={{
+                toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarExport
+                      csvOptions={{
+                        fileName: "abc",
+                      }}
+                    />
+                  </GridToolbarContainer>
+                ),
+              }}
               // disableColumnSelector
               // disableColumnFilter
             />

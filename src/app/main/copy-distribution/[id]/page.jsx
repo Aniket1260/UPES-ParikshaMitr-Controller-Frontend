@@ -56,6 +56,9 @@ const CopyDetails = ({ params }) => {
   });
   console.log(BundleQuery);
 
+  const sapId = BundleQuery.data && BundleQuery.data[0].evaluator.sap_id;
+  const subjectCode = BundleQuery.data && BundleQuery.data[0].subject_code;
+
   const rows = useMemo(() => {
     if (BundleQuery.data && BundleQuery.data.length > 0) {
       const bundle = BundleQuery.data[0];
@@ -236,7 +239,7 @@ const CopyDetails = ({ params }) => {
               <GridToolbarContainer>
                 <GridToolbarExport
                   csvOptions={{
-                    fileName: `bundle_${BundleQuery.data[0]?.evaluator?.sap_id}_${BundleQuery.data[0]?.subject_code}_batches`,
+                    fileName: `bundle_${sapId}_${subjectCode}_batches`,
                   }}
                 />
               </GridToolbarContainer>

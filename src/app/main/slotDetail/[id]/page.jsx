@@ -642,6 +642,7 @@ const SlotDetails = ({ params }) => {
       <ManageInvigilatorModal
         open={invigilatorModalOpen}
         handleClose={handleInvigilatorModalClose}
+        slotId={slotId}
       />
       <AssignTeacherModal
         open={assignTeacherModalOpen}
