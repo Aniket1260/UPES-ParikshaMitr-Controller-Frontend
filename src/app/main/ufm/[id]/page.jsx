@@ -3,6 +3,7 @@ import { getUFMBySlotService } from "@/services/cont-ufm.service";
 import { Visibility } from "@mui/icons-material";
 import {
   Box,
+  Button,
   CircularProgress,
   Grid,
   IconButton,
@@ -145,9 +146,18 @@ const UFMBySlot = ({ params }) => {
 
   return (
     <Box>
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        UFM Details for Slot
-      </Typography>
+      <Grid container justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h4" sx={{ mb: 2 }}>
+          UFM Details for Slot
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => router.push(`/main/ufm/${slotId}`)}
+        >
+          UFM Redressal
+        </Button>
+      </Grid>
       {UFMBySlotQuery.isLoading && <CircularProgress />}
       {UFMBySlotQuery.isSuccess && (
         <>
