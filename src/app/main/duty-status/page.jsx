@@ -21,7 +21,11 @@ import { format } from "date-fns";
 import { da, enIN } from "date-fns/locale";
 import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import { refetchInterval } from "@/config/var.config";
 
 const DutyStatus = () => {
@@ -268,6 +272,21 @@ const DutyStatus = () => {
               disableSelectionOnClick
               disableRowSelectionOnClick
               // loading={getDataQuery.isLoading}
+              slots={{
+                toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarExport
+                      csvOptions={{
+                        fileName: `duty_status_${activeTab}_${format(
+                          date,
+                          "dd-MM-yyyy",
+                          { locale: enIN }
+                        )}`,
+                      }}
+                    />
+                  </GridToolbarContainer>
+                ),
+              }}
             />
           </Box>
           {/* )} */}

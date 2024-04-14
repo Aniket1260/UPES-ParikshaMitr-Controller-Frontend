@@ -22,6 +22,7 @@ import {
 import {
   DataGrid,
   GridToolbarContainer,
+  GridToolbarExport,
   GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -238,6 +239,11 @@ const StudentListRoomID = ({ params }) => {
                   toolbar: () => (
                     <GridToolbarContainer>
                       <GridToolbarFilterButton />
+                      <GridToolbarExport
+                        csvOptions={{
+                          fileName: `student_list_${roomId}`,
+                        }}
+                      />
                     </GridToolbarContainer>
                   ),
                 }}

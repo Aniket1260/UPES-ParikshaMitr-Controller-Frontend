@@ -9,7 +9,11 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
@@ -23,6 +27,14 @@ const UFMBySlot = ({ params }) => {
   }
 
   const router = useRouter();
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
 
   const UFMBySlotQuery = useQuery({
     queryKey: ["ufm", slotId, controllerToken],
@@ -179,7 +191,24 @@ const UFMBySlot = ({ params }) => {
               width: "calc(100vw - 280px)",
             }}
           >
-            <DataGrid rows={rows} columns={cols} disableRowSelectionOnClick />
+            <DataGrid
+              rows={rows}
+              columns={cols}
+              disableRowSelectionOnClick
+              slots={{
+                toolbar: () => (
+                  <GridToolbarContainer>
+                    <GridToolbarExport
+                      csvOptions={{
+                        fileName: `ufm_slotId_${slotId}_${formatDate(
+                          UFMBySlotQuery.data.slot.date
+                        )}`,
+                      }}
+                    />
+                  </GridToolbarContainer>
+                ),
+              }}
+            />
           </Box>
         </>
       )}

@@ -21,7 +21,11 @@ import {
   Typography,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { DataGrid } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridToolbarContainer,
+  GridToolbarExport,
+} from "@mui/x-data-grid";
 import {
   AddRoomtoSlotService,
   ChangeRoomsStatusService,
@@ -104,14 +108,6 @@ const SlotDetails = ({ params }) => {
   const { Canvas } = useQRCode();
 
   const queryClient = useQueryClient();
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear().toString();
-    return `${day}/${month}/${year}`;
-  };
 
   const router = useRouter();
   const { id: slotId } = params;
@@ -391,6 +387,14 @@ const SlotDetails = ({ params }) => {
       roomId: params.row.room_id,
       invigilators_num: params.row.num_inv,
     });
+  };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   const columns = useMemo(
@@ -1076,6 +1080,19 @@ const SlotDetails = ({ params }) => {
                         setRowSelected(newSelection);
                       }}
                       getRowId={(row) => row.room_id}
+                      slots={{
+                        toolbar: () => (
+                          <GridToolbarContainer>
+                            <GridToolbarExport
+                              csvOptions={{
+                                fileName: `SlotDetails-${formatDate(
+                                  SlotDetailsQuery.data.date
+                                )}_${SlotDetailsQuery.data.timeSlot}`,
+                              }}
+                            />
+                          </GridToolbarContainer>
+                        ),
+                      }}
                     />
                   </Box>
                 )}

@@ -98,7 +98,7 @@ const ExamSlots = () => {
     {
       field: "date",
       headerName: "Slot Date",
-      minWidth: 180,
+      minWidth: 170,
       renderCell: (params) => {
         return format(new Date(params.value), "do MMM yyyy");
       },
@@ -106,7 +106,7 @@ const ExamSlots = () => {
     {
       field: "type",
       headerName: "Slot Type",
-      minWidth: 180,
+      minWidth: 160,
     },
     {
       field: "timeSlot",
@@ -148,12 +148,12 @@ const ExamSlots = () => {
     {
       field: "uniqueCode",
       headerName: "Unique Code",
-      minWidth: 250,
+      minWidth: 150,
     },
     {
       field: "rooms",
       headerName: "No. of Rooms Alloted",
-      minWidth: 180,
+      minWidth: 150,
       renderCell: ({ row }) => {
         return row?.rooms?.length;
       },
@@ -161,7 +161,7 @@ const ExamSlots = () => {
     {
       field: "_",
       headerName: "Actions",
-      minWidth: 240,
+      minWidth: 250,
       renderCell: ({ row }) => {
         return (
           <Box>
@@ -308,7 +308,10 @@ const ExamSlots = () => {
                   <GridToolbarContainer>
                     <GridToolbarExport
                       csvOptions={{
-                        fileName: "abc",
+                        fileName: `exam_slots_${format(
+                          new Date(),
+                          "dd-MM-yyyy"
+                        )}}`,
                       }}
                     />
                   </GridToolbarContainer>

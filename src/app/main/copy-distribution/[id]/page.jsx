@@ -174,9 +174,6 @@ const CopyDetails = ({ params }) => {
           <Typography variant="h4" sx={{ mb: 2 }}>
             Bundle Details
           </Typography>
-          {/* <Button variant="outlined" onClick={() => {}}>
-            Export as CSV
-          </Button> */}
         </Box>
         <Grid container spacing={1}>
           <Grid item xs={6}>
