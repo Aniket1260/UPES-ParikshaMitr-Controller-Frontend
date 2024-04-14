@@ -55,7 +55,7 @@ const StatusUpdateModal = ({
       action = "Submitted";
       break;
     default:
-      break;
+      return null;
   }
 
   const handleConfirm = async () => {
