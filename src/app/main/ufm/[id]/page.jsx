@@ -150,13 +150,13 @@ const UFMBySlot = ({ params }) => {
         <Typography variant="h4" sx={{ mb: 2 }}>
           UFM Details for Slot
         </Typography>
-        <Button
+        {/* <Button
           variant="contained"
           color="primary"
           onClick={() => router.push(`/main/ufm/${slotId}`)}
         >
           UFM Redressal
-        </Button>
+        </Button> */}
       </Grid>
       {UFMBySlotQuery.isLoading && <CircularProgress />}
       {UFMBySlotQuery.isSuccess && (
