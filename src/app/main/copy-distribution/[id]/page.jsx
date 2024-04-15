@@ -13,8 +13,10 @@ import React, { useEffect, useMemo, useState } from "react";
 
 const getChipColor = (status) => {
   switch (status) {
-    case "ALLOTED":
+    case "AVAILABLE":
       return "warning";
+    case "ALLOTTED":
+      return "primary";
     case "INPROGRESS":
       return "info";
     case "SUBMITTED":
@@ -26,8 +28,10 @@ const getChipColor = (status) => {
 
 const getChipText = (status, dueIn) => {
   switch (status) {
-    case "ALLOTED":
-      return "Alloted";
+    case "AVAILABLE":
+      return "Available";
+    case "ALLOTTED":
+      return "Requested Confirmation";
     case "INPROGRESS":
       return `${dueIn}`;
     case "SUBMITTED":
@@ -68,6 +72,7 @@ const CopyDetails = ({ params }) => {
         numStudents: copy.no_of_students,
         program: copy.program,
         status: copy.status,
+        availableDate: copy.available_date,
         allottedDate: copy.allotted_date,
         startDate: copy.start_date,
         submissionDate: copy.submit_date,
@@ -90,7 +95,7 @@ const CopyDetails = ({ params }) => {
   const [selectedCopy, setSelectedCopy] = useState(null);
 
   const handleChipClick = (status, copy) => {
-    if (status === "COMPLETED") return;
+    // if (status === "SUBMITTED") return;
     setSelectedCopy(copy);
     setOpenModal(true);
   };
@@ -145,8 +150,8 @@ const CopyDetails = ({ params }) => {
       },
     },
     {
-      field: "allottedDate",
-      headerName: "Allotted Date",
+      field: "availableDate",
+      headerName: "Available Date",
       minWidth: 200,
     },
     {

@@ -45,8 +45,8 @@ const StatusUpdateModal = ({
   let action = "";
 
   switch (status) {
-    case "ALLOTED":
-      message = "Mark the status as Started";
+    case "AVAILABLE":
+      message = "Request teacher to start the evaluation";
       action = "Started";
       break;
     case "INPROGRESS":
