@@ -31,6 +31,7 @@ import React, { useMemo, useState } from "react";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import Tooltip from "@mui/material/Tooltip";
 import AddStudentDialog from "./addStudentModal";
+import { refetchInterval } from "@/config/var.config";
 
 const StudentListRoomID = ({ params }) => {
   const { id: roomId } = params;
@@ -41,8 +42,9 @@ const StudentListRoomID = ({ params }) => {
   const StudentListQuery = useQuery({
     queryKey: ["studentList", controllerToken, roomId],
     queryFn: () => getStudentListByRoomId(controllerToken, roomId),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 60 * 24,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (StudentListQuery.isError) {

@@ -19,6 +19,7 @@ import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
 import { EventAvailable } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
+import { refetchInterval } from "@/config/var.config";
 
 const TeacherListPage = () => {
   if (global?.window !== undefined) {
@@ -30,16 +31,18 @@ const TeacherListPage = () => {
     queryKey: ["teachers", { type: "unapproved" }, controllerToken],
     queryFn: () => getUnapprovedTeachers(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   const approvedTeacherResult = useQuery({
     queryKey: ["teachers", { type: "approved" }, controllerToken],
     queryFn: () => getApprovedTeachers(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (unApprovedTeacherResult.isError) {

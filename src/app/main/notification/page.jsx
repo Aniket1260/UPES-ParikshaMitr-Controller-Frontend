@@ -15,6 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { enqueueSnackbar } from "notistack";
 import { Search } from "@mui/icons-material";
 import { format } from "date-fns";
+import { refetchInterval } from "@/config/var.config";
 
 const Notification = () => {
   const [sendNotification, setSendNotification] = useState({
@@ -30,8 +31,9 @@ const Notification = () => {
     queryKey: ["notifications", controllerToken],
     queryFn: () => getNotifications(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (notificationRes.isError) {

@@ -37,6 +37,7 @@ import React, { useMemo } from "react";
 import UploadSeatingPlan from "./UploadSeatingPlan";
 import ContactModal from "./ContactModal";
 import UploadDutyPlan from "./UploadDutyChart";
+import { refetchInterval } from "@/config/var.config";
 
 const ExamSlots = () => {
   const [addModal, setAddModal] = React.useState({
@@ -68,6 +69,9 @@ const ExamSlots = () => {
   const SlotQuery = useQuery({
     queryKey: ["slots", controllerToken],
     queryFn: () => getAllExamSlots(controllerToken),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   const { mutate: deleteSlot } = useMutation({

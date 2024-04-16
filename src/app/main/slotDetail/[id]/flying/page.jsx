@@ -24,6 +24,7 @@ import DetailsModal from "./flyingDetailModal";
 import AssignRoomModal from "./AssignRoomsModal";
 import CompleteFlyingModal from "./CompleteFlyingModal";
 import AddFlyingModal from "./AddFlyingModal";
+import { refetchInterval } from "@/config/var.config";
 
 const getChipColor = (status) => {
   switch (status.toLowerCase()) {
@@ -59,6 +60,9 @@ const SlotFlying = ({ params }) => {
   const FlyingQuery = useQuery({
     queryKey: ["flying", slotId, controllerToken],
     queryFn: () => getFlyingDetailsBySlotID(controllerToken, slotId),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (FlyingQuery.isError) {

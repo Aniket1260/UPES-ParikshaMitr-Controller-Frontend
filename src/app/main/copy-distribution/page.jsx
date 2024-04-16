@@ -9,6 +9,7 @@ import { enqueueSnackbar } from "notistack";
 import { Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
+import { refetchInterval } from "@/config/var.config";
 
 const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
@@ -31,6 +32,9 @@ const CopyDistribution = () => {
   const CopyQuery = useQuery({
     queryKey: ["bundle", controllerToken],
     queryFn: () => getBundleService(controllerToken),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   const handleClose = () => {

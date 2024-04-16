@@ -1,4 +1,5 @@
 "use client";
+import { refetchInterval } from "@/config/var.config";
 import { GetAllUFMService } from "@/services/cont-ufm.service";
 import { Visibility } from "@mui/icons-material";
 import {
@@ -28,8 +29,9 @@ const UFMList = () => {
     queryKey: ["ufm", controllerToken],
     queryFn: () => GetAllUFMService(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (UFMQuery.isError) {

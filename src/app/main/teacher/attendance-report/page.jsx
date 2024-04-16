@@ -1,4 +1,5 @@
 "use client";
+import { refetchInterval } from "@/config/var.config";
 import { getTeacherAttendance } from "@/services/cont-teacher.service";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import {
@@ -22,8 +23,9 @@ const AttendanceReport = () => {
     queryKey: ["attendance", controllerToken],
     queryFn: () => getTeacherAttendance(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (AttendanceQuery.isError) {

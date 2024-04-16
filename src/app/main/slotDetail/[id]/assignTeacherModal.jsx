@@ -13,6 +13,7 @@ import { getApprovedTeachers } from "@/services/cont-teacher.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
 import { enqueueSnackbar } from "notistack";
+import { refetchInterval } from "@/config/var.config";
 
 const AssignTeacherModal = ({
   open,
@@ -32,8 +33,9 @@ const AssignTeacherModal = ({
     queryKey: ["teachers", { type: "approved" }, controllerToken],
     queryFn: () => getApprovedTeachers(controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   const [filterValue, setFilterValue] = useState("");

@@ -1,4 +1,5 @@
 "use client";
+import { refetchInterval } from "@/config/var.config";
 import {
   ApproveInvigilationsService,
   getUnapprovedInvigilations,
@@ -62,6 +63,9 @@ const ApproveInvigilations = () => {
   const UnapprovedTeachersQuery = useQuery({
     queryKey: ["unapprovedTeachers", controllerToken],
     queryFn: () => getUnapprovedInvigilations(controllerToken),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (UnapprovedTeachersQuery.isError) {

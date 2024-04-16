@@ -10,6 +10,7 @@ import {
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
+import { refetchInterval } from "@/config/var.config";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -57,6 +58,9 @@ const CopyDetails = ({ params }) => {
   const BundleQuery = useQuery({
     queryKey: ["bundle", controllerToken, bundleId],
     queryFn: () => getBundleByIdService(controllerToken, bundleId),
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
   console.log(BundleQuery.data);
 

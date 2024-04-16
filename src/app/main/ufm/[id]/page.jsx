@@ -1,4 +1,5 @@
 "use client";
+import { refetchInterval } from "@/config/var.config";
 import { getUFMBySlotService } from "@/services/cont-ufm.service";
 import { Visibility } from "@mui/icons-material";
 import {
@@ -41,8 +42,9 @@ const UFMBySlot = ({ params }) => {
     queryKey: ["ufm", slotId, controllerToken],
     queryFn: () => getUFMBySlotService(slotId, controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (UFMBySlotQuery.isError) {

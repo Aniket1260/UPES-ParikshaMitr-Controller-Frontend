@@ -1,4 +1,5 @@
 "use client";
+import { refetchInterval } from "@/config/var.config";
 import { getUFMByIdService } from "@/services/cont-ufm.service";
 import {
   Box,
@@ -22,8 +23,9 @@ const UFMDetailPage = ({ params }) => {
     queryKey: ["ufm", { type: "byId" }, controllerToken, slotId],
     queryFn: () => getUFMByIdService(slotId, controllerToken),
     retry: 2,
-    staleTime: 1000,
-    gcTime: 1000 * 2,
+    cacheTime: 0,
+    refetchIntervalInBackground: true,
+    refetchInterval: refetchInterval,
   });
 
   if (getUFMByIdQuery.isError) {
