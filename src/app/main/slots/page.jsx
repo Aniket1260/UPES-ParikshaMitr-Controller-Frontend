@@ -141,6 +141,12 @@ const ExamSlots = () => {
         const isCompleted = row.rooms.every(
           (room) => room.status === "COMPLETED"
         );
+        const isNotStarted = row.rooms.length === 0;
+
+        if (isNotStarted) {
+          return <Chip label="Created" color="warning" />;
+        }
+
         return (
           <Chip
             label={isCompleted ? "Completed" : "Not Completed"}
