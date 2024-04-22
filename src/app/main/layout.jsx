@@ -3,8 +3,9 @@ import React, { useEffect } from "react";
 import CustomAppBar from "@/components/CustomAppBar";
 import { Box, Toolbar } from "@mui/material";
 import CustomDrawer from "@/components/CustomDrawer";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
+import { invigilationMenu, userMenu } from "@/config/sidenav.config";
 
 axios.interceptors.response.use(
   (response) => {
@@ -19,15 +20,32 @@ axios.interceptors.response.use(
   }
 );
 
+const protectedRoutes = [
+  ...invigilationMenu
+    .filter((ele) => ele.proctor === false)
+    .map((item) => item.href),
+  ...userMenu.filter((ele) => ele.proctor === false).map((item) => item.href),
+];
+
 const TeacherLayout = ({ children }) => {
   const router = useRouter();
+  const pathname = usePathname();
   let token;
+  let role;
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       token = localStorage.getItem("token");
+      role = localStorage.getItem("role");
       if (!token) {
         router.push("/auth/login");
+      }
+
+      if (role === "proctor") {
+        console.log(pathname);
+        if (protectedRoutes.includes(pathname)) {
+          router.push("/main/teacher");
+        }
       }
     }
   }, []);
