@@ -15,6 +15,9 @@ import Link from "next/link";
 import React from "react";
 
 const CustomDrawer = () => {
+  if (global?.window !== undefined) {
+    var role = localStorage.getItem("role");
+  }
   return (
     <Drawer
       variant="permanent"
@@ -40,16 +43,22 @@ const CustomDrawer = () => {
           Exam Management
         </Typography>
         <List>
-          {invigilationMenu.map((item, idx) => (
-            <Link href={item.href} key={idx}>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.title} />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-          ))}
+          {invigilationMenu.map((item, idx) => {
+            console.log(role, item.proctor);
+            if (role === "proctor" && item.proctor === false) {
+              return null;
+            }
+            return (
+              <Link href={item.href} key={idx}>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.title} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            );
+          })}
         </List>
         <Divider />
         <Typography
@@ -61,16 +70,22 @@ const CustomDrawer = () => {
           Teacher Management
         </Typography>
         <List>
-          {userMenu.map((item, idx) => (
-            <Link href={item.href} key={idx}>
-              <ListItem disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.title} />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-          ))}
+          {userMenu.map((item, idx) => {
+            console.log(role, item.proctor);
+            if (role === "proctor" && item.proctor === false) {
+              return null;
+            }
+            return (
+              <Link href={item.href} key={idx}>
+                <ListItem disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.title} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            );
+          })}
         </List>
       </Box>
     </Drawer>

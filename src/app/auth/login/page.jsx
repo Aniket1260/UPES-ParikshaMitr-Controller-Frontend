@@ -36,6 +36,7 @@ const Login = () => {
         message: "Login Successful",
       });
       localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.role);
       router.push("/main/teacher");
     },
     onError: (error) => {
