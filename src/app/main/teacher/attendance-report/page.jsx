@@ -57,6 +57,20 @@ const AttendanceReport = () => {
           );
         },
       },
+      {
+        field: "sap_id",
+        headerName: "Emp ID",
+        width: 200,
+        renderCell: (params) => {
+          return (
+            <Box>
+              <Typography variant="body1" py={1}>
+                {params.value}
+              </Typography>
+            </Box>
+          );
+        },
+      },
     ];
     AttendanceQuery.data?.data?.allSlotsData.forEach((slot) => {
       slot.timeSlots.forEach((timeSlot) => {
@@ -115,6 +129,7 @@ const AttendanceReport = () => {
       const row = {
         id: teacher._id,
         name: teacher.teacher,
+        sap_id: teacher.sap_id,
       };
       teacher.attendance.forEach((slot) => {
         row[`${slot.slot_date}_${slot.slot_type}`] = slot.attendance

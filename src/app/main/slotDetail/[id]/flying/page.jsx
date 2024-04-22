@@ -191,6 +191,11 @@ const SlotFlying = ({ params }) => {
       },
     },
     {
+      field: "final_remarks",
+      headerName: "Final Remarks",
+      minWidth: 130,
+    },
+    {
       field: "actions",
       headerName: "Actions",
       minWidth: 150,
@@ -207,21 +212,23 @@ const SlotFlying = ({ params }) => {
                 <Visibility />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Assign Rooms" placement="top" arrow>
-              <IconButton
-                onClick={() => {
-                  console.log(params.row);
-                  setAssignModal({
-                    isOpen: true,
-                    flyingId: params.row._id,
-                    name: params.row.teacher_id?.name,
-                    rooms_assigned: params.row.rooms_assigned,
-                  });
-                }}
-              >
-                <Add />
-              </IconButton>
-            </Tooltip>
+            {params.row.status != "completed" && (
+              <Tooltip title="Assign Rooms" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    console.log(params.row);
+                    setAssignModal({
+                      isOpen: true,
+                      flyingId: params.row._id,
+                      name: params.row.teacher_id?.name,
+                      rooms_assigned: params.row.rooms_assigned,
+                    });
+                  }}
+                >
+                  <Add />
+                </IconButton>
+              </Tooltip>
+            )}
             {params.row.status === "ongoing" && (
               <Tooltip
                 title="Complete Duty of Flying"

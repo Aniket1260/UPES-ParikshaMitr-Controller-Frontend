@@ -392,7 +392,9 @@ const AddSlotModal = ({ open, handleClose }) => {
           <ToggleButtonGroup
             value={slotType}
             exclusive
-            onChange={(e, newValue) => setSlotType(newValue)}
+            onChange={(e, newValue) => {
+              if (newValue) setSlotType(newValue);
+            }}
             aria-label="text alignment"
             sx={{ width: "100%" }}
           >
@@ -409,7 +411,9 @@ const AddSlotModal = ({ open, handleClose }) => {
           <ToggleButtonGroup
             value={timeSlot}
             exclusive
-            onChange={(e, newValue) => setTimeSlot(newValue)}
+            onChange={(e, newValue) => {
+              if (newValue) setTimeSlot(newValue);
+            }}
             aria-label="text alignment"
             sx={{ width: "100%" }}
           >
