@@ -16,6 +16,7 @@ import { enqueueSnackbar } from "notistack";
 import { Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
+import DownloadMasterCSV from "./downloadCSV";
 import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, isSunday } from "date-fns";
 
@@ -285,6 +286,7 @@ const CopyDistribution = () => {
       <Box display="flex" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Copy Distribution Bundle</Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
+          <DownloadMasterCSV data={rows} />
           <Button
             variant="contained"
             color="primary"

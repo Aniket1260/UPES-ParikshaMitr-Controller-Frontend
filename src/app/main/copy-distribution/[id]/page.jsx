@@ -1,12 +1,8 @@
 "use client";
 import { getBundleByIdService } from "@/services/copy-distribution";
 import StatusUpdateModal from "./statusUpdateModal";
-import { Grid, Typography, Box, Chip, Button } from "@mui/material";
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-} from "@mui/x-data-grid";
+import { Grid, Typography, Box, Chip } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
@@ -302,17 +298,6 @@ const CopyDetails = ({ params }) => {
           columns={cols}
           pageSize={5}
           disableRowSelectionOnClick
-          slots={{
-            toolbar: () => (
-              <GridToolbarContainer>
-                <GridToolbarExport
-                  csvOptions={{
-                    fileName: `bundle_${sapId}_${subjectCode}_batches`,
-                  }}
-                />
-              </GridToolbarContainer>
-            ),
-          }}
         />
         {selectedCopy && (
           <StatusUpdateModal
