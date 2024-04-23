@@ -1,6 +1,13 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import UploadBundleModal from "./UploadBundleModal";
 import { DataGrid } from "@mui/x-data-grid";
@@ -10,6 +17,47 @@ import { Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
 import { refetchInterval } from "@/config/var.config";
+import { addDays, differenceInDays, isSunday } from "date-fns";
+
+const getChipColor = (status) => {
+  switch (status) {
+    case "AVAILABLE":
+      return "warning";
+    case "ALLOTTED":
+      return "primary";
+    case "PARTIAL":
+      return "info";
+    case "PARTIAL ALLOT":
+      return "info";
+    case "INPROGRESS":
+      return "info";
+    case "SUBMITTED":
+      return "success";
+    case "OVERDUE":
+      return "error";
+  }
+};
+
+const getChipText = (status) => {
+  switch (status) {
+    case "AVAILABLE":
+      return "Available";
+    case "ALLOTTED":
+      return "Requested Confirmation";
+    case "INPROGRESS":
+      return `In Checking`;
+    case "SUBMITTED":
+      return "Submitted";
+    case "OVERDUE":
+      return `Overdue`;
+    case "PARTIAL":
+      return `Partially Checked`;
+    case "PARTIAL ALLOT":
+      return `Partially Allotted`;
+    default:
+      return "";
+  }
+};
 
 const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
@@ -50,6 +98,22 @@ const CopyDistribution = () => {
     setManualEntryOpen(true);
   };
 
+  function getNextWorkingDay(date) {
+    const nextDay = addDays(date, 1);
+    if (isSunday(nextDay)) {
+      return getNextWorkingDay(nextDay);
+    }
+    return nextDay;
+  }
+
+  function getWorkingDateAfterDays(startDate, workingDays) {
+    let currentDate = startDate;
+    for (let i = 1; i < workingDays; i++) {
+      currentDate = getNextWorkingDay(currentDate);
+    }
+    return currentDate;
+  }
+
   const rows = useMemo(() => {
     return (
       CopyQuery.data?.map((ele) => {
@@ -60,6 +124,67 @@ const CopyDistribution = () => {
             message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
           });
         }
+
+        let row_status = "INPROGRESS";
+
+        // change row status based on copies status
+        // even if one copy is OVERDUE, the row status will be OVERDUE
+        // if all copies are AVAILABLE or ALLOTTED, the row status will be AVAILABLE
+        // if all copies are INPROGRESS, the row status will be INPROGRESS
+        // if some copies are INPROGRESS and some are SUBMITTED, the row status will be PARTIAL
+        // else if all copies are SUBMITTED, the row status will be SUBMITTED
+        let ovr_count = 0;
+        let sub_count = 0;
+        let inprog_count = 0;
+        let avail_count = 0;
+        let allot_count = 0;
+        ele.copies.forEach((copy) => {
+          switch (copy.status) {
+            case "SUBMITTED":
+              sub_count++;
+              break;
+            case "INPROGRESS":
+              const due_date = copy.start_date
+                ? getWorkingDateAfterDays(new Date(copy.start_date), 7)
+                : "";
+              const day_diff = differenceInDays(due_date, new Date());
+              console.log(day_diff);
+
+              if (day_diff < 0) {
+                ovr_count++;
+              } else {
+                inprog_count++;
+              }
+              break;
+            case "AVAILABLE":
+              avail_count++;
+              break;
+            case "ALLOTTED":
+              allot_count++;
+              break;
+          }
+        });
+        console.log(
+          ovr_count,
+          sub_count,
+          inprog_count,
+          avail_count,
+          allot_count
+        );
+        if (ovr_count > 0) {
+          row_status = "OVERDUE";
+        } else if (sub_count === ele.copies.length) {
+          row_status = "SUBMITTED";
+        } else if (inprog_count === ele.copies.length) {
+          row_status = "INPROGRESS";
+        } else if (sub_count > 0 && inprog_count > 0) {
+          row_status = "PARTIAL";
+        } else if (sub_count > 0 && (avail_count > 0 || allot_count > 0)) {
+          row_status = "PARTIAL ALLOT";
+        } else if (avail_count + allot_count === ele.copies.length) {
+          row_status = "AVAILABLE";
+        }
+
         return {
           ...ele,
           evaluatorName: ele.evaluator?.name,
@@ -68,12 +193,13 @@ const CopyDistribution = () => {
           evaluationMode: ele.evaluation_mode,
           subjectName: ele.subject_name,
           subjectCode: ele.subject_code,
+          status: row_status,
           id: ele._id,
         };
       }) || []
     );
   }, [CopyQuery.data]);
-
+  console.log(rows);
   if (CopyQuery.isError) {
     enqueueSnackbar({
       variant: "error",
@@ -114,6 +240,23 @@ const CopyDistribution = () => {
       field: "subjectCode",
       headerName: "Subject Code",
       minWidth: 170,
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      minWidth: 150,
+      renderCell: (params) => {
+        return (
+          <Box>
+            <Chip
+              label={getChipText(params.value)}
+              color={getChipColor(params.value)}
+            >
+              {params.value}
+            </Chip>
+          </Box>
+        );
+      },
     },
     {
       field: "actions",
