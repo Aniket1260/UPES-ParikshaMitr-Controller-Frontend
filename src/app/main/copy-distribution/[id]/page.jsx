@@ -11,6 +11,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { refetchInterval } from "@/config/var.config";
+import { addDays, differenceInDays, format, isSunday } from "date-fns";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -104,6 +105,22 @@ const CopyDetails = ({ params }) => {
     setOpenModal(true);
   };
 
+  function getNextWorkingDay(date) {
+    const nextDay = addDays(date, 1);
+    if (isSunday(nextDay)) {
+      return getNextWorkingDay(nextDay);
+    }
+    return nextDay;
+  }
+
+  function getWorkingDateAfterDays(startDate, workingDays) {
+    let currentDate = startDate;
+    for (let i = 1; i < workingDays; i++) {
+      currentDate = getNextWorkingDay(currentDate);
+    }
+    return currentDate;
+  }
+
   const handleConfirm = () => {
     console.log({
       batch: selectedCopy?.batch,
@@ -167,6 +184,27 @@ const CopyDetails = ({ params }) => {
       field: "submissionDate",
       headerName: "Submission Date",
       minWidth: 200,
+    },
+    {
+      field: "abs",
+      headerName: "Remark",
+      minWidth: 150,
+      renderCell: (params) => {
+        if (params.row.status === "SUBMITTED") {
+          const due_date = params.row.startDate
+            ? getWorkingDateAfterDays(new Date(params.row.startDate), 7)
+            : "";
+          const day_diff = differenceInDays(
+            due_date,
+            new Date(params.row.submissionDate)
+          );
+
+          if (day_diff < 0) {
+            return <Chip label="Late Submission" color="error" />;
+          }
+          return <></>;
+        }
+      },
     },
   ];
   return (
