@@ -81,7 +81,7 @@ const DownloadMasterCSV = ({ data }) => {
 
   return (
     <div>
-      <Button variant="contained" onClick={downloadCSV}>
+      <Button sx={{ height: "100%" }} variant="contained" onClick={downloadCSV}>
         Download Master CSV
       </Button>
     </div>
