@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@mui/material";
+import { addDays, differenceInDays, isSunday } from "date-fns";
 
 const DownloadMasterCSV = ({ data }) => {
   const currentDate = new Date();
@@ -14,12 +15,43 @@ const DownloadMasterCSV = ({ data }) => {
     return `${day}/${month}/${year}`;
   };
 
+  function getNextWorkingDay(date) {
+    const nextDay = addDays(date, 1);
+    if (isSunday(nextDay)) {
+      return getNextWorkingDay(nextDay);
+    }
+    return nextDay;
+  }
+
+  function getWorkingDateAfterDays(startDate, workingDays) {
+    let currentDate = startDate;
+    for (let i = 1; i < workingDays; i++) {
+      currentDate = getNextWorkingDay(currentDate);
+    }
+    return currentDate;
+  }
+
+  const addRemark = (copy) => {
+    if (copy.status === "SUBMITTED") {
+      const due_date = copy.start_date
+        ? getWorkingDateAfterDays(new Date(copy.start_date), 7)
+        : "";
+      const day_diff = differenceInDays(due_date, new Date(copy.submit_date));
+
+      if (day_diff < 0) {
+        return "Late Submission";
+      }
+    }
+    return "";
+  };
+
   const downloadCSV = () => {
     let csvContent =
-      "Subject Name, Subject Code,Evaluation Mode,Program,Batch,Number of Students,Evaluator Name,Evaluator SAP ID,Evaluator Phone,Date of Exam,Allotted Date,Available Date,Start Date,Status,Submit Date\n";
+      "Subject Name, Subject Code,Evaluation Mode,Program,Batch,Number of Students,Evaluator Name,Evaluator SAP ID,Evaluator Phone,Date of Exam,Allotted Date,Available Date,Start Date,Status,Submit Date, Remark\n";
 
     data.forEach((item) => {
       item.copies.forEach((copy) => {
+        const remark = addRemark(copy);
         csvContent += `${item.subject_name},${item.subject_code},${
           item.evaluation_mode
         },${copy.program},${copy.batch},${copy.no_of_students},${
@@ -30,7 +62,7 @@ const DownloadMasterCSV = ({ data }) => {
           copy.available_date
         )},${formatDate(copy.start_date)},${copy.status},${formatDate(
           copy.submit_date
-        )}\n`;
+        )}, ${remark}\n`;
       });
     });
 
