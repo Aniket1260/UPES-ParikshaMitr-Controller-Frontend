@@ -9,6 +9,7 @@ import { enqueueSnackbar } from "notistack";
 import { Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
+import DownloadMasterCSV from "./downloadCSV";
 
 const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
@@ -138,6 +139,7 @@ const CopyDistribution = () => {
       <Box display="flex" justifyContent="space-between" mb={5}>
         <Typography variant="h4">Copy Distribution Bundle</Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
+          <DownloadMasterCSV data={rows} />
           <Button
             variant="contained"
             color="primary"
