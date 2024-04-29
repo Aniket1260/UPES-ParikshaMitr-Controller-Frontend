@@ -5,6 +5,9 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
 import { uploadBundleService } from "@/services/copy-distribution";
@@ -24,13 +27,14 @@ const ManualEntryModal = ({ open, onClose }) => {
   const [formData, setFormData] = useState({
     subjectName: "",
     subjectCode: "",
+    subjectSchool: "SOCS",
     evaluationMode: "",
     program: "",
     batch: "",
     noOfStudents: "",
     evaluatorName: "",
     evaluatorSap: "",
-    evaluatorSchool: "",
+    distributionRoomNumber: "",
     dateOfExam: "",
   });
 
@@ -79,7 +83,7 @@ const ManualEntryModal = ({ open, onClose }) => {
     const value = e.target.value;
     setFormData({
       ...formData,
-      [field]: value,
+      [field]: field === "roomNo" ? parseInt(value) : value,
     });
   };
 
@@ -87,13 +91,14 @@ const ManualEntryModal = ({ open, onClose }) => {
     setFormData({
       subjectName: "",
       subjectCode: "",
+      subjectSchool: "",
       evaluationMode: "",
       program: "",
       batch: "",
       noOfStudents: "",
       evaluatorName: "",
       evaluatorSap: "",
-      evaluatorSchool: "",
+      distributionRoomNumber: "",
       dateOfExam: "",
     });
     onClose();
@@ -118,6 +123,21 @@ const ManualEntryModal = ({ open, onClose }) => {
             value={formData.subjectCode}
             onChange={(e) => handleChange(e, "subjectCode")}
           />
+        </Box>
+        <Box mb={2}>
+          <InputLabel id="demo-simple-select-label">Subject School</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={formData.subjectSchool}
+            onChange={(e) => handleChange(e, "subjectSchool")}
+            fullWidth
+          >
+            <MenuItem value="SOCS">SOCS</MenuItem>
+            <MenuItem value="SOHST">SOHST</MenuItem>
+            <MenuItem value="SOE">SOE</MenuItem>
+            <MenuItem value="SOD">SOD</MenuItem>
+          </Select>
         </Box>
         <Box mb={2}>
           <TextField
@@ -169,10 +189,10 @@ const ManualEntryModal = ({ open, onClose }) => {
         </Box>
         <Box mb={2}>
           <TextField
-            label="Evaluator School"
+            label="Distribution Room Number"
             fullWidth
-            value={formData.evaluatorSchool}
-            onChange={(e) => handleChange(e, "evaluatorSchool")}
+            value={formData.roomNo}
+            onChange={(e) => handleChange(e, "roomNo")}
           />
         </Box>
         <Box mb={2}>

@@ -47,22 +47,22 @@ const DownloadMasterCSV = ({ data }) => {
 
   const downloadCSV = () => {
     let csvContent =
-      "Subject Name, Subject Code,Evaluation Mode,Program,Batch,Number of Students,Evaluator Name,Evaluator SAP ID,Evaluator Phone,Date of Exam,Allotted Date,Available Date,Start Date,Status,Submit Date, Remark\n";
+      "Subject Name, Subject Code,Subject School, Evaluation Mode,Program,Batch,Number of Students,Evaluator Name,Evaluator SAP ID,Evaluator Phone,Date of Exam,Allotted Date,Available Date,Distribution Room Number,Start Date,Status,Submit Date, Remark\n";
 
     data.forEach((item) => {
       item.copies.forEach((copy) => {
         const remark = addRemark(copy);
         csvContent += `${item.subject_name},${item.subject_code},${
-          item.evaluation_mode
-        },${copy.program},${copy.batch},${copy.no_of_students},${
-          item.evaluator?.name || ""
-        },${item.evaluator?.sap_id || ""},${item.evaluator?.phone || ""},${
-          item.date_of_exam
-        },${formatDate(copy.allotted_date)},${formatDate(
+          item.subject_school
+        },${item.evaluation_mode},${copy.program},${copy.batch},${
+          copy.no_of_students
+        },${item.evaluator?.name || ""},${item.evaluator?.sap_id || ""},${
+          item.evaluator?.phone || ""
+        },${item.date_of_exam},${formatDate(copy.allotted_date)},${formatDate(
           copy.available_date
-        )},${formatDate(copy.start_date)},${copy.status},${formatDate(
-          copy.submit_date
-        )}, ${remark}\n`;
+        )},${item.room_no},${formatDate(copy.start_date)},${
+          copy.status
+        },${formatDate(copy.submit_date)}, ${remark}\n`;
       });
     });
 
