@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, format, isSunday } from "date-fns";
+import DeleteConfirmationModal from "./deleteModal";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -130,6 +131,21 @@ const CopyDetails = ({ params }) => {
     setOpenModal(false);
   };
 
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedBundle, setSelectedBundle] = useState(null);
+
+  const handleConfirmDelete = () => {
+    setOpenDeleteModal(false);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+  const handleDeleteButtonClick = (bundle) => {
+    setSelectedBundle(bundle);
+    setOpenDeleteModal(true);
+  };
+
   const cols = [
     {
       field: "batch",
@@ -223,7 +239,14 @@ const CopyDetails = ({ params }) => {
           return <></>;
         }
         if (params.row.status === "AVAILABLE") {
-          return <Button variant="contained">Delete</Button>;
+          return (
+            <Button
+              variant="contained"
+              onClick={() => handleDeleteButtonClick(params.row)}
+            >
+              Delete
+            </Button>
+          );
         }
       },
     },
@@ -243,6 +266,7 @@ const CopyDetails = ({ params }) => {
             Bundle Details
           </Typography>
         </Box>
+
         <Grid container spacing={1}>
           <Grid item xs={3}>
             <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
@@ -343,6 +367,15 @@ const CopyDetails = ({ params }) => {
             batch={selectedCopy?.batch}
             program={selectedCopy?.program}
             bundle_id={bundleId}
+          />
+        )}
+        {selectedBundle && (
+          <DeleteConfirmationModal
+            open={openDeleteModal}
+            onClose={handleCloseDeleteModal}
+            onDelete={handleConfirmDelete}
+            bundle_id={bundleId}
+            batch={selectedBundle?.batch}
           />
         )}
       </Box>

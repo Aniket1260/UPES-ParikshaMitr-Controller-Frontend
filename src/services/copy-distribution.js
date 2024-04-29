@@ -73,3 +73,22 @@ export const statusChangeService = async (token, data) => {
     throw error;
   }
 };
+
+export const deleteBundle = async (token, bundleId, batch) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/copy-distribution/delete-bundle?bundle_id=${bundleId}&batch=${batch}`,
+
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

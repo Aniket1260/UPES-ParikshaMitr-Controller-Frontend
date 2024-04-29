@@ -25,7 +25,7 @@ const StatusUpdateModal = ({
       handleClose();
       enqueueSnackbar({
         variant: "success",
-        message: "Status chnaged successfully",
+        message: "Status changed successfully",
       });
     },
     onError: (error) => {
