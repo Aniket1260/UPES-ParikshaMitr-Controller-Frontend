@@ -38,6 +38,8 @@ const getChipColor = (status) => {
       return "success";
     case "OVERDUE":
       return "error";
+    case "NO COPIES":
+      return "error";
   }
 };
 
@@ -57,6 +59,8 @@ const getChipText = (status) => {
       return `Partially Checked`;
     case "PARTIAL ALLOT":
       return `Partially Allotted`;
+    case "NO COPIES":
+      return `No Copies`;
     default:
       return "";
   }
@@ -194,6 +198,10 @@ const CopyDistribution = () => {
             row_status = "PARTIAL ALLOT";
           } else if (avail_count + allot_count === ele.copies.length) {
             row_status = "AVAILABLE";
+          }
+
+          if (ele.copies.length === 0) {
+            row_status = "NO COPIES";
           }
 
           return {
