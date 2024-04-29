@@ -299,7 +299,6 @@ const ExamSlots = () => {
       <Box sx={{ pt: 2 }}>
         {SlotQuery.isLoading && <CircularProgress />}
         {SlotQuery.isSuccess && rows.length > 0 && (
-          //TODO: Add this width to each parent element of the DataGrid
           <Box
             style={{
               height: "80vh",

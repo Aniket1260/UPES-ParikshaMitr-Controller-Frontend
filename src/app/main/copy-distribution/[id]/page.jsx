@@ -169,6 +169,10 @@ const CopyDetails = ({ params }) => {
     {
       field: "availableDate",
       headerName: "Available Date",
+      //TODO: Add this to StartDate and Submission date and CSV also i.e "dd/MM/yyyy hh:mm a"
+      renderCell: (params) => {
+        return format(new Date(params.row.availableDate), "dd/MM/yyyy hh:mm a");
+      },
       minWidth: 200,
     },
     {
