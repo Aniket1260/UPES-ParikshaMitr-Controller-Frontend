@@ -1,7 +1,7 @@
 "use client";
 import { getBundleByIdService } from "@/services/copy-distribution";
 import StatusUpdateModal from "./statusUpdateModal";
-import { Grid, Typography, Box, Chip } from "@mui/material";
+import { Grid, Typography, Box, Chip, Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -221,6 +221,9 @@ const CopyDetails = ({ params }) => {
             return <Chip label="Late Submission" color="error" />;
           }
           return <></>;
+        }
+        if (params.row.status === "AVAILABLE") {
+          return <Button variant="contained">Delete</Button>;
         }
       },
     },
