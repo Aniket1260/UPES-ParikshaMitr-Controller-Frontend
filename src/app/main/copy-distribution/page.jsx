@@ -194,6 +194,8 @@ const CopyDistribution = () => {
           evaluationMode: ele.evaluation_mode,
           subjectName: ele.subject_name,
           subjectCode: ele.subject_code,
+          subjectSchool: ele.subject_school,
+          roomNo: ele.room_no,
           status: row_status,
           id: ele._id,
         };
@@ -243,14 +245,14 @@ const CopyDistribution = () => {
       minWidth: 170,
     },
     {
-      field: "evaluatorSchool",
-      headerName: "Evaluator School",
+      field: "subjectSchool",
+      headerName: "Subject School",
       minWidth: 150,
     },
     {
       field: "roomNo",
-      headerName: "Room Number",
-      minWidth: 150,
+      headerName: "Room No.",
+      minWidth: 120,
     },
     {
       field: "status",

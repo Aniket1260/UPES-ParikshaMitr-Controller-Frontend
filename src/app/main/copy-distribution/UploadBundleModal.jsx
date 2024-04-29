@@ -115,6 +115,10 @@ const UploadBundleModal = ({ open, onClose }) => {
         (header) =>
           header.trim().toLowerCase().replace(/_/g, " ") === "evaluator school"
       );
+      const SubjectSchoolIndex = headers.findIndex(
+        (header) =>
+          header.trim().toLowerCase().replace(/_/g, " ") === "subject school"
+      );
       const DateOfExamIndex = headers.findIndex(
         (header) =>
           header.trim().toLowerCase().replace(/_/g, " ") === "date of exam"
@@ -136,7 +140,8 @@ const UploadBundleModal = ({ open, onClose }) => {
         const evaluatorSap = rowData[EvaluatorSapIndex];
         const evaluatorSchool = rowData[EvaluatorSchoolIndex];
         const dateOfExam = rowData[DateOfExamIndex];
-        const roomNo = rowData[RoomNoIndex];
+        const roomNo = parseInt(rowData[RoomNoIndex]);
+        const subjectSchool = rowData[SubjectSchoolIndex];
         return {
           id: idx,
           subjectName,
@@ -150,6 +155,7 @@ const UploadBundleModal = ({ open, onClose }) => {
           evaluatorSchool,
           dateOfExam,
           roomNo,
+          subjectSchool,
         };
       });
       setCsvData(parsedData);
@@ -175,8 +181,8 @@ const UploadBundleModal = ({ open, onClose }) => {
       }));
     }
     enqueueSnackbar({
-      message: "All Bundles Uploaded",
-      variant: "success",
+      message: "All Bundles Processed",
+      variant: "info",
     });
     setProgress({ loading: false, bundles_uploaded: 0 });
     handleClose();
@@ -191,6 +197,7 @@ const UploadBundleModal = ({ open, onClose }) => {
   const cols = [
     { field: "subjectName", headerName: "Subject Name", minWidth: 150 },
     { field: "subjectCode", headerName: "Subject Code", minWidth: 150 },
+    { field: "subjectSchool", headerName: "Subject School", minWidth: 150 },
     { field: "evaluationMode", headerName: "Evaluation Mode", minWidth: 150 },
     { field: "program", headerName: "Program", minWidth: 150 },
     { field: "batch", headerName: "Batch", minWidth: 150 },
