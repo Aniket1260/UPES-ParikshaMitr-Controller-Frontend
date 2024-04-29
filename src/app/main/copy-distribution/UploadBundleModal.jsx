@@ -119,6 +119,9 @@ const UploadBundleModal = ({ open, onClose }) => {
         (header) =>
           header.trim().toLowerCase().replace(/_/g, " ") === "date of exam"
       );
+      const RoomNoIndex = headers.findIndex(
+        (header) => header.trim().toLowerCase().replace(/_/g, " ") === "room no"
+      );
       data = rows.slice(1).filter((row) => row.trim() !== "");
 
       const parsedData = data.map((row, idx) => {
@@ -133,6 +136,7 @@ const UploadBundleModal = ({ open, onClose }) => {
         const evaluatorSap = rowData[EvaluatorSapIndex];
         const evaluatorSchool = rowData[EvaluatorSchoolIndex];
         const dateOfExam = rowData[DateOfExamIndex];
+        const roomNo = rowData[RoomNoIndex];
         return {
           id: idx,
           subjectName,
@@ -145,6 +149,7 @@ const UploadBundleModal = ({ open, onClose }) => {
           evaluatorSap,
           evaluatorSchool,
           dateOfExam,
+          roomNo,
         };
       });
       setCsvData(parsedData);
@@ -194,6 +199,7 @@ const UploadBundleModal = ({ open, onClose }) => {
     { field: "evaluatorSap", headerName: "Evaluator's SAPID", minWidth: 150 },
     { field: "evaluatorSchool", headerName: "Evaluator School", minWidth: 150 },
     { field: "dateOfExam", headerName: "Date of Exam", minWidth: 150 },
+    { field: "roomNo", headerName: "Room No", minWidth: 150 },
   ];
 
   return (

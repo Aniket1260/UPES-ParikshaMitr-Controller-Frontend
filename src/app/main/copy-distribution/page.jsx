@@ -243,6 +243,16 @@ const CopyDistribution = () => {
       minWidth: 170,
     },
     {
+      field: "evaluatorSchool",
+      headerName: "Evaluator School",
+      minWidth: 150,
+    },
+    {
+      field: "roomNo",
+      headerName: "Room Number",
+      minWidth: 150,
+    },
+    {
       field: "status",
       headerName: "Status",
       minWidth: 150,
