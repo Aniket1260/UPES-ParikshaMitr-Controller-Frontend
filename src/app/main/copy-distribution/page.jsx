@@ -5,6 +5,8 @@ import {
   Button,
   Chip,
   IconButton,
+  MenuItem,
+  Select,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -62,6 +64,7 @@ const getChipText = (status) => {
 
 const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
+  const [schoolSelected, setSchoolSelected] = useState("A");
   const router = useRouter();
 
   const formatDate = (dateString) => {
@@ -117,91 +120,98 @@ const CopyDistribution = () => {
 
   const rows = useMemo(() => {
     return (
-      CopyQuery.data?.map((ele) => {
-        const formattedDate = formatDate(ele.date_of_exam);
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formattedDate)) {
-          enqueueSnackbar({
-            variant: "error",
-            message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
-          });
-        }
-
-        let row_status = "INPROGRESS";
-
-        // change row status based on copies status
-        // even if one copy is OVERDUE, the row status will be OVERDUE
-        // if all copies are AVAILABLE or ALLOTTED, the row status will be AVAILABLE
-        // if all copies are INPROGRESS, the row status will be INPROGRESS
-        // if some copies are INPROGRESS and some are SUBMITTED, the row status will be PARTIAL
-        // else if all copies are SUBMITTED, the row status will be SUBMITTED
-        let ovr_count = 0;
-        let sub_count = 0;
-        let inprog_count = 0;
-        let avail_count = 0;
-        let allot_count = 0;
-        ele.copies.forEach((copy) => {
-          switch (copy.status) {
-            case "SUBMITTED":
-              sub_count++;
-              break;
-            case "INPROGRESS":
-              const due_date = copy.start_date
-                ? getWorkingDateAfterDays(new Date(copy.start_date), 7)
-                : "";
-              const day_diff = differenceInDays(due_date, new Date());
-              console.log(day_diff);
-
-              if (day_diff < 0) {
-                ovr_count++;
-              } else {
-                inprog_count++;
-              }
-              break;
-            case "AVAILABLE":
-              avail_count++;
-              break;
-            case "ALLOTTED":
-              allot_count++;
-              break;
+      CopyQuery.data
+        ?.filter((ele) => {
+          if (schoolSelected === "A") {
+            return true;
           }
-        });
-        console.log(
-          ovr_count,
-          sub_count,
-          inprog_count,
-          avail_count,
-          allot_count
-        );
-        if (ovr_count > 0) {
-          row_status = "OVERDUE";
-        } else if (sub_count === ele.copies.length) {
-          row_status = "SUBMITTED";
-        } else if (inprog_count === ele.copies.length) {
-          row_status = "INPROGRESS";
-        } else if (sub_count > 0 && inprog_count > 0) {
-          row_status = "PARTIAL";
-        } else if (sub_count > 0 && (avail_count > 0 || allot_count > 0)) {
-          row_status = "PARTIAL ALLOT";
-        } else if (avail_count + allot_count === ele.copies.length) {
-          row_status = "AVAILABLE";
-        }
+          return ele.subject_school === schoolSelected;
+        })
+        .map((ele) => {
+          const formattedDate = formatDate(ele.date_of_exam);
+          if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formattedDate)) {
+            enqueueSnackbar({
+              variant: "error",
+              message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
+            });
+          }
 
-        return {
-          ...ele,
-          evaluatorName: ele.evaluator?.name,
-          sap: ele.evaluator?.sap_id,
-          dateofexam: formattedDate,
-          evaluationMode: ele.evaluation_mode,
-          subjectName: ele.subject_name,
-          subjectCode: ele.subject_code,
-          subjectSchool: ele.subject_school,
-          roomNo: ele.room_no,
-          status: row_status,
-          id: ele._id,
-        };
-      }) || []
+          let row_status = "INPROGRESS";
+
+          // change row status based on copies status
+          // even if one copy is OVERDUE, the row status will be OVERDUE
+          // if all copies are AVAILABLE or ALLOTTED, the row status will be AVAILABLE
+          // if all copies are INPROGRESS, the row status will be INPROGRESS
+          // if some copies are INPROGRESS and some are SUBMITTED, the row status will be PARTIAL
+          // else if all copies are SUBMITTED, the row status will be SUBMITTED
+          let ovr_count = 0;
+          let sub_count = 0;
+          let inprog_count = 0;
+          let avail_count = 0;
+          let allot_count = 0;
+          ele.copies.forEach((copy) => {
+            switch (copy.status) {
+              case "SUBMITTED":
+                sub_count++;
+                break;
+              case "INPROGRESS":
+                const due_date = copy.start_date
+                  ? getWorkingDateAfterDays(new Date(copy.start_date), 7)
+                  : "";
+                const day_diff = differenceInDays(due_date, new Date());
+                console.log(day_diff);
+
+                if (day_diff < 0) {
+                  ovr_count++;
+                } else {
+                  inprog_count++;
+                }
+                break;
+              case "AVAILABLE":
+                avail_count++;
+                break;
+              case "ALLOTTED":
+                allot_count++;
+                break;
+            }
+          });
+          console.log(
+            ovr_count,
+            sub_count,
+            inprog_count,
+            avail_count,
+            allot_count
+          );
+          if (ovr_count > 0) {
+            row_status = "OVERDUE";
+          } else if (sub_count === ele.copies.length) {
+            row_status = "SUBMITTED";
+          } else if (inprog_count === ele.copies.length) {
+            row_status = "INPROGRESS";
+          } else if (sub_count > 0 && inprog_count > 0) {
+            row_status = "PARTIAL";
+          } else if (sub_count > 0 && (avail_count > 0 || allot_count > 0)) {
+            row_status = "PARTIAL ALLOT";
+          } else if (avail_count + allot_count === ele.copies.length) {
+            row_status = "AVAILABLE";
+          }
+
+          return {
+            ...ele,
+            evaluatorName: ele.evaluator?.name,
+            sap: ele.evaluator?.sap_id,
+            dateofexam: formattedDate,
+            evaluationMode: ele.evaluation_mode,
+            subjectName: ele.subject_name,
+            subjectCode: ele.subject_code,
+            subjectSchool: ele.subject_school,
+            roomNo: ele.room_no,
+            status: row_status,
+            id: ele._id,
+          };
+        }) || []
     );
-  }, [CopyQuery.data]);
+  }, [CopyQuery.data, schoolSelected]);
   console.log(rows);
   if (CopyQuery.isError) {
     enqueueSnackbar({
@@ -321,6 +331,17 @@ const CopyDistribution = () => {
         onClose={handleManualEntryClose}
         columns={cols}
       />
+      <Select
+        sx={{ marginBottom: 2 }}
+        value={schoolSelected}
+        onChange={(e) => setSchoolSelected(e.target.value)}
+      >
+        <MenuItem value="A">Select School</MenuItem>
+        <MenuItem value="SOHST">SOHST</MenuItem>
+        <MenuItem value="SOCS">SOCS</MenuItem>
+        <MenuItem value="SOE">SOE</MenuItem>
+        <MenuItem value="SOD">SOD</MenuItem>
+      </Select>
       <Box
         style={{
           height: "80vh",
