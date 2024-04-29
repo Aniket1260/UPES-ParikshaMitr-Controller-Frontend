@@ -241,7 +241,7 @@ const CopyDetails = ({ params }) => {
           </Typography>
         </Box>
         <Grid container spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
               Evaluator SapId
             </Typography>
@@ -253,7 +253,7 @@ const CopyDetails = ({ params }) => {
                 : ""}
             </Typography>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
               Evaluator Name
             </Typography>
@@ -262,6 +262,16 @@ const CopyDetails = ({ params }) => {
               BundleQuery.data.length > 0 &&
               BundleQuery.data[0].evaluator
                 ? BundleQuery.data[0].evaluator.name
+                : ""}
+            </Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
+              Subject Name
+            </Typography>
+            <Typography variant="h5">
+              {BundleQuery.data && BundleQuery.data.length > 0
+                ? BundleQuery.data[0].subject_name
                 : ""}
             </Typography>
           </Grid>
@@ -289,11 +299,11 @@ const CopyDetails = ({ params }) => {
           </Grid>
           <Grid item xs={3}>
             <Typography variant="body2" color="primary" sx={{ mt: 1 }}>
-              Subject Name
+              Subject School
             </Typography>
             <Typography variant="h5">
               {BundleQuery.data && BundleQuery.data.length > 0
-                ? BundleQuery.data[0].subject_name
+                ? BundleQuery.data[0].subject_school
                 : ""}
             </Typography>
           </Grid>
