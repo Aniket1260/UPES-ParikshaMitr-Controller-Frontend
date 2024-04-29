@@ -111,10 +111,6 @@ const UploadBundleModal = ({ open, onClose }) => {
         (header) =>
           header.trim().toLowerCase().replace(/_/g, " ") === "evaluator's sapid"
       );
-      const EvaluatorSchoolIndex = headers.findIndex(
-        (header) =>
-          header.trim().toLowerCase().replace(/_/g, " ") === "evaluator school"
-      );
       const SubjectSchoolIndex = headers.findIndex(
         (header) =>
           header.trim().toLowerCase().replace(/_/g, " ") === "subject school"
@@ -138,7 +134,6 @@ const UploadBundleModal = ({ open, onClose }) => {
         const noOfStudents = rowData[NoOfStudents];
         const evaluatorName = rowData[EvaluatorNameIndex];
         const evaluatorSap = rowData[EvaluatorSapIndex];
-        const evaluatorSchool = rowData[EvaluatorSchoolIndex];
         const dateOfExam = rowData[DateOfExamIndex];
         const roomNo = parseInt(rowData[RoomNoIndex]);
         const subjectSchool = rowData[SubjectSchoolIndex];
@@ -152,7 +147,6 @@ const UploadBundleModal = ({ open, onClose }) => {
           noOfStudents,
           evaluatorName,
           evaluatorSap,
-          evaluatorSchool,
           dateOfExam,
           roomNo,
           subjectSchool,
@@ -204,7 +198,6 @@ const UploadBundleModal = ({ open, onClose }) => {
     { field: "noOfStudents", headerName: "Number of Students", minWidth: 150 },
     { field: "evaluatorName", headerName: "Evaluator Name", minWidth: 150 },
     { field: "evaluatorSap", headerName: "Evaluator's SAPID", minWidth: 150 },
-    { field: "evaluatorSchool", headerName: "Evaluator School", minWidth: 150 },
     { field: "dateOfExam", headerName: "Date of Exam", minWidth: 150 },
     { field: "roomNo", headerName: "Room No", minWidth: 150 },
   ];
