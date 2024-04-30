@@ -159,8 +159,8 @@ const CopyDistribution = () => {
                 sub_count++;
                 break;
               case "INPROGRESS":
-                const due_date = copy.start_date
-                  ? getWorkingDateAfterDays(new Date(copy.start_date), 7)
+                const due_date = copy.available_date
+                  ? getWorkingDateAfterDays(new Date(copy.available_date), 7)
                   : "";
                 const day_diff = differenceInDays(due_date, new Date());
                 console.log(day_diff);
@@ -217,6 +217,22 @@ const CopyDistribution = () => {
             status: row_status,
             id: ele._id,
           };
+        })
+        .sort((a, b) => {
+          // Submitted at the bottom
+          if (a.status === "SUBMITTED" && b.status !== "SUBMITTED") {
+            return 1;
+          }
+          if (b.status === "SUBMITTED" && a.status !== "SUBMITTED") {
+            return -1;
+          }
+          // Overdue at the top
+          if (a.status === "OVERDUE" && b.status !== "OVERDUE") {
+            return -1;
+          }
+          if (b.status === "OVERDUE" && a.status !== "OVERDUE") {
+            return 1;
+          }
         }) || []
     );
   }, [CopyQuery.data, schoolSelected]);
