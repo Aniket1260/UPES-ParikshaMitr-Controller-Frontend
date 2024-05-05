@@ -330,7 +330,7 @@ const CopyDistribution = () => {
   return (
     <div>
       <Box display="flex" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Copy Distribution Bundle</Typography>
+        <Typography variant="h4">Copy Distribution Dashboard</Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <DownloadMasterCSV data={rows} />
           <Button

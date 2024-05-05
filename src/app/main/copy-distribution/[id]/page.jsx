@@ -68,18 +68,34 @@ const CopyDetails = ({ params }) => {
   const rows = useMemo(() => {
     if (BundleQuery.data && BundleQuery.data.length > 0) {
       const bundle = BundleQuery.data[0];
-      return bundle.copies.map((copy) => ({
-        id: copy._id,
-        batch: copy.batch,
-        numStudents: copy.no_of_students,
-        program: copy.program,
-        status: copy.status,
-        availableDate: copy.available_date,
-        allottedDate: copy.allotted_date,
-        startDate: copy.start_date,
-        submissionDate: copy.submit_date,
-        due_in: copy.due_in,
-      }));
+      return bundle.copies
+        .map((copy) => ({
+          id: copy._id,
+          batch: copy.batch,
+          numStudents: copy.no_of_students,
+          program: copy.program,
+          status: copy.status,
+          availableDate: copy.available_date,
+          allottedDate: copy.allotted_date,
+          startDate: copy.start_date,
+          submissionDate: copy.submit_date,
+          due_in: copy.due_in,
+        }))
+        .sort((a, b) => {
+          if (a.status === "SUBMITTED" && b.status !== "SUBMITTED") {
+            return 1;
+          }
+          if (b.status === "SUBMITTED" && a.status !== "SUBMITTED") {
+            return -1;
+          }
+          if (a.status === "OVERDUE" && b.status !== "OVERDUE") {
+            return -1;
+          }
+          if (b.status === "OVERDUE" && a.status !== "OVERDUE") {
+            return 1;
+          }
+          return 0;
+        });
     }
     return [];
   }, [BundleQuery.data]);
