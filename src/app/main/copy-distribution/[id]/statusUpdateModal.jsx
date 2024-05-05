@@ -9,7 +9,11 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { statusChangeService } from "@/services/copy-distribution";
+import {
+  BundleSubmitUpdate,
+  statusChangeService,
+} from "@/services/copy-distribution";
+import { enqueueSnackbar } from "notistack";
 
 const StatusUpdateModal = ({
   open,
@@ -19,14 +23,21 @@ const StatusUpdateModal = ({
   batch,
   program,
   bundle_id,
+  awardsheetHardcopyprop,
+  awardsheetSoftcopyprop,
+  answersheetprop,
 }) => {
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
   }
   const queryClient = useQueryClient();
-  const [awardsheetSoftcopy, setAwardsheetSoftcopy] = useState(false);
-  const [awardsheetHardcopy, setAwardsheetHardcopy] = useState(false);
-  const [answersheet, setAnswersheet] = useState(false);
+  const [awardsheetSoftcopy, setAwardsheetSoftcopy] = useState(
+    awardsheetSoftcopyprop
+  );
+  const [awardsheetHardcopy, setAwardsheetHardcopy] = useState(
+    awardsheetHardcopyprop
+  );
+  const [answersheet, setAnswersheet] = useState(answersheetprop);
 
   const statusChangeMutation = useMutation({
     mutationFn: (statusData) =>
@@ -37,6 +48,25 @@ const StatusUpdateModal = ({
       enqueueSnackbar({
         variant: "success",
         message: "Status changed successfully",
+      });
+    },
+    onError: (error) => {
+      console.log("error", error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.message,
+      });
+    },
+  });
+
+  const bundleUpdateService = useMutation({
+    mutationFn: (statusData) => BundleSubmitUpdate(controllerToken, statusData),
+    onSuccess: () => {
+      queryClient.invalidateQueries("bundle");
+      handleClose();
+      enqueueSnackbar({
+        variant: "success",
+        message: "Updated successfully",
       });
     },
     onError: (error) => {
@@ -71,7 +101,17 @@ const StatusUpdateModal = ({
 
   const handleConfirm = async () => {
     let newStatus = status;
-    if (status === "INPROGRESS") {
+
+    if (status == "INPROGRESS" || status == "OVERDUE") {
+      const data = {
+        bundle_id: bundle_id,
+        batch: batch,
+        program: program,
+        answersheet: answersheet,
+        award_hardcopy: awardsheetHardcopy,
+        award_softcopy: awardsheetSoftcopy,
+      };
+      bundleUpdateService.mutate(data);
       if (awardsheetSoftcopy && awardsheetHardcopy && answersheet) {
         const statusData = {
           bundle_id: bundle_id,
@@ -113,7 +153,7 @@ const StatusUpdateModal = ({
   const isUpdateDisabled =
     !awardsheetSoftcopy && !awardsheetHardcopy && !answersheet;
 
-  if (status === "INPROGRESS") {
+  if (status === "INPROGRESS" || status === "OVERDUE") {
     return (
       <Dialog open={open} onClose={onClose}>
         <DialogTitle>Mark the items you have received</DialogTitle>
@@ -124,6 +164,7 @@ const StatusUpdateModal = ({
                 checked={answersheet}
                 onChange={handleCheckboxChange}
                 name="answersheet"
+                disabled={answersheetprop}
               />
             }
             label="Answersheet"
@@ -134,6 +175,7 @@ const StatusUpdateModal = ({
                 checked={awardsheetSoftcopy}
                 onChange={handleCheckboxChange}
                 name="awardsheetSoftcopy"
+                disabled={awardsheetSoftcopyprop}
               />
             }
             label="Awardsheet Softcopy"
@@ -144,6 +186,7 @@ const StatusUpdateModal = ({
                 checked={awardsheetHardcopy}
                 onChange={handleCheckboxChange}
                 name="awardsheetHardcopy"
+                disabled={awardsheetHardcopyprop}
               />
             }
             label="Awardsheet Hardcopy"

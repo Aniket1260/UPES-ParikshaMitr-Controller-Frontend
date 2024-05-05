@@ -92,3 +92,22 @@ export const deleteBundle = async (token, bundleId, batch) => {
     throw error;
   }
 };
+
+export const BundleSubmitUpdate = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/copy-distribution/batch-submit-update`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

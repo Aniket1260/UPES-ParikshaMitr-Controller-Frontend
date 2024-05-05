@@ -88,6 +88,9 @@ const CopyDetails = ({ params }) => {
           startDate: copy.start_date,
           submissionDate: copy.submit_date,
           due_in: copy.due_in,
+          award_softcopy: copy.award_softcopy,
+          award_hardcopy: copy.award_hardcopy,
+          answersheet: copy.answersheet,
         }))
         .sort((a, b) => {
           if (a.status === "SUBMITTED" && b.status !== "SUBMITTED") {
@@ -398,6 +401,9 @@ const CopyDetails = ({ params }) => {
               batch={selectedCopy?.batch}
               program={selectedCopy?.program}
               bundle_id={bundleId}
+              awardsheetSoftcopyprop={selectedCopy?.award_softcopy}
+              awardsheetHardcopyprop={selectedCopy?.award_hardcopy}
+              answersheetprop={selectedCopy?.answersheet}
             />
           )}
           {selectedBundle && (
