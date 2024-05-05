@@ -1,7 +1,14 @@
 "use client";
 import { getBundleByIdService } from "@/services/copy-distribution";
 import StatusUpdateModal from "./statusUpdateModal";
-import { Grid, Typography, Box, Chip, Button } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Box,
+  Chip,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
@@ -88,6 +95,7 @@ const CopyDetails = ({ params }) => {
           if (b.status === "SUBMITTED" && a.status !== "SUBMITTED") {
             return -1;
           }
+
           if (a.status === "OVERDUE" && b.status !== "OVERDUE") {
             return -1;
           }
@@ -279,7 +287,7 @@ const CopyDetails = ({ params }) => {
           }}
         >
           <Typography variant="h4" sx={{ mb: 2 }}>
-            Bundle Details
+            Bundle Details {BundleQuery.isLoading && <CircularProgress />}
           </Typography>
         </Box>
 
@@ -362,39 +370,41 @@ const CopyDetails = ({ params }) => {
           </Grid>
         </Grid>
       </Box>
-      <Box
-        style={{
-          height: "80vh",
-          width: "calc(100vw - 280px)",
-        }}
-      >
-        <DataGrid
-          rows={rows || []}
-          columns={cols}
-          pageSize={5}
-          disableRowSelectionOnClick
-        />
-        {selectedCopy && (
-          <StatusUpdateModal
-            open={openModal}
-            onClose={handleClose}
-            onConfirm={handleConfirm}
-            status={selectedCopy.status}
-            batch={selectedCopy?.batch}
-            program={selectedCopy?.program}
-            bundle_id={bundleId}
+      {BundleQuery.isSuccess && (
+        <Box
+          style={{
+            height: "80vh",
+            width: "calc(100vw - 280px)",
+          }}
+        >
+          <DataGrid
+            rows={rows || []}
+            columns={cols}
+            pageSize={5}
+            disableRowSelectionOnClick
           />
-        )}
-        {selectedBundle && (
-          <DeleteConfirmationModal
-            open={openDeleteModal}
-            onClose={handleCloseDeleteModal}
-            onDelete={handleConfirmDelete}
-            bundle_id={bundleId}
-            batch={selectedBundle?.batch}
-          />
-        )}
-      </Box>
+          {selectedCopy && (
+            <StatusUpdateModal
+              open={openModal}
+              onClose={handleClose}
+              onConfirm={handleConfirm}
+              status={selectedCopy.status}
+              batch={selectedCopy?.batch}
+              program={selectedCopy?.program}
+              bundle_id={bundleId}
+            />
+          )}
+          {selectedBundle && (
+            <DeleteConfirmationModal
+              open={openDeleteModal}
+              onClose={handleCloseDeleteModal}
+              onDelete={handleConfirmDelete}
+              bundle_id={bundleId}
+              batch={selectedBundle?.batch}
+            />
+          )}
+        </Box>
+      )}
     </Box>
   );
 };

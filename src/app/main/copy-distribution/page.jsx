@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   IconButton,
   MenuItem,
   Select,
@@ -372,12 +373,15 @@ const CopyDistribution = () => {
           width: "calc(100vw - 280px)",
         }}
       >
-        <DataGrid
-          rows={rows}
-          columns={cols}
-          pageSize={5}
-          disableRowSelectionOnClick
-        />
+        {CopyQuery.isLoading && <CircularProgress />}
+        {CopyQuery.isSuccess && (
+          <DataGrid
+            rows={rows}
+            columns={cols}
+            pageSize={5}
+            disableRowSelectionOnClick
+          />
+        )}
       </Box>
     </div>
   );
