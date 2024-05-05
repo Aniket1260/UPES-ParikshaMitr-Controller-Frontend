@@ -81,6 +81,7 @@ const CopyDetails = ({ params }) => {
           batch: copy.batch,
           numStudents: copy.no_of_students,
           program: copy.program,
+          distibuter: copy.distibuter,
           status: copy.status,
           availableDate: copy.available_date,
           allottedDate: copy.allotted_date,
@@ -185,6 +186,11 @@ const CopyDetails = ({ params }) => {
       field: "program",
       headerName: "Program",
       minWidth: 180,
+    },
+    {
+      field: "distibuter",
+      headerName: "Distributor",
+      minWidth: 200,
     },
     {
       field: "status",
