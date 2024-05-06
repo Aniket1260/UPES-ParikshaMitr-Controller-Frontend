@@ -111,3 +111,21 @@ export const BundleSubmitUpdate = async (token, data) => {
     throw error;
   }
 };
+
+export const deleteSubjectService = async (token, id) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/copy-distribution/delete-subject?bundle_id=${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

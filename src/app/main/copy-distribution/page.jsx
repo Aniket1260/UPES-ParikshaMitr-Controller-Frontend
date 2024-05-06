@@ -11,12 +11,15 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UploadBundleModal from "./UploadBundleModal";
 import { DataGrid } from "@mui/x-data-grid";
-import { getBundleService } from "@/services/copy-distribution";
+import {
+  deleteSubjectService,
+  getBundleService,
+} from "@/services/copy-distribution";
 import { enqueueSnackbar } from "notistack";
-import { Edit, Visibility } from "@mui/icons-material";
+import { Delete, Edit, Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
 import DownloadMasterCSV from "./downloadCSV";
@@ -88,6 +91,7 @@ const CopyDistribution = () => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const CopyQuery = useQuery({
@@ -96,6 +100,23 @@ const CopyDistribution = () => {
     cacheTime: 0,
     refetchIntervalInBackground: true,
     refetchInterval: refetchInterval,
+  });
+
+  const { mutate: deleteBundle } = useMutation({
+    mutationFn: (id) => deleteSubjectService(controllerToken, id),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Bundle Deleted Successfully",
+      });
+      queryClient.invalidateQueries("bundle");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
   });
 
   const handleClose = () => {
@@ -333,6 +354,13 @@ const CopyDistribution = () => {
                 </IconButton>
               </Tooltip>
             )}
+            {role && role === "superuser" && (
+              <Tooltip title="Delete" placement="top" arrow>
+                <IconButton onClick={() => handleDelete(row)} color="error">
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         );
       },
@@ -341,6 +369,9 @@ const CopyDistribution = () => {
   const handleEdit = (row) => {
     setSelectedRow(row);
     setEditModalOpen(true);
+  };
+  const handleDelete = (row) => {
+    deleteBundle(row._id);
   };
   return (
     <div>
