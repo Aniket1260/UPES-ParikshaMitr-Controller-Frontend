@@ -38,13 +38,16 @@ export const userMenu = [
   },
 ];
 
-export const miscMenu = [
+export const superuserMenu = [
   {
     title: "Users",
     href: "/main/users",
     icon: <PeopleAlt />,
     proctor: true,
   },
+];
+
+export const miscMenu = [
   {
     title: "About Us",
     href: "/main/about-us",
