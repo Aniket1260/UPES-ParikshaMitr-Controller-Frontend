@@ -3,7 +3,9 @@ import {
   AddTask,
   Assessment,
   AssignmentLate,
+  Copyright,
   NotificationsActive,
+  PeopleAlt,
   PersonSearch,
   SchoolRounded,
 } from "@mui/icons-material";
@@ -33,6 +35,18 @@ export const userMenu = [
     href: "/main/copy-distribution",
     icon: <AssignmentIcon />,
     proctor: false,
+  },
+  {
+    title: "Users",
+    href: "/main/users",
+    icon: <PeopleAlt />,
+    proctor: true,
+  },
+  {
+    title: "About Us",
+    href: "/main/about-us",
+    icon: <Copyright />,
+    proctor: true,
   },
 ];
 
