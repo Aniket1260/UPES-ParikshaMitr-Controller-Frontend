@@ -1,5 +1,5 @@
 "use client";
-import { invigilationMenu, userMenu } from "@/config/sidenav.config";
+import { invigilationMenu, miscMenu, userMenu } from "@/config/sidenav.config";
 import {
   Box,
   Divider,
@@ -83,6 +83,34 @@ const CustomDrawer = () => {
             <List>
               {role &&
                 userMenu.map((item, idx) => {
+                  console.log(role, item.proctor);
+                  if (role === "proctor" && item.proctor === false) {
+                    return null;
+                  }
+                  return (
+                    <Link href={item.href} key={idx}>
+                      <ListItem disablePadding>
+                        <ListItemButton>
+                          <ListItemIcon>{item.icon}</ListItemIcon>
+                          <ListItemText primary={item.title} />
+                        </ListItemButton>
+                      </ListItem>
+                    </Link>
+                  );
+                })}
+            </List>
+            <Divider />
+            <Typography
+              variant="body2"
+              component="div"
+              sx={{ px: 2, pt: 1 }}
+              color="text.secondary"
+            >
+              Miscellaneous
+            </Typography>
+            <List>
+              {role &&
+                miscMenu.map((item, idx) => {
                   console.log(role, item.proctor);
                   if (role === "proctor" && item.proctor === false) {
                     return null;

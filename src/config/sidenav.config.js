@@ -36,6 +36,9 @@ export const userMenu = [
     icon: <AssignmentIcon />,
     proctor: false,
   },
+];
+
+export const miscMenu = [
   {
     title: "Users",
     href: "/main/users",

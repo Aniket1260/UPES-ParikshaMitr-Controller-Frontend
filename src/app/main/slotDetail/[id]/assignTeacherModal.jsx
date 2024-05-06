@@ -30,7 +30,7 @@ const AssignTeacherModal = ({
   const queryClient = useQueryClient();
 
   const approvedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "approved" }, controllerToken],
+    queryKey: ["teachers", { type: "approved" }, controllerToken, slotId],
     queryFn: () => GetInvigilatorsInSlotService(controllerToken, slotId),
     retry: 2,
     cacheTime: 0,
