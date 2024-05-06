@@ -8,6 +8,8 @@ import {
   Chip,
   Button,
   CircularProgress,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,6 +18,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, format, isSunday } from "date-fns";
 import DeleteConfirmationModal from "./deleteModal";
+import EditModalDetails from "./editModal";
+import { Edit } from "@mui/icons-material";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -53,6 +57,9 @@ const CopyDetails = ({ params }) => {
   const router = useRouter();
   const bundleId = params.id;
   console.log(bundleId);
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -271,19 +278,48 @@ const CopyDetails = ({ params }) => {
           }
           return <></>;
         }
-        if (params.row.status === "AVAILABLE") {
-          return (
+        //   if (params.row.status === "AVAILABLE") {
+        //     return (
+        //       <Button
+        //         variant="contained"
+        //         onClick={() => handleDeleteButtonClick(params.row)}
+        //       >
+        //         Delete
+        //       </Button>
+        //     );
+        //   }
+      },
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      minWidth: 150,
+      renderCell: (params) => (
+        <>
+          {params.row.status === "AVAILABLE" && (
             <Button
               variant="contained"
               onClick={() => handleDeleteButtonClick(params.row)}
             >
               Delete
             </Button>
-          );
-        }
-      },
+          )}
+          {params.row.status !== "SUBMITTED" && (
+            <Tooltip title="Edit Details" placement="top" arrow>
+              <IconButton onClick={() => handleEdit(params.row)}>
+                <Edit />
+              </IconButton>
+            </Tooltip>
+          )}
+        </>
+      ),
     },
   ];
+
+  const handleEdit = (row) => {
+    setSelectedRow(row);
+    setEditModalOpen(true);
+  };
   return (
     <Box>
       <Box>
@@ -417,6 +453,11 @@ const CopyDetails = ({ params }) => {
           )}
         </Box>
       )}
+      <EditModalDetails
+        rowData={selectedRow}
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+      />
     </Box>
   );
 };

@@ -16,12 +16,13 @@ import UploadBundleModal from "./UploadBundleModal";
 import { DataGrid } from "@mui/x-data-grid";
 import { getBundleService } from "@/services/copy-distribution";
 import { enqueueSnackbar } from "notistack";
-import { Visibility } from "@mui/icons-material";
+import { Edit, Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
 import DownloadMasterCSV from "./downloadCSV";
 import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, isSunday } from "date-fns";
+import EditModal from "./editModalMainPage";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -71,6 +72,9 @@ const CopyDistribution = () => {
   const [open, setOpen] = useState(false);
   const [schoolSelected, setSchoolSelected] = useState("A");
   const router = useRouter();
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -164,7 +168,7 @@ const CopyDistribution = () => {
                   ? getWorkingDateAfterDays(new Date(copy.available_date), 7)
                   : "";
                 const day_diff = differenceInDays(due_date, new Date());
-                console.log(day_diff);
+                // console.log(day_diff);
 
                 if (day_diff < 0) {
                   ovr_count++;
@@ -180,13 +184,13 @@ const CopyDistribution = () => {
                 break;
             }
           });
-          console.log(
-            ovr_count,
-            sub_count,
-            inprog_count,
-            avail_count,
-            allot_count
-          );
+          // console.log(
+          //   ovr_count,
+          //   sub_count,
+          //   inprog_count,
+          //   avail_count,
+          //   allot_count
+          // );
           if (ovr_count > 0) {
             row_status = "OVERDUE";
           } else if (sub_count === ele.copies.length) {
@@ -237,7 +241,7 @@ const CopyDistribution = () => {
         }) || []
     );
   }, [CopyQuery.data, schoolSelected]);
-  console.log(rows);
+
   if (CopyQuery.isError) {
     enqueueSnackbar({
       variant: "error",
@@ -322,12 +326,22 @@ const CopyDistribution = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            {row.status !== "SUBMITTED" && (
+              <Tooltip title="Edit Details" placement="top" arrow>
+                <IconButton onClick={() => handleEdit(row)}>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         );
       },
     },
   ];
-
+  const handleEdit = (row) => {
+    setSelectedRow(row);
+    setEditModalOpen(true);
+  };
   return (
     <div>
       <Box display="flex" justifyContent="space-between" mb={5}>
@@ -383,6 +397,11 @@ const CopyDistribution = () => {
           />
         )}
       </Box>
+      <EditModal
+        rowData={selectedRow}
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+      />
     </div>
   );
 };
