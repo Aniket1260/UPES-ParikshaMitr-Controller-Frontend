@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import CustomAppBar from "@/components/CustomAppBar";
-import { Box, Toolbar } from "@mui/material";
+import { Box, Divider, Toolbar, Typography } from "@mui/material";
 import CustomDrawer from "@/components/CustomDrawer";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
@@ -63,9 +63,26 @@ const TeacherLayout = ({ children }) => {
     >
       <CustomAppBar />
       <CustomDrawer />
-      <Box sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        sx={{ flexGrow: 1, p: 3, position: "relative", paddingBottom: "100px" }}
+      >
         <Toolbar variant="dense" />
         {children}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 0,
+            textAlign: "center",
+            height: "40px",
+            width: "calc(100% - 50px)",
+            // bgcolor: "#160b28",
+          }}
+        >
+          <Divider />
+          <Typography variant="body2" sx={{ lineHeight: "40px" }}>
+            © {new Date().getFullYear()} Parikshamitr Team
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
