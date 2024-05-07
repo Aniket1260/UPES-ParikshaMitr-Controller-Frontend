@@ -9,8 +9,16 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { enqueueSnackbar } from "notistack";
+import { editBundleService } from "../../../services/copy-distribution";
 
 const EditModal = ({ rowData, open, onClose }) => {
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
+
   const [editedData, setEditedData] = useState({
     evaluatorName: rowData ? rowData.evaluatorName : "",
     sap: rowData ? rowData.sap : "",
@@ -37,16 +45,60 @@ const EditModal = ({ rowData, open, onClose }) => {
         evaluationMode: rowData.evaluationMode,
         sap: rowData.sap,
         evaluatorName: rowData.evaluatorName,
+        id: rowData._id,
       }));
     }
   }, [rowData]);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: editDataMutation } = useMutation({
+    mutationFn: () =>
+      editBundleService(
+        {
+          ...editedData,
+          roomNumber: +editedData.roomNumber,
+        },
+        controllerToken
+      ),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Bundle Edited Successfully",
+      });
+      queryClient.invalidateQueries("bundle");
+      onClose();
+    },
+    onError: (error) => {
+      console.error(error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+    onSettled: () => {
+      setEditedData({
+        evaluatorName: rowData ? rowData.evaluatorName : "",
+        sap: rowData ? rowData.sap : "",
+        dateOfExamination: "",
+        subjectName: "",
+        roomNumber: "",
+        evaluationMode: rowData ? rowData.evaluationMode : "",
+        subjectCode: rowData ? rowData.subjectCode : "",
+        subjectSchool: rowData ? rowData.subjectSchool : "",
+        status: rowData ? rowData.status : "",
+        id: rowData ? rowData._id : "",
+      });
+    },
+  });
 
   const handleClose = () => {
     onClose();
   };
 
   const handleSave = () => {
-    console.log("Edited data:", editedData);
+    editDataMutation();
+
     onClose();
   };
 
@@ -150,7 +202,7 @@ const EditModal = ({ rowData, open, onClose }) => {
           onClick={handleSave}
           color="primary"
           variant="contained"
-          disabled={!isChanged}
+          // disabled={!isChanged}
         >
           Save
         </Button>

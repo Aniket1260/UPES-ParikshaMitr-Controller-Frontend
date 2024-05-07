@@ -129,3 +129,22 @@ export const deleteSubjectService = async (token, id) => {
     throw error;
   }
 };
+
+export const editBundleService = async (data, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/copy-distribution/edit-bundle`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
