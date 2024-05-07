@@ -6,7 +6,6 @@ import {
   Typography,
   Box,
   Button,
-  Grid,
   Autocomplete,
   TextField,
   Tab,
@@ -20,6 +19,7 @@ import {
 } from "@/services/exam-slots.service";
 import { getFreeTeachersBySlotID } from "@/services/flying.service";
 import { enqueueSnackbar } from "notistack";
+import { DataGrid } from "@mui/x-data-grid";
 
 const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
   if (global?.window !== undefined) {
@@ -76,11 +76,20 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
     if (selectedTab === "remove") {
       console.log("Invigilators in slot", InvInSlotQuery.data);
       return InvInSlotQuery.data?.data;
+    } else if (selectedTab === "list") {
+      console.log("All Teachers", InvInSlotQuery.data);
+      return InvInSlotQuery.data?.data;
     } else {
       console.log("Free teachers", FreeTeachersQuery.data);
       return FreeTeachersQuery.data?.data;
     }
-  }, [open, selectedTab, InvInSlotQuery.data, FreeTeachersQuery.data]);
+  }, [
+    open,
+    selectedTab,
+    InvInSlotQuery.data,
+    FreeTeachersQuery.data,
+    InvInSlotQuery.data,
+  ]);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -117,38 +126,60 @@ const ManageInvigilatorModal = ({ open, handleClose, slotId }) => {
         <Tabs value={selectedTab} onChange={handleTabChange}>
           <Tab value="add" label="Add" />
           <Tab value="remove" label="Remove" />
+          <Tab value="list" label="List" />
         </Tabs>
 
-        <Box my={1} alignItems="center">
-          <Autocomplete
-            options={options}
-            getOptionLabel={(option) => `${option.name}  ${option.sap_id}`}
-            onChange={(event, value) => {
-              setSelectedTeacher(value);
-            }}
-            value={selectedTeacher}
-            renderInput={(params) => (
-              <TextField {...params} placeholder="Search Teachers" />
-            )}
-          />
-        </Box>
+        {(selectedTab === "add" || selectedTab === "remove") && (
+          <Box my={1} alignItems="center">
+            <Autocomplete
+              options={options}
+              getOptionLabel={(option) => `${option.name}  ${option.sap_id}`}
+              onChange={(event, value) => {
+                setSelectedTeacher(value);
+              }}
+              value={selectedTeacher}
+              renderInput={(params) => (
+                <TextField {...params} placeholder="Search Teachers" />
+              )}
+            />
+          </Box>
+        )}
 
-        <Box mt={3} textAlign="right">
-          <Button
-            variant="outlined"
-            onClick={closeDialog}
-            style={{ marginRight: "8px" }}
-          >
-            Close
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleAction}
-            disabled={selectedTeacher === null}
-          >
-            {selectedTab === "add" ? "Add" : "Remove"}
-          </Button>
-        </Box>
+        {(selectedTab === "add" || selectedTab === "remove") && (
+          <Box mt={3} textAlign="right">
+            <Button
+              variant="outlined"
+              onClick={closeDialog}
+              style={{ marginRight: "8px" }}
+            >
+              Close
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleAction}
+              disabled={selectedTeacher === null}
+            >
+              {selectedTab === "add" ? "Add" : "Remove"}
+            </Button>
+          </Box>
+        )}
+
+        {selectedTab === "list" && (
+          <Box my={2} height={400} width="100%">
+            <DataGrid
+              rows={options.map((teacher, index) => ({
+                id: teacher._id,
+                ...teacher,
+              }))}
+              columns={[
+                { field: "name", headerName: "Name", width: 170 },
+                { field: "sap_id", headerName: "SAP ID", width: 150 },
+              ]}
+              pageSize={5}
+              autoHeight
+            />
+          </Box>
+        )}
       </DialogContent>
     </Dialog>
   );

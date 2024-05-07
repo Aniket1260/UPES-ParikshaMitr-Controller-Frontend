@@ -21,8 +21,8 @@ const AboutUs = () => {
     },
     {
       name: "Khushi Gupta",
-      role: "SDE",
-      company: "BMC Software Pvt. Ltd.",
+      role: "Technical Associate",
+      company: "OnceHub Technologies Pvt. Ltd.",
       spec: "BTech CSE AIML B3 NON-HONORS",
       image: "/Ani.jpg",
       phone: "7078870401",
