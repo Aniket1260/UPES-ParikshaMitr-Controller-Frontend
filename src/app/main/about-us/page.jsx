@@ -38,7 +38,7 @@ const AboutUs = () => {
       email: "mailaarav2002@gmail.com",
     },
     {
-      name: "Eshaan Dutta",
+      name: "Eshan Dutta",
       role: "Software Developer",
       company: "Tata Technologies",
       spec: "BTech CSE AIML B3 HONORS",
