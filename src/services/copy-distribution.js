@@ -148,3 +148,22 @@ export const editBundleService = async (data, token) => {
     throw error;
   }
 };
+
+export const editBatchService = async (data, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/copy-distribution/edit-batch`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

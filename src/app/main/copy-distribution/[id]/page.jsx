@@ -19,7 +19,7 @@ import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, format, isSunday } from "date-fns";
 import DeleteConfirmationModal from "./deleteModal";
 import EditModalDetails from "./editModal";
-import { Edit } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -296,18 +296,20 @@ const CopyDetails = ({ params }) => {
       minWidth: 150,
       renderCell: (params) => (
         <>
-          {params.row.status === "AVAILABLE" && (
-            <Button
-              variant="contained"
-              onClick={() => handleDeleteButtonClick(params.row)}
-            >
-              Delete
-            </Button>
-          )}
           {params.row.status !== "SUBMITTED" && (
             <Tooltip title="Edit Details" placement="top" arrow>
               <IconButton onClick={() => handleEdit(params.row)}>
                 <Edit />
+              </IconButton>
+            </Tooltip>
+          )}
+          {params.row.status === "AVAILABLE" && (
+            <Tooltip title="Delete Batch" placement="top" arrow>
+              <IconButton
+                onClick={() => handleDeleteButtonClick(params.row)}
+                color="error"
+              >
+                <Delete />
               </IconButton>
             </Tooltip>
           )}

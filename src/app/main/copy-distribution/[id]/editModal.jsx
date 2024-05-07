@@ -9,8 +9,16 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { editBatchService } from "../../../../services/copy-distribution";
+import { enqueueSnackbar } from "notistack";
 
 const EditModalDetails = ({ rowData, open, onClose }) => {
+  if (global?.window !== undefined) {
+    // Now it's safe to access window and localStorage
+    var controllerToken = localStorage.getItem("token");
+  }
+
   const [editedData, setEditedData] = useState({
     id: rowData ? rowData.id : "",
     batch: rowData ? rowData.batch : "",
@@ -35,16 +43,58 @@ const EditModalDetails = ({ rowData, open, onClose }) => {
         availableDate: rowData.availableDate,
         allottedDate: rowData.allottedDate,
         startDate: rowData.startDate,
+        id: rowData.id,
       }));
     }
   }, [rowData]);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: editDataMutation } = useMutation({
+    mutationFn: () =>
+      editBatchService(
+        {
+          ...editedData,
+          numStudents: +editedData.noOfStudents,
+        },
+        controllerToken
+      ),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Bundle Edited Successfully",
+      });
+      queryClient.invalidateQueries("bundle");
+      onClose();
+    },
+    onError: (error) => {
+      console.error(error);
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
+    onSettled: () => {
+      setEditedData({
+        id: rowData ? rowData.id : "",
+        batch: rowData ? rowData.batch : "",
+        program: rowData ? rowData.program : "",
+        noOfStudents: "",
+        distributor: rowData ? rowData.distibuter : "",
+        status: rowData ? rowData.status : "",
+        availableDate: rowData ? rowData.availableDate : "",
+        allottedDate: rowData ? rowData.allottedDate : "",
+        startDate: rowData ? rowData.startDate : "",
+      });
+    },
+  });
 
   const handleClose = () => {
     onClose();
   };
 
   const handleSave = () => {
-    console.log("Edited data:", editedData);
+    editDataMutation();
     onClose();
   };
 
@@ -138,12 +188,7 @@ const EditModalDetails = ({ rowData, open, onClose }) => {
         <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button
-          onClick={handleSave}
-          color="primary"
-          variant="contained"
-          disabled={!isChanged}
-        >
+        <Button onClick={handleSave} color="primary" variant="contained">
           Save
         </Button>
       </DialogActions>
