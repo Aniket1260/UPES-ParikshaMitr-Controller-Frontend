@@ -47,3 +47,22 @@ export const deleteControllerService = async (id, token) => {
     throw error;
   }
 };
+
+export const changeRoleService = async (id, role, token) => {
+  try {
+    const response = await axios.put(
+      `${BaseUrl}/exam-controller/change-role/${id}`,
+      { role },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

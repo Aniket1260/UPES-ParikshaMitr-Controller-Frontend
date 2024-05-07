@@ -20,7 +20,8 @@ import { enqueueSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import AddUserModal from "./AddUserModal";
 import { refetchInterval } from "@/config/var.config";
-import { Delete } from "@mui/icons-material";
+import { ChangeCircle, Delete } from "@mui/icons-material";
+import ChangeRoleModal from "./ChangeRoleModal";
 
 const Users = () => {
   if (global?.window !== undefined) {
@@ -29,6 +30,11 @@ const Users = () => {
 
   const [addUserModal, setaddUserModal] = useState({
     open: false,
+  });
+
+  const [changeRoleModal, setChangeRoleModal] = useState({
+    open: false,
+    row: null,
   });
 
   const [deleteUserModal, setdeleteUserModal] = useState({
@@ -114,6 +120,15 @@ const Users = () => {
       renderCell: (params) => {
         return (
           <Box>
+            <Tooltip title="Change Role" placement="top">
+              <IconButton
+                onClick={() => {
+                  setChangeRoleModal({ open: true, row: params.row });
+                }}
+              >
+                <ChangeCircle />
+              </IconButton>
+            </Tooltip>
             <Tooltip title="Delete User">
               <IconButton
                 color="error"
@@ -174,6 +189,11 @@ const Users = () => {
         open={deleteUserModal.open}
         onClose={() => setdeleteUserModal({ open: false, id: null })}
         onConfirm={handleDeleteUser}
+      />
+      <ChangeRoleModal
+        open={changeRoleModal.open}
+        handleClose={() => setChangeRoleModal({ open: false, row: null })}
+        row={changeRoleModal.row}
       />
     </Box>
   );
