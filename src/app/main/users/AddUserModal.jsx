@@ -130,11 +130,7 @@ const AddUserModal = ({ open, handleClose }) => {
               setAddUserData((prev) => ({ ...prev, role: value }));
             }}
             renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Search Teachers"
-                onChange={(event) => setFilterValue(event.target.value)}
-              />
+              <TextField {...params} placeholder="Select Role" />
             )}
             popperPlacement="bottom-start"
           />

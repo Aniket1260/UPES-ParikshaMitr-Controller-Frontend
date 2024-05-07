@@ -7,6 +7,9 @@ import {
   Box,
   Button,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   IconButton,
   Tooltip,
   Typography,
@@ -26,6 +29,11 @@ const Users = () => {
 
   const [addUserModal, setaddUserModal] = useState({
     open: false,
+  });
+
+  const [deleteUserModal, setdeleteUserModal] = useState({
+    open: false,
+    id: null,
   });
 
   const GetAllControllerQuery = useQuery({
@@ -66,6 +74,11 @@ const Users = () => {
     });
   }
 
+  const handleDeleteUser = () => {
+    deleteUserMutation(deleteUserModal.id);
+    setdeleteUserModal({ open: false, id: null });
+  };
+
   const rows = useMemo(() => {
     return GetAllControllerQuery.data?.map((ele, idx) => ({
       ...ele,
@@ -105,7 +118,7 @@ const Users = () => {
               <IconButton
                 color="error"
                 onClick={() => {
-                  deleteUserMutation(params.row._id);
+                  setdeleteUserModal({ open: true, id: params.row._id });
                 }}
               >
                 <Delete />
@@ -157,8 +170,27 @@ const Users = () => {
         open={addUserModal.open}
         handleClose={() => setaddUserModal({ open: false })}
       />
+      <DeleteConfirmDialog
+        open={deleteUserModal.open}
+        onClose={() => setdeleteUserModal({ open: false, id: null })}
+        onConfirm={handleDeleteUser}
+      />
     </Box>
   );
 };
 
 export default Users;
+
+const DeleteConfirmDialog = ({ open, onClose, onConfirm }) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Are you sure you want to delete this bundle?</DialogTitle>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onConfirm} color="error">
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
