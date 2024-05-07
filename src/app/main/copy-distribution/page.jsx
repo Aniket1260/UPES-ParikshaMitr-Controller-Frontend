@@ -5,6 +5,9 @@ import {
   Button,
   Chip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   IconButton,
   MenuItem,
   Select,
@@ -78,6 +81,8 @@ const CopyDistribution = () => {
 
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -356,7 +361,13 @@ const CopyDistribution = () => {
             )}
             {role && role === "superuser" && (
               <Tooltip title="Delete" placement="top" arrow>
-                <IconButton onClick={() => handleDelete(row)} color="error">
+                <IconButton
+                  onClick={() => {
+                    setSelectedRow(row);
+                    setDeleteDialogOpen(true);
+                  }}
+                  color="error"
+                >
                   <Delete />
                 </IconButton>
               </Tooltip>
@@ -372,6 +383,7 @@ const CopyDistribution = () => {
   };
   const handleDelete = (row) => {
     deleteBundle(row._id);
+    setSelectedRow(null);
   };
   return (
     <div>
@@ -433,7 +445,29 @@ const CopyDistribution = () => {
         open={editModalOpen}
         onClose={() => setEditModalOpen(false)}
       />
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={() => {
+          handleDelete(selectedRow);
+          setDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 };
 export default CopyDistribution;
+
+const DeleteConfirmDialog = ({ open, onClose, onConfirm }) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Are you sure you want to delete this bundle?</DialogTitle>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onConfirm} color="error">
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
