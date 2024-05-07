@@ -4,23 +4,31 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogTitle,
   IconButton,
   MenuItem,
   Select,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import UploadBundleModal from "./UploadBundleModal";
 import { DataGrid } from "@mui/x-data-grid";
-import { getBundleService } from "@/services/copy-distribution";
+import {
+  deleteSubjectService,
+  getBundleService,
+} from "@/services/copy-distribution";
 import { enqueueSnackbar } from "notistack";
-import { Visibility } from "@mui/icons-material";
+import { Delete, Edit, Visibility } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import ManualEntryModal from "./manualEntryModal";
 import DownloadMasterCSV from "./downloadCSV";
 import { refetchInterval } from "@/config/var.config";
 import { addDays, differenceInDays, isSunday } from "date-fns";
+import EditModal from "./editModalMainPage";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -71,6 +79,11 @@ const CopyDistribution = () => {
   const [schoolSelected, setSchoolSelected] = useState("A");
   const router = useRouter();
 
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
@@ -83,6 +96,7 @@ const CopyDistribution = () => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const CopyQuery = useQuery({
@@ -91,6 +105,23 @@ const CopyDistribution = () => {
     cacheTime: 0,
     refetchIntervalInBackground: true,
     refetchInterval: refetchInterval,
+  });
+
+  const { mutate: deleteBundle } = useMutation({
+    mutationFn: (id) => deleteSubjectService(controllerToken, id),
+    onSuccess: () => {
+      enqueueSnackbar({
+        variant: "success",
+        message: "Bundle Deleted Successfully",
+      });
+      queryClient.invalidateQueries("bundle");
+    },
+    onError: (error) => {
+      enqueueSnackbar({
+        variant: "error",
+        message: error.response?.status + " : " + error.response?.data.message,
+      });
+    },
   });
 
   const handleClose = () => {
@@ -163,7 +194,7 @@ const CopyDistribution = () => {
                   ? getWorkingDateAfterDays(new Date(copy.available_date), 7)
                   : "";
                 const day_diff = differenceInDays(due_date, new Date());
-                console.log(day_diff);
+                // console.log(day_diff);
 
                 if (day_diff < 0) {
                   ovr_count++;
@@ -179,13 +210,13 @@ const CopyDistribution = () => {
                 break;
             }
           });
-          console.log(
-            ovr_count,
-            sub_count,
-            inprog_count,
-            avail_count,
-            allot_count
-          );
+          // console.log(
+          //   ovr_count,
+          //   sub_count,
+          //   inprog_count,
+          //   avail_count,
+          //   allot_count
+          // );
           if (ovr_count > 0) {
             row_status = "OVERDUE";
           } else if (sub_count === ele.copies.length) {
@@ -236,7 +267,7 @@ const CopyDistribution = () => {
         }) || []
     );
   }, [CopyQuery.data, schoolSelected]);
-  console.log(rows);
+
   if (CopyQuery.isError) {
     enqueueSnackbar({
       variant: "error",
@@ -321,16 +352,43 @@ const CopyDistribution = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
+            {row.status !== "SUBMITTED" && (
+              <Tooltip title="Edit Details" placement="top" arrow>
+                <IconButton onClick={() => handleEdit(row)}>
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+            )}
+            {role && role === "superuser" && (
+              <Tooltip title="Delete" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    setSelectedRow(row);
+                    setDeleteDialogOpen(true);
+                  }}
+                  color="error"
+                >
+                  <Delete />
+                </IconButton>
+              </Tooltip>
+            )}
           </Box>
         );
       },
     },
   ];
-
+  const handleEdit = (row) => {
+    setSelectedRow(row);
+    setEditModalOpen(true);
+  };
+  const handleDelete = (row) => {
+    deleteBundle(row._id);
+    setSelectedRow(null);
+  };
   return (
     <div>
       <Box display="flex" justifyContent="space-between" mb={5}>
-        <Typography variant="h4">Copy Distribution Bundle</Typography>
+        <Typography variant="h4">Copy Distribution Dashboard</Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <DownloadMasterCSV data={rows} />
           <Button
@@ -372,14 +430,44 @@ const CopyDistribution = () => {
           width: "calc(100vw - 280px)",
         }}
       >
-        <DataGrid
-          rows={rows}
-          columns={cols}
-          pageSize={5}
-          disableRowSelectionOnClick
-        />
+        {CopyQuery.isLoading && <CircularProgress />}
+        {CopyQuery.isSuccess && (
+          <DataGrid
+            rows={rows}
+            columns={cols}
+            pageSize={5}
+            disableRowSelectionOnClick
+          />
+        )}
       </Box>
+      <EditModal
+        rowData={selectedRow}
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+      />
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={() => {
+          handleDelete(selectedRow);
+          setDeleteDialogOpen(false);
+        }}
+      />
     </div>
   );
 };
 export default CopyDistribution;
+
+const DeleteConfirmDialog = ({ open, onClose, onConfirm }) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Are you sure you want to delete this bundle?</DialogTitle>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onConfirm} color="error">
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};

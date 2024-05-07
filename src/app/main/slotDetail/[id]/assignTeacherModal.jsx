@@ -9,11 +9,11 @@ import {
   Grid,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import { getApprovedTeachers } from "@/services/cont-teacher.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ManualAssignInvigilatorService } from "@/services/controller.service";
 import { enqueueSnackbar } from "notistack";
 import { refetchInterval } from "@/config/var.config";
+import { GetInvigilatorsInSlotService } from "@/services/exam-slots.service";
 
 const AssignTeacherModal = ({
   open,
@@ -30,8 +30,8 @@ const AssignTeacherModal = ({
   const queryClient = useQueryClient();
 
   const approvedTeacherResult = useQuery({
-    queryKey: ["teachers", { type: "approved" }, controllerToken],
-    queryFn: () => getApprovedTeachers(controllerToken),
+    queryKey: ["teachers", { type: "approved" }, controllerToken, slotId],
+    queryFn: () => GetInvigilatorsInSlotService(controllerToken, slotId),
     retry: 2,
     cacheTime: 0,
     refetchIntervalInBackground: true,
@@ -42,15 +42,9 @@ const AssignTeacherModal = ({
   const [selectedTeacher, setSelectedTeacher] = useState(null);
   const [selectedTeacherId, setSelectedTeacherId] = useState([]);
 
-  console.log(assignedTeachersIdList);
-
-  const filteredOptions = approvedTeacherResult.data
-    ? approvedTeacherResult.data.filter(
-        (teacher) =>
-          `${teacher.name} ${teacher.sap_id}`
-            .toLowerCase()
-            .includes(filterValue.toLowerCase()) &&
-          !assignedTeachersIdList.includes(teacher._id)
+  const filteredOptions = approvedTeacherResult.data?.data
+    ? approvedTeacherResult.data?.data?.filter(
+        (teacher) => !assignedTeachersIdList.includes(teacher._id)
       )
     : [];
 

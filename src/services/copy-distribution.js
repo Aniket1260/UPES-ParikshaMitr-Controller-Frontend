@@ -92,3 +92,78 @@ export const deleteBundle = async (token, bundleId, batch) => {
     throw error;
   }
 };
+
+export const BundleSubmitUpdate = async (token, data) => {
+  try {
+    const response = await axios.patch(
+      `${BaseUrl}/exam-controller/copy-distribution/batch-submit-update`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteSubjectService = async (token, id) => {
+  try {
+    const response = await axios.delete(
+      `${BaseUrl}/exam-controller/copy-distribution/delete-subject?bundle_id=${id}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const editBundleService = async (data, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/copy-distribution/edit-bundle`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const editBatchService = async (data, token) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/copy-distribution/edit-batch`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
