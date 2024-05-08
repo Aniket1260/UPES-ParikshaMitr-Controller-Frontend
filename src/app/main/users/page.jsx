@@ -120,25 +120,30 @@ const Users = () => {
       renderCell: (params) => {
         return (
           <Box>
-            <Tooltip title="Change Role" placement="top">
-              <IconButton
-                onClick={() => {
-                  setChangeRoleModal({ open: true, row: params.row });
-                }}
-              >
-                <ChangeCircle />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete User">
-              <IconButton
-                color="error"
-                onClick={() => {
-                  setdeleteUserModal({ open: true, id: params.row._id });
-                }}
-              >
-                <Delete />
-              </IconButton>
-            </Tooltip>
+            {params?.row?.role != "superuser" && (
+              <>
+                <Tooltip title="Change Role" placement="top">
+                  <IconButton
+                    onClick={() => {
+                      setChangeRoleModal({ open: true, row: params.row });
+                    }}
+                  >
+                    <ChangeCircle />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title="Delete User">
+                  <IconButton
+                    color="error"
+                    onClick={() => {
+                      setdeleteUserModal({ open: true, id: params.row._id });
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                </Tooltip>
+              </>
+            )}
           </Box>
         );
       },
