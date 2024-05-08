@@ -61,13 +61,13 @@ export const invigilationMenu = [
     title: "Examination Slots",
     href: "/main/slots",
     icon: <AccessTime />,
-    proctor: false,
+    proctor: true,
   },
   {
     title: "Approve Invigilations",
     href: "/main/approve-invigilations",
     icon: <AddTask />,
-    proctor: true,
+    proctor: false,
   },
   {
     title: "Student Search",

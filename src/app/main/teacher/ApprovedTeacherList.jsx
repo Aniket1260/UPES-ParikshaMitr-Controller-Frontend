@@ -19,6 +19,7 @@ const ApprovedTeacherList = ({ teacherData }) => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const { mutate } = useMutation({
@@ -63,22 +64,24 @@ const ApprovedTeacherList = ({ teacherData }) => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "blue",
-            }}
-          >
-            <Tooltip title="Disable Teacher" placement="top" arrow>
-              <IconButton onClick={() => mutate(params.row._id)}>
-                <Close />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        );
+        if (role && (role == "admin" || role == "superuser")) {
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "blue",
+              }}
+            >
+              <Tooltip title="Disable Teacher" placement="top" arrow>
+                <IconButton onClick={() => mutate(params.row._id)}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          );
+        }
       },
     },
   ];

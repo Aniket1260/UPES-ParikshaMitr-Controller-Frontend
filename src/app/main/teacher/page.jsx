@@ -25,6 +25,7 @@ const TeacherListPage = () => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
   const router = useRouter();
   const unApprovedTeacherResult = useQuery({
@@ -72,17 +73,19 @@ const TeacherListPage = () => {
           Teachers{" "}
         </Typography>
       </Box>
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6">Quick Actions </Typography>
-        <Box sx={{ display: "flex" }}>
-          <Button
-            variant="contained"
-            onClick={() => router.push("teacher/attendance-report")}
-          >
-            View Attendance Report
-          </Button>
+      {role && (role == "admin" || role == "superuser") && (
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6">Quick Actions </Typography>
+          <Box sx={{ display: "flex" }}>
+            <Button
+              variant="contained"
+              onClick={() => router.push("teacher/attendance-report")}
+            >
+              View Attendance Report
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
       {unApprovedTeacherResult.isLoading || approvedTeacherResult.isLoading ? (
         <Box>
           <CircularProgress />

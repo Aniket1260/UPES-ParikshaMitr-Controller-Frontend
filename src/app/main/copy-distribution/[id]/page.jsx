@@ -274,7 +274,12 @@ const CopyDetails = ({ params }) => {
           );
 
           if (day_diff < 0) {
-            return <Chip label="Late Submission" color="error" />;
+            return (
+              <Chip
+                label={"Late Submission by" + Math.abs(day_diff) + " days"}
+                color="error"
+              />
+            );
           }
           return <></>;
         }

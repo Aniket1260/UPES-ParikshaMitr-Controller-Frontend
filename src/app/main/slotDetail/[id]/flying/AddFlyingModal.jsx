@@ -9,8 +9,12 @@ import {
   TextField,
 } from "@mui/material";
 import { Autocomplete } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { getFreeTeachersBySlotID } from "@/services/flying.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  addFlyingService,
+  getFreeTeachersBySlotID,
+} from "@/services/flying.service";
+import { enqueueSnackbar } from "notistack";
 
 const AddFlyingModal = ({ isOpen, onClose, slotId }) => {
   if (global?.window !== undefined) {
@@ -26,11 +30,26 @@ const AddFlyingModal = ({ isOpen, onClose, slotId }) => {
     enabled: isOpen,
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate: AddFlyingMutation } = useMutation({
+    mutationFn: (flyingData) => addFlyingService(controllerToken, flyingData),
+    onSuccess: () => {
+      enqueueSnackbar("Flying added successfully", { variant: "success" });
+      queryClient.invalidateQueries("flying");
+      onClose();
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: "error" });
+    },
+  });
+
   const handleAddFlying = () => {
     const flyingData = {
       slot_id: slotId,
       teacher_id: selectedTeacher._id,
     };
+    AddFlyingMutation(flyingData);
     console.log(flyingData);
     onClose();
   };

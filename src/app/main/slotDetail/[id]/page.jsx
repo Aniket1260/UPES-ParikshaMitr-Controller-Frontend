@@ -114,6 +114,7 @@ const SlotDetails = ({ params }) => {
 
   if (global?.window !== undefined) {
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const mutation = useMutation({
@@ -528,42 +529,45 @@ const SlotDetails = ({ params }) => {
                   <Groups3 />
                 </IconButton>
               </Tooltip>
-
-              {/* {params.row.isDeletable && ( */}
-              <Tooltip title="Assign Invigilator" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    handleAssignTeacherClick(params);
-                  }}
-                >
-                  <Assignment />
-                </IconButton>
-              </Tooltip>
-              {/* )} */}
-              {params.row.isDeletable && (
-                <Tooltip title="Delete Invigilator" placement="top" arrow>
-                  <IconButton
-                    onClick={() => {
-                      handleDeleteInviglatorClick(params);
-                    }}
+              {role && (role == "admin" || role == "superuser") && (
+                <>
+                  {/* {params.row.isDeletable && ( */}
+                  <Tooltip title="Assign Invigilator" placement="top" arrow>
+                    <IconButton
+                      onClick={() => {
+                        handleAssignTeacherClick(params);
+                      }}
+                    >
+                      <Assignment />
+                    </IconButton>
+                  </Tooltip>
+                  {/* )} */}
+                  {params.row.isDeletable && (
+                    <Tooltip title="Delete Invigilator" placement="top" arrow>
+                      <IconButton
+                        onClick={() => {
+                          handleDeleteInviglatorClick(params);
+                        }}
+                      >
+                        <RemoveIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  <Tooltip
+                    title="Edit Number of Invigilators"
+                    placement="top"
+                    arrow
                   >
-                    <RemoveIcon />
-                  </IconButton>
-                </Tooltip>
+                    <IconButton
+                      onClick={() => {
+                        handleEditInvigilatorClick(params);
+                      }}
+                    >
+                      <AddCircleOutlineIcon />
+                    </IconButton>
+                  </Tooltip>
+                </>
               )}
-              <Tooltip
-                title="Edit Number of Invigilators"
-                placement="top"
-                arrow
-              >
-                <IconButton
-                  onClick={() => {
-                    handleEditInvigilatorClick(params);
-                  }}
-                >
-                  <AddCircleOutlineIcon />
-                </IconButton>
-              </Tooltip>
             </Box>
           );
         },
@@ -707,29 +711,33 @@ const SlotDetails = ({ params }) => {
             mb={2}
           >
             <Typography variant="h4">Slot Details</Typography>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setAddRoomModalOpen(true)}
-              >
-                Add Room
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => setInvigilatorModalOpen(true)}
-              >
-                Manage Invigilator
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => router.push(`/main/slotDetail/${slotId}/flying`)}
-              >
-                Manage Flying
-              </Button>
-            </Box>
+            {role && (role == "admin" || role == "superuser") && (
+              <Box sx={{ display: "flex", gap: 1 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setAddRoomModalOpen(true)}
+                >
+                  Add Room
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setInvigilatorModalOpen(true)}
+                >
+                  Manage Invigilator
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    router.push(`/main/slotDetail/${slotId}/flying`)
+                  }
+                >
+                  Manage Flying
+                </Button>
+              </Box>
+            )}
           </Grid>
 
           <AddRoomModal
@@ -970,29 +978,31 @@ const SlotDetails = ({ params }) => {
                   </Box>
                 </Box>
 
-                <Box sx={{ mb: 2 }}>
-                  <Typography
-                    variant="body2"
-                    color="primary"
-                    sx={{ textTransform: "uppercase", mb: 1 }}
-                  >
-                    Selected Room Actions
-                  </Typography>
-                  <Box>
-                    <Button
-                      variant="contained"
-                      disabled={rowSelected.length == 0}
-                      onClick={() => {
-                        setSelectedStatusChangeModal({
-                          open: true,
-                          status: "COMPLETED",
-                        });
-                      }}
+                {role && (role == "admin" || role == "superuser") && (
+                  <Box sx={{ mb: 2 }}>
+                    <Typography
+                      variant="body2"
+                      color="primary"
+                      sx={{ textTransform: "uppercase", mb: 1 }}
                     >
-                      Change Room status
-                    </Button>
+                      Selected Room Actions
+                    </Typography>
+                    <Box>
+                      <Button
+                        variant="contained"
+                        disabled={rowSelected.length == 0}
+                        onClick={() => {
+                          setSelectedStatusChangeModal({
+                            open: true,
+                            status: "COMPLETED",
+                          });
+                        }}
+                      >
+                        Change Room status
+                      </Button>
+                    </Box>
                   </Box>
-                </Box>
+                )}
                 <Dialog
                   open={selectedStatusChangeModal.open}
                   onClose={() =>
@@ -1070,7 +1080,7 @@ const SlotDetails = ({ params }) => {
                       disableRowSelectionOnClick
                       // disableColumnSelector
                       // disableColumnFilter
-                      checkboxSelection
+                      checkboxSelection={role == "admin" || role == "superuser"}
                       rowHeight={60}
                       initialState={{
                         pagination: { paginationModel: { pageSize: 25 } },

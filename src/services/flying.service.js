@@ -95,3 +95,22 @@ export const getFreeTeachersBySlotID = async (token, slotId) => {
     throw error;
   }
 };
+
+export const addFlyingService = async (token, body) => {
+  try {
+    const response = await axios.post(
+      `${BaseUrl}/exam-controller/flying/create`,
+      body,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

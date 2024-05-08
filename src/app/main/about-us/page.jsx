@@ -26,7 +26,7 @@ const AboutUs = () => {
       spec: "BTech CSE AIML B3 NON-HONORS",
       image: "/Ani.jpg",
       phone: "7078870401",
-      email: "500086849@stu.upes.ac.in",
+      email: "guptakhushi5555@gmail.com",
     },
     {
       name: "Aarav Sharma",
@@ -63,19 +63,13 @@ const AboutUs = () => {
               Virender Kadyan
             </Typography>
             <Typography color="textSecondary" gutterBottom>
-              Associate Professor
+              Senior Associate Professor (SOCS)
             </Typography>
             <Typography variant="body2" component="p">
               University of Petroleum and Energy Studies
             </Typography>
             <Typography variant="body2" component="p">
-              Head Research Labs: SLRC, MiRC
-            </Typography>
-            <Typography variant="body2" component="p">
-              Coordinator-Centre-Data Science and A.I.
-            </Typography>
-            <Typography variant="body2" component="p">
-              9992037007
+              Head Research Labs: MiRC
             </Typography>
             <Typography variant="body2" component="p">
               vkadyan@ddn.upes.ac.in
@@ -93,7 +87,7 @@ const AboutUs = () => {
           <Card style={cardStyle}>
             <CardContent>
               <Typography variant="h5" component="h2" gutterBottom>
-                {member.name}
+                Er. {member.name}
               </Typography>
               <Typography color="textSecondary" sx={{ mb: 0, lineHeight: 1 }}>
                 {member.role}
@@ -109,9 +103,9 @@ const AboutUs = () => {
               <Typography variant="body2" component="p">
                 B-Tech Hons. CSE AIML (UPES)
               </Typography>
-              <Typography variant="body2" component="p">
+              {/* <Typography variant="body2" component="p">
                 {member.phone}
-              </Typography>
+              </Typography> */}
               <Typography variant="body2" component="p">
                 {member.email}
               </Typography>

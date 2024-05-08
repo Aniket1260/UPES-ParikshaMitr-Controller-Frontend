@@ -64,6 +64,7 @@ const ExamSlots = () => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const SlotQuery = useQuery({
@@ -182,21 +183,23 @@ const ExamSlots = () => {
                 <Visibility />
               </IconButton>
             </Tooltip>
-            {row.flying_squad.length == 0 && (
-              <Tooltip title="Upload Duty Chart" placement="top" arrow>
-                <IconButton
-                  onClick={() =>
-                    setUploadDutyPlanModal({
-                      open: true,
-                      slot: row,
-                    })
-                  }
-                >
-                  <Groups />
-                </IconButton>
-              </Tooltip>
-            )}
-            {/* <Tooltip title="Slot Contact Details" placement="top" arrow>
+            {role && (role == "admin" || role == "superuser") && (
+              <>
+                {row.flying_squad.length == 0 && (
+                  <Tooltip title="Upload Duty Chart" placement="top" arrow>
+                    <IconButton
+                      onClick={() =>
+                        setUploadDutyPlanModal({
+                          open: true,
+                          slot: row,
+                        })
+                      }
+                    >
+                      <Groups />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {/* <Tooltip title="Slot Contact Details" placement="top" arrow>
               <IconButton
                 onClick={() =>
                   setContactModal({
@@ -208,26 +211,28 @@ const ExamSlots = () => {
                 <Call />
               </IconButton>
             </Tooltip> */}
-            {row?.rooms?.length == 0 && (
-              <Tooltip title="Upload Seating Plan" placement="top" arrow>
-                <IconButton
-                  onClick={() =>
-                    setUploadSeatingPlanModal({
-                      open: true,
-                      slot: row,
-                    })
-                  }
-                >
-                  <Ballot />
-                </IconButton>
-              </Tooltip>
-            )}
-            {row?.isDeletable && (
-              <Tooltip title="Delete Slot" placement="top" arrow>
-                <IconButton onClick={() => deleteSlot(row._id)}>
-                  <Delete color="error" />
-                </IconButton>
-              </Tooltip>
+                {row?.rooms?.length == 0 && (
+                  <Tooltip title="Upload Seating Plan" placement="top" arrow>
+                    <IconButton
+                      onClick={() =>
+                        setUploadSeatingPlanModal({
+                          open: true,
+                          slot: row,
+                        })
+                      }
+                    >
+                      <Ballot />
+                    </IconButton>
+                  </Tooltip>
+                )}
+                {row?.isDeletable && (
+                  <Tooltip title="Delete Slot" placement="top" arrow>
+                    <IconButton onClick={() => deleteSlot(row._id)}>
+                      <Delete color="error" />
+                    </IconButton>
+                  </Tooltip>
+                )}
+              </>
             )}
           </Box>
         );
@@ -284,13 +289,15 @@ const ExamSlots = () => {
         }}
       >
         <Typography variant="h4">Examination slots</Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => setAddModal((prev) => ({ ...prev, open: true }))}
-        >
-          Add Slot
-        </Button>
+        {role && (role == "admin" || role == "superuser") && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setAddModal((prev) => ({ ...prev, open: true }))}
+          >
+            Add Slot
+          </Button>
+        )}
       </Box>
       <AddSlotModal
         open={addModal.open}

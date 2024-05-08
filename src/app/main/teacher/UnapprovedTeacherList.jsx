@@ -140,58 +140,60 @@ const UnapprovedTeacherList = ({ teacherData }) => {
       sortable: false,
       disableColumnMenu: true,
       renderCell: (params) => {
-        return (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: "blue",
-            }}
-          >
-            <Tooltip title="Approve Teacher" placement="top" arrow>
-              <IconButton onClick={() => mutate(params.row._id)}>
-                <Check />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Edit Teacher" placement="top" arrow>
-              <IconButton
-                onClick={() =>
-                  setEditTeacherModal({
-                    open: true,
-                    teacher: params.row,
-                  })
-                }
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Delete Teacher" placement="top" arrow>
-              <IconButton
-                onClick={() => {
-                  setDeleteConfirmation({
-                    open: true,
-                    teacher: params.row._id,
-                  });
-                }}
-              >
-                <Delete color="error" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Change Password" placement="top" arrow>
-              <IconButton
-                onClick={() => {
-                  setChangePasswordModal({
-                    open: true,
-                    teacher: params.row,
-                  });
-                }}
-              >
-                <Password />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        );
+        if (role && (role == "admin" || role == "superuser")) {
+          return (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "blue",
+              }}
+            >
+              <Tooltip title="Approve Teacher" placement="top" arrow>
+                <IconButton onClick={() => mutate(params.row._id)}>
+                  <Check />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Edit Teacher" placement="top" arrow>
+                <IconButton
+                  onClick={() =>
+                    setEditTeacherModal({
+                      open: true,
+                      teacher: params.row,
+                    })
+                  }
+                >
+                  <Edit />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Delete Teacher" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    setDeleteConfirmation({
+                      open: true,
+                      teacher: params.row._id,
+                    });
+                  }}
+                >
+                  <Delete color="error" />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Change Password" placement="top" arrow>
+                <IconButton
+                  onClick={() => {
+                    setChangePasswordModal({
+                      open: true,
+                      teacher: params.row,
+                    });
+                  }}
+                >
+                  <Password />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          );
+        }
       },
     },
   ];

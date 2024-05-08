@@ -138,7 +138,7 @@ const CustomDrawer = () => {
               sx={{ px: 2, pt: 1 }}
               color="text.secondary"
             >
-              Miscellaneous
+              Team
             </Typography>
             <List>
               {role &&

@@ -116,24 +116,28 @@ const DutyStatus = () => {
             field: "attendance",
             headerName: "Attendance",
             minWidth: 180,
-            valueGetter: (params) =>
-              params?.row?.attendance === true ? "P" : "A",
-            renderCell: (params) => (
-              <Box
-                sx={{
-                  backgroundColor:
-                    params.value === "P" ? "darkgreen" : "#ad1313",
-                  color: "white",
-                  padding: "5px",
-                  textAlign: "center",
-                  width: "100%",
-                }}
-              >
-                <Typography variant="body1" py={1}>
-                  {params.value}
-                </Typography>
-              </Box>
-            ),
+            valueGetter: (params) => {
+              return params == true ? "P" : "A";
+            },
+            renderCell: (params) => {
+              console.log(params);
+              return (
+                <Box
+                  sx={{
+                    backgroundColor:
+                      params.value === "P" ? "darkgreen" : "#ad1313",
+                    color: "white",
+                    padding: "5px",
+                    textAlign: "center",
+                    width: "100%",
+                  }}
+                >
+                  <Typography variant="body1" py={1}>
+                    {params.value}
+                  </Typography>
+                </Box>
+              );
+            },
           },
         ]
       : [
