@@ -1,3 +1,4 @@
+"use client";
 import {
   ChangePasswordService,
   approveTeacher,
@@ -45,6 +46,7 @@ const UnapprovedTeacherList = ({ teacherData }) => {
   if (global?.window !== undefined) {
     // Now it's safe to access window and localStorage
     var controllerToken = localStorage.getItem("token");
+    var role = localStorage.getItem("role");
   }
 
   const { mutate } = useMutation({

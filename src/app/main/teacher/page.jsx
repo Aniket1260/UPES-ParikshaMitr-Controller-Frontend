@@ -13,7 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import UnapprovedTeacherList from "./UnapprovedTeacherList";
 import { enqueueSnackbar } from "notistack";
 import ApprovedTeacherList from "./ApprovedTeacherList";
@@ -27,6 +27,13 @@ const TeacherListPage = () => {
     var controllerToken = localStorage.getItem("token");
     var role = localStorage.getItem("role");
   }
+
+  const [domLoaded, setDomLoaded] = useState(false);
+
+  useEffect(() => {
+    setDomLoaded(true);
+  }, []);
+
   const router = useRouter();
   const unApprovedTeacherResult = useQuery({
     queryKey: ["teachers", { type: "unapproved" }, controllerToken],
@@ -66,6 +73,10 @@ const TeacherListPage = () => {
     });
   }
 
+  if (!domLoaded) {
+    return <CircularProgress />;
+  }
+
   return (
     <Box>
       <Box>
@@ -75,7 +86,7 @@ const TeacherListPage = () => {
       </Box>
       {role && (role == "admin" || role == "superuser") && (
         <Box sx={{ mb: 3 }}>
-          <Typography variant="h6">Quick Actions </Typography>
+          <Typography variant="h6">Quick Actions</Typography>
           <Box sx={{ display: "flex" }}>
             <Button
               variant="contained"
