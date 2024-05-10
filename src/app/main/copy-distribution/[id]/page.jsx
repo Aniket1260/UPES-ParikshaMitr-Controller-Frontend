@@ -20,6 +20,7 @@ import { addDays, differenceInDays, format, isSunday } from "date-fns";
 import DeleteConfirmationModal from "./deleteModal";
 import EditModalDetails from "./editModal";
 import { Delete, Edit } from "@mui/icons-material";
+import { enqueueSnackbar } from "notistack";
 
 const getChipColor = (status) => {
   switch (status) {
@@ -118,15 +119,6 @@ const CopyDetails = ({ params }) => {
     }
     return [];
   }, [BundleQuery.data]);
-  if (BundleQuery.isError) {
-    enqueueSnackbar({
-      variant: "error",
-      message:
-        BundleQuery.error.response?.status +
-        " : " +
-        BundleQuery.error.response?.data.message,
-    });
-  }
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedCopy, setSelectedCopy] = useState(null);
@@ -327,6 +319,29 @@ const CopyDetails = ({ params }) => {
     setSelectedRow(row);
     setEditModalOpen(true);
   };
+
+  if (BundleQuery.isError) {
+    enqueueSnackbar({
+      variant: "error",
+      message:
+        BundleQuery.error.response?.status +
+        " : " +
+        BundleQuery.error.response?.data.message,
+    });
+    return (
+      <Box>
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Bundle Details
+        </Typography>
+
+        <Typography variant="h6" color="error">
+          {BundleQuery.error.response?.status +
+            " : Error while fetching bundle details. Please see the message popup for more details."}
+        </Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Box>
