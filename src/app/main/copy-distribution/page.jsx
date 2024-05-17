@@ -165,10 +165,13 @@ const CopyDistribution = () => {
         .map((ele) => {
           const formattedDate = formatDate(ele.date_of_exam);
           if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formattedDate)) {
-            enqueueSnackbar({
-              variant: "error",
-              message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
-            });
+            // enqueueSnackbar({
+            //   variant: "error",
+            //   message: `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`,
+            // });
+            console.error(
+              `Error in row with ID ${ele._id}: Date format should be dd/mm/yyyy`
+            );
           }
 
           let row_status = "INPROGRESS";
